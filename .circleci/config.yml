@@ -1,0 +1,81 @@
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    filters:
+      branches:
+        only:
+          - develop
+          - master
+
+    working_directory: ~/book-shop # directory where steps will run
+
+    docker: # run the steps with Docker
+      - image: circleci/openjdk:11-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
+        environment: # database's environment
+          JDBC_DATABASE_URL: jdbc:postgresql://localhost:5432/juniorstart
+          JDBC_DATABASE_USERNAME: postgres
+          JDBC_DATABASE_PASSWORD: password
+
+      - image: circleci/postgres:9.5-alpine-ram        # ...with this image you can add the postgres's database
+        environment:
+          POSTGRES_DB: juniorstart # database's name
+          POSTGRES_USER: postgres # database's username
+
+
+    steps: # a collection of executable commands
+
+      - checkout # check out source code to working directory
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: book-shop-{{ checksum "pom.xml" }}
+
+      - run: mvn dependency:go-offline # gets the project dependencies
+
+      - run: sudo apt-get update
+
+      - run: mvn test
+
+      - save_cache: # saves the project dependencies
+          paths:
+            - ~/.m2
+          key: book-shop-{{ checksum "pom.xml" }}
+
+      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
+          # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: target/surefire-reports
+
+      - store_artifacts: # store the uberjar as an artifact
+          # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: target/book-shop-0.0.1-SNAPSHOT.jar
+      # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
+
+  deploy:
+    filters:
+      branches:
+        only:
+          - master
+
+    docker: # run the steps with Docker
+      - image: circleci/buildpack-deps:trusty # ...with this image as the primary container; this is where all `steps` will run
+
+
+    steps:
+
+      - checkout
+
+      - run:
+          name: Deploy app on the Heroku
+          command: | # push command
+            git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+workflows: # workflows for the project
+  version: 2
+
+  build-deploy:
+
+
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
