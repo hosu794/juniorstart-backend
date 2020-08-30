@@ -1,6 +1,7 @@
 package com.juniorstart.juniorstart.model.audit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,8 +17,7 @@ import java.time.Instant;
 @JsonIgnoreProperties(
         value = {"createdAt", "updatedAt"}, allowGetters = true
 )
-@Getter
-@Setter
+@Data
 public abstract class DateAudit {
 
     @CreatedDate
