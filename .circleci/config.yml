@@ -81,4 +81,9 @@ workflows: # workflows for the project
             - build
           filters:
             branches:
+<<<<<<< Updated upstream
               only: master
+=======
+              only:
+                - master
+>>>>>>> Stashed changes
