@@ -4,7 +4,7 @@ jobs: # a collection of steps
     filters:
       branches:
         only:
-          - develop
+          - dev
           - master
 
     working_directory: ~/book-shop # directory where steps will run
@@ -51,7 +51,10 @@ jobs: # a collection of steps
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
 
   deploy:
-
+    filters:
+      branches:
+        only:
+          - master
 
     docker: # run the steps with Docker
       - image: circleci/buildpack-deps:trusty # ...with this image as the primary container; this is where all `steps` will run
@@ -76,6 +79,3 @@ workflows: # workflows for the project
       - deploy:
           requires:
             - build
-          filters:
-            only:
-              - master
