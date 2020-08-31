@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+local_dev.env
+local_prod.env
 
 ### STS ###
 .apt_generated
