@@ -4,15 +4,15 @@ import com.juniorstart.juniorstart.model.audit.DateAudit;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {
@@ -23,14 +23,17 @@ import java.util.Set;
         })
 })
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends DateAudit {
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID privateId;
+
+    @NaturalId
+    private Long publicId;
 
     @NotBlank
     @Size(max = 40)
