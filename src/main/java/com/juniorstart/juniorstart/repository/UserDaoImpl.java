@@ -36,7 +36,11 @@ public class UserDaoImpl implements UserDao {
         JPAQuery<User> query = new JPAQuery<>(em);
         QUser user = QUser.user;
 
-        return Optional.ofNullable(query.from(user).where(user.privateId.eq(id)).fetchOne());
+        return Optional.ofNullable(query
+                .from(user)
+                .where(user.privateId.eq(id))
+                .fetchOne()
+        );
     }
 
     @Override
@@ -45,5 +49,29 @@ public class UserDaoImpl implements UserDao {
         QUser user = QUser.user;
 
         return query.from(user).fetch();
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        JPAQuery<User> query = new JPAQuery<>(em);
+        QUser user = QUser.user;
+
+        return Optional.ofNullable(query
+                .from(user)
+                .where(user.email.eq(email))
+                .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<User> findByPublicId(Long publicId) {
+        JPAQuery<User> query = new JPAQuery<>(em);
+        QUser user = QUser.user;
+
+        return Optional.ofNullable(query
+                .from(user)
+                .where(user.publicId.eq(publicId))
+                .fetchOne()
+        );
     }
 }

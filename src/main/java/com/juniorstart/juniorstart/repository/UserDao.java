@@ -14,4 +14,8 @@ public interface UserDao {
     Optional<User> findById(UUID id);
 
     Iterable<User> findAll();
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByPublicId(Long publicId);
 }
