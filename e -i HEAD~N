@@ -1,0 +1,46 @@
+* [33mad79c9d[m[33m ([m[1;36mHEAD -> [m[1;32mcreate-login-register-system#B031[m[33m)[m Finish authentication feature.
+* [33meb4e3c4[m Refactor code and add documentation.
+* [33mf0fe73d[m Setup Facebook Login.
+* [33m72d3c8f[m[33m ([m[1;31morigin/create-login-register-system#B031[m[33m)[m Refactor UserController.
+* [33md4e088a[m Refactor Authentication Controller.
+* [33m7386dc2[m Finish github provider .
+* [33m5136841[m Delete garbage providers.
+* [33m155c8d5[m Setup google provider.
+* [33me6b3ea6[m Add authorization with providers.
+* [33m314343c[m Create cookie util and UserPrincipal class.
+* [33mfcf63f1[m Change application-properties to the applicaton.yml.
+*   [33m4089b9e[m[33m ([m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m Merge pull request #8 from hosu794/master
+[32m|[m[33m\[m  
+[32m|[m *   [33m8b1b15f[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m Merge pull request #7 from hosu794/dev
+[32m|[m [34m|[m[32m\[m  
+[32m|[m [34m|[m[32m/[m  
+[32m|[m[32m/[m[34m|[m   
+* [34m|[m [33m38d6047[m Merge pull request #6 from hosu794/master
+[36m|[m[34m\[m[34m|[m 
+[36m|[m * [33m80b91a0[m Merge pull request #5 from Ejden/master
+[36m|[m[36m/[m[1;33m|[m 
+[36m|[m * [33ma421af7[m #B033
+[36m|[m[36m/[m  
+* [33m964ab8c[m Change circleci file .
+* [33mc4199fb[m Delete docker and change database to Postgres to avoid problems with the integration for the another users.
+* [33m143fdd6[m Change circleci file .
+* [33mee3165c[m Change circleci file .
+* [33m43c0b15[m Change yaml file .
+* [33mce8c1b0[m Change second time circleci file.
+* [33m58e3a3a[m index on dev: 5397360 Use @Data adnotation instead @Getter, @Setter in Audit classes.
+* [33m5397360[m Use @Data adnotation instead @Getter, @Setter in Audit classes.
+* [33mc2f747a[m Use lombok in an audit class.
+*   [33ma75cafe[m Merge branch 'master' of https://github.com/hosu794/juniorstart-backend into master
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [33m46e9576[m Create README.md
+* [1;35m|[m [33mbfc1e9b[m mysql docker image
+[1;35m|[m[1;35m/[m  
+*   [33md31575e[m Merge pull request #1 from hosu794/create-user-feature
+[1;36m|[m[31m\[m  
+[1;36m|[m * [33m1c47f04[m[33m ([m[1;31morigin/create-user-feature[m[33m)[m Create User Model with a roles and auditing.
+[1;36m|[m[1;36m/[m  
+* [33mf5794be[m Configure Date/Time converters and UTC Timezone.
+* [33m8078f74[m Setup Runtime for Java 11.
+* [33mc1e97e7[m Setup Runtime for Java 11.
+* [33m3801974[m Detele mvn test from circleci config.
+* [33ma484a8b[m First Commit.
