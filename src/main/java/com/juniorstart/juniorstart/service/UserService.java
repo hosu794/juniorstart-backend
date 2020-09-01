@@ -2,7 +2,7 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.repository.UserRepository;
+import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserService {
 
+    final private UserDao userDao;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
     }
 
-    final private UserRepository userRepository;
 
     /** Get a current user credentials.
      * @param userPrincipal The current logged user.
@@ -30,8 +30,7 @@ public class UserService {
      * @throws ResourceNotFoundException if user not find
      */
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return userRepository.findById(userPrincipal.getId())
+        return userDao.findByPublicId(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
-
 }

@@ -7,7 +7,7 @@ import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.AuthResponse;
 import com.juniorstart.juniorstart.payload.LoginRequest;
 import com.juniorstart.juniorstart.payload.SignUpRequest;
-import com.juniorstart.juniorstart.repository.UserRepository;
+import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.TokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -31,20 +31,18 @@ import java.net.URI;
 @Service
 @Slf4j
 public class AuthenticationService {
-
-    public AuthenticationService(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenProvider = tokenProvider;
-        this.userRepository = userRepository;
-
-    }
-
     final private AuthenticationManager authenticationManager;
-    final private UserRepository userRepository;
+    final private UserDao userDao;
     final private PasswordEncoder passwordEncoder;
     final private TokenProvider tokenProvider;
 
+    public AuthenticationService(AuthenticationManager authenticationManager, UserDao userDao, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+        this.userDao = userDao;
+
+    }
 
     /** Authenticate a given user by credentials.
      * @param loginRequest The user’s credentials to login.
@@ -75,7 +73,7 @@ public class AuthenticationService {
      * @throws BadRequestException if email is already in use
      */
     public ResponseEntity<?> registerUser(SignUpRequest signUpRequest) {
-        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if(userDao.findByEmail(signUpRequest.getEmail()).isPresent()) {
             throw new BadRequestException("Email address already in use.");
         }
 
@@ -88,11 +86,11 @@ public class AuthenticationService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        User result = userRepository.save(user);
+        User result = userDao.save(user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/user/me")
-                .buildAndExpand(result.getId()).toUri();
+                .buildAndExpand(result.getPrivateId()).toUri();
 
         return ResponseEntity.created(location)
                 .body(new ApiResponse(true, "User registered successfully@"));
