@@ -1,10 +1,8 @@
 package com.juniorstart.juniorstart.security;
 
-
-
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.repository.UserRepository;
+import com.juniorstart.juniorstart.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,14 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private final UserDao userDao;
+
     @Autowired
-    UserRepository userRepository;
+    public CustomUserDetailsService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        User user = userDao.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with email : " + email)
         );
@@ -36,7 +38,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Transactional
     public UserDetails loadUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
+        User user = userDao.findByPublicId(id).orElseThrow(
             () -> new ResourceNotFoundException("User", "id", id)
         );
 
