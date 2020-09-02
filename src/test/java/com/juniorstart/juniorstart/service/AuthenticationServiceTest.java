@@ -87,7 +87,6 @@ public class AuthenticationServiceTest {
     @Test
     public void should_authenticateUser() throws Exception {
         Mockito.when(tokenProvider.createToken(ArgumentMatchers.any(Authentication.class))).thenReturn("Token");
-        Mockito.when(authentication.getPrincipal()).thenReturn(userPrincipal);
         Mockito.when(authenticationManager.authenticate(ArgumentMatchers.any())).thenReturn(authentication);
 
 
