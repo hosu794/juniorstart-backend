@@ -11,6 +11,12 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
+/** Represents an user service.
+ * @author Adrian
+ * @author Dawid Wit
+ * @version 1.1
+ * @since 1.0
+ */
 @Repository
 public class UserDaoImpl implements UserDao {
 
@@ -71,6 +77,24 @@ public class UserDaoImpl implements UserDao {
         return Optional.ofNullable(query
                 .from(user)
                 .where(user.publicId.eq(publicId))
+                .fetchOne()
+        );
+    }
+
+
+    /** Method to find user by name and password.
+     * @param name of looking user.
+     * @param password for user account.
+     * @return optional of matches user.
+     */
+    @Override
+    public Optional<User> findByNameAndPassword(String name, String password) {
+        JPAQuery<User> query = new JPAQuery<>(em);
+        QUser user = QUser.user;
+
+        return Optional.ofNullable(query
+                .from(user)
+                .where(user.password.eq(password).and(user.name.eq(name)))
                 .fetchOne()
         );
     }
