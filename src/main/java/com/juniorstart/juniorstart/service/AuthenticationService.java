@@ -73,6 +73,7 @@ public class AuthenticationService {
      * @throws BadRequestException if email is already in use
      */
     public ResponseEntity<?> registerUser(SignUpRequest signUpRequest) {
+
         if(userDao.findByEmail(signUpRequest.getEmail()).isPresent()) {
             throw new BadRequestException("Email address already in use.");
         }
