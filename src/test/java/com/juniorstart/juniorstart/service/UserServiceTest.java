@@ -2,7 +2,8 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.repository.UserRepository;
+import com.juniorstart.juniorstart.repository.UserDao;
+
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,8 +22,8 @@ import java.util.Optional;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
-    UserRepository userRepository = Mockito.mock(UserRepository.class);
-    UserService userService = new UserService(userRepository);
+    UserDao userDao = Mockito.mock(UserDao.class);
+    UserService userService = new UserService(userDao);
 
     User user;
     UserPrincipal userPrincipal;
@@ -33,7 +34,7 @@ public class UserServiceTest {
         createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
         user = new User();
         user.setPassword("Password");
-        user.setId((long) 12);
+        user.setPublicId((long) 12);
         user.setProvider(AuthProvider.local);
         user.setEmail("grzechu@gmail.com");
         user.setName("okioki");
@@ -45,7 +46,7 @@ public class UserServiceTest {
     @Test
     public void should_getCurrentUser() throws Exception {
 
-        Mockito.when(userRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(user));
+        Mockito.when(userDao.findByPublicId(ArgumentMatchers.any())).thenReturn(Optional.of(user));
         Assert.assertEquals(userService.getCurrentUser(userPrincipal).getEmail(),user.getEmail());
     }
 
