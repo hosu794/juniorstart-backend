@@ -8,7 +8,6 @@ import com.juniorstart.juniorstart.security.oauth2.CustomOAuth2UserService;
 import com.juniorstart.juniorstart.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.juniorstart.juniorstart.security.oauth2.OAuth2AuthenticationFailureHandler;
 import com.juniorstart.juniorstart.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,20 +32,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, CustomOAuth2UserService customOAuth2UserService, OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler, OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler, HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.customOAuth2UserService = customOAuth2UserService;
+        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
+        this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
+    }
 
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
 
-    @Autowired
-    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
-    @Autowired
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    private final CustomOAuth2UserService customOAuth2UserService;
+
+
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {

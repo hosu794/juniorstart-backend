@@ -19,16 +19,27 @@ import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
+/** Represents a OAuth2 user service.
+ * @author Grzegorz Szczęsny
+ * @version 1.0
+ * @since 1.0
+ */
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private UserDao userDao;
 
-    @Autowired
+
     public CustomOAuth2UserService(UserDao userDao) {
         this.userDao = userDao;
     }
 
+
+    /** Get a user by request.
+     * @param oAuth2UserRequest The request that contains OAuth2 user's credentials .
+     * @return a authorized oAuth2 user
+     * @throws InternalAuthenticationServiceException if credentials are not correct
+     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
@@ -43,6 +54,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
+
+    /** Validate a given request.
+     * @param oAuth2UserRequest The request that contains OAuth2 user's credentials .
+     * @param oAuth2User The object with the user's credentials
+     * @return a authorized oAuth2 user
+     * @throws OAuth2AuthenticationProcessingException if credentials are not correct
+     */
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
         if(StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
@@ -66,6 +84,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return UserPrincipal.create(user, oAuth2User.getAttributes());
     }
 
+    /** Register a new user.
+     * @param oAuth2UserRequest The request that contains OAuth2 user's credentials .
+     * @param oAuth2UserInfo The object with the user's credentials
+     * @return a user's object
+     */
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = new User();
 
@@ -77,6 +100,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return userDao.save(user);
     }
 
+    /** Update a current user.
+     * @param existingUser The existing user
+     * @param oAuth2UserInfo The object with the user's credentials
+     * @return a updated user's object
+     */
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         existingUser.setName(oAuth2UserInfo.getName());
         existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
