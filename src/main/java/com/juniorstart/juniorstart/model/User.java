@@ -1,13 +1,11 @@
 package com.juniorstart.juniorstart.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.juniorstart.juniorstart.generation.UserIdGenerator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -24,14 +22,18 @@ import java.util.UUID;
 public class User  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private UUID privateId;
 
     @NaturalId
-    private Long publicId;
+    private Long publicId = UserIdGenerator.generateId();
 
     private String name;
+
+    private Integer age;
+
+    private boolean hiddenFromSearch;
 
     @Email
     @Column(nullable = false)

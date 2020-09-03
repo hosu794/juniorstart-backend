@@ -1,6 +1,7 @@
 package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
+import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ApiResponse;
@@ -51,7 +52,6 @@ public class AuthenticationService {
      */
     public ResponseEntity<?> authenticationUser(LoginRequest loginRequest) {
 
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -63,7 +63,6 @@ public class AuthenticationService {
 
         String token = tokenProvider.createToken(authentication);
         return ResponseEntity.ok(new AuthResponse(token));
-
     }
 
 
@@ -93,7 +92,7 @@ public class AuthenticationService {
                 .buildAndExpand(result.getPrivateId()).toUri();
 
         return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "User registered successfully@"));
+                .body(new ApiResponse(true, "User registered successfully"));
     }
 
 
