@@ -4,12 +4,15 @@ import com.juniorstart.juniorstart.exception.AgeSpecifierNotFoundException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.parser.UrlNumberParser;
+import com.juniorstart.juniorstart.payload.ApiResponse;
+import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import static com.juniorstart.juniorstart.repository.UserSpecifications.*;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,7 +20,8 @@ import java.util.UUID;
 
 /** Represents an user service.
  * @author Grzegorz Szczęsny
- * @version 1.0
+ * @author Dawid Wit
+ * @version 1.1
  * @since 1.0
  */
 @Service
@@ -37,6 +41,19 @@ public class UserService {
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return userDao.findByPrivateId(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
+    }
+
+    /** Update user email.
+     * @param changeMail class for change mail request with new email, name and password data.
+     * @return ResponseEntity<Boolean> is email has changed in repo.
+     * @throws ResourceNotFoundException cannot find user by name and password.
+     */
+    public ResponseEntity<ApiResponse> changeEmail(ChangeMailRequest changeMail) {
+        User user = userDao.findByNameAndPassword(changeMail.getName(), changeMail.getPassword())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeMail.getName()));
+        user.setEmail(changeMail.getEmail());
+        user = userDao.save(user);
+        return ResponseEntity.ok(new ApiResponse(changeMail.getEmail().equals(user.getEmail()), "Email change"));
     }
 
     public Optional<User> getUserByPrivateId(UUID id) {
