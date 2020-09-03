@@ -1,7 +1,5 @@
 package com.juniorstart.juniorstart.security.oauth2;
 
-
-import com.juniorstart.juniorstart.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.juniorstart.juniorstart.util.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;

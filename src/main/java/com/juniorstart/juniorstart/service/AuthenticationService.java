@@ -1,6 +1,7 @@
 package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
+import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ApiResponse;

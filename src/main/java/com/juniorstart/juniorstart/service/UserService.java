@@ -35,7 +35,7 @@ public class UserService {
      * @throws ResourceNotFoundException if user not find
      */
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return userDao.findByPublicId(userPrincipal.getId())
+        return userDao.findByPrivateId(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
 

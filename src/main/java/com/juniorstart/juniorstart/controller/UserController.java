@@ -6,8 +6,6 @@ import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
+    @PreAuthorize("hasRole('ADMIN')")
     public Iterable<User> getUsers(
             @RequestParam(required = false) Optional<Long> publicId,
             @RequestParam(required = false) Optional<String> name,
@@ -38,10 +37,5 @@ public class UserController {
             @RequestParam(required = false) Optional<String> email) {
 
         return userService.getUsersByProps(publicId, name, age, email);
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    public void generate() {
-
     }
 }
