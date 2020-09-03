@@ -23,11 +23,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class User  {
 
+    @Transient
+    private UUID privateId = UUID.randomUUID();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private UUID privateId;
-
     @NaturalId
     private Long publicId;
 
