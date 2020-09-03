@@ -51,7 +51,6 @@ public class AuthenticationService {
      */
     public ResponseEntity<?> authenticationUser(LoginRequest loginRequest) {
 
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -63,7 +62,6 @@ public class AuthenticationService {
 
         String token = tokenProvider.createToken(authentication);
         return ResponseEntity.ok(new AuthResponse(token));
-
     }
 
 
@@ -93,7 +91,7 @@ public class AuthenticationService {
                 .buildAndExpand(result.getPrivateId()).toUri();
 
         return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "User registered successfully@"));
+                .body(new ApiResponse(true, "User registered successfully"));
     }
 
 
