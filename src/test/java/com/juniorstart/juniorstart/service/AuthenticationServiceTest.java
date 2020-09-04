@@ -28,6 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,26 +51,15 @@ public class AuthenticationServiceTest {
     SignUpRequest signUpRequest;
     LoginRequest loginRequest;
     MockHttpServletRequest request;
-
+    UUID uuid = UUID.randomUUID();
 
     @Before
     public void initialize() throws Exception {
         createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
-        user = new User();
-        user.setPassword("Password");
-        user.setPublicId((long) 12);
-        user.setProvider(AuthProvider.local);
-        user.setEmail("grzechu@gmail.com");
-        user.setName("okioki");
-        user.setEmailVerified(true);
+        user = User.builder().name("MockName").password("Password").publicId(12L).provider(AuthProvider.local).email("grzesiek12@gmail.com").emailVerified(true).privateId(uuid).build();
         userPrincipal = UserPrincipal.create(user);
-        signUpRequest = new SignUpRequest();
-        signUpRequest.setEmail(user.getEmail());
-        signUpRequest.setName(user.getName());
-        signUpRequest.setPassword(user.getPassword());
-        loginRequest = new LoginRequest();
-        loginRequest.setEmail(user.getEmail());
-        loginRequest.setPassword(user.getPassword());
+        signUpRequest = SignUpRequest.builder().email(user.getEmail()).name(user.getName()).password(user.getPassword()).build();
+        loginRequest = LoginRequest.builder().email(user.getEmail()).password(user.getPassword()).build();
         request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }

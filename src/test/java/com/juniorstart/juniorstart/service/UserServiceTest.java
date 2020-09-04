@@ -42,8 +42,6 @@ public class UserServiceTest {
     UserService userService = new UserService(userDao);
     UUID uuid = UUID.randomUUID();
 
-
-
     User user;
     UserPrincipal userPrincipal;
     Instant createdAt;
@@ -55,14 +53,8 @@ public class UserServiceTest {
     @Before
     public void initialize() throws Exception {
         createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
-        user = new User();
-        user.setPassword("Password");
-        user.setPublicId(12l);
-        user.setProvider(AuthProvider.local);
-        user.setEmail("grzechu@gmail.com");
-        user.setName("okioki");
-        user.setEmailVerified(true);
-        user.setPrivateId(uuid);
+
+         user = User.builder().name("MockName").password("Password").publicId(12L).provider(AuthProvider.local).email("grzesiek12@gmail.com").emailVerified(true).privateId(uuid).build();
         userPrincipal = UserPrincipal.create(user);
 
 
