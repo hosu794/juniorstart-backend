@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 /** Represents an user service.
  * @author Dawid Wit
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -43,6 +44,7 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         user = new User();
+        user.setPrivateId(new UUID(1,5));
         user.setName("Test");
         user.setEmail("test@test.com");
         user.setImageUrl("test Url");
@@ -61,12 +63,12 @@ public class UserServiceTest {
         User mockUser = this.user;
         mockUser.setEmail("test2@test.com");
         Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
-        Mockito.when(userDao.findByNameAndPassword("Test", "Password")).thenReturn(optional);
-        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com","Test","Password");
+        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), "Password")).thenReturn(optional);
+        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",user.getPrivateId(),"Password");
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
-        User user = userDao.findByNameAndPassword("Test","Password").get();
+        User user = userDao.findByPrivateIdAndPassword(this.user.getPrivateId(),"Password").get();
 
         //Then
         assertTrue(isChanged.getBody().isSuccess());
@@ -79,8 +81,8 @@ public class UserServiceTest {
     public void validTestChangeEmail() {
         //Given
         Optional<User> optional = Optional.empty();
-        Mockito.when(userDao.findByNameAndPassword("Test", "Password")).thenReturn(optional);
-        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com","Test","Password");
+        Mockito.when(userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password")).thenReturn(optional);
+        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",this.user.getPrivateId(),"Password");
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);

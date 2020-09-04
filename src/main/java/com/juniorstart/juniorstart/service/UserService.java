@@ -49,8 +49,8 @@ public class UserService {
      * @throws ResourceNotFoundException cannot find user by name and password.
      */
     public ResponseEntity<ApiResponse> changeEmail(ChangeMailRequest changeMail) {
-        User user = userDao.findByNameAndPassword(changeMail.getName(), changeMail.getPassword())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeMail.getName()));
+        User user = userDao.findByPrivateIdAndPassword(changeMail.getPrivateId(), changeMail.getPassword())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeMail.getPrivateId()));
         user.setEmail(changeMail.getEmail());
         user = userDao.save(user);
         return ResponseEntity.ok(new ApiResponse(changeMail.getEmail().equals(user.getEmail()), "Email change"));
