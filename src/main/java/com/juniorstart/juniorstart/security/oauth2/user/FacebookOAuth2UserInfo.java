@@ -1,7 +1,5 @@
 package com.juniorstart.juniorstart.security.oauth2.user;
 
-import com.juniorstart.juniorstart.security.oauth2.user.OAuth2UserInfo;
-
 import java.util.Map;
 
 public class FacebookOAuth2UserInfo extends OAuth2UserInfo {
