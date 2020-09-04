@@ -5,6 +5,7 @@ import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
+import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,15 +44,20 @@ public class UserServiceTest {
      */
     @Before
     public void setUp() {
-        user = new User();
-        user.setPrivateId(new UUID(1,5));
-        user.setName("Test");
-        user.setEmail("test@test.com");
-        user.setImageUrl("test Url");
-        user.setEmailVerified(true);
-        user.setPassword("Password");
-        user.setProvider(AuthProvider.local);
-        user.setProviderId("id");
+        user = User.builder()
+                .privateId(new UUID(1,5))
+                .publicId(10L)
+                .name("Test")
+                .age(18)
+                .hiddenFromSearch(false)
+                .email("test@test.com")
+                .imageUrl("test Url")
+                .emailVerified(true)
+                .password("Password")
+                .provider(AuthProvider.local)
+                .providerId("id").build();
+
+        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.of(this.user));
     }
 
     /** Test of correct data.
@@ -59,11 +65,9 @@ public class UserServiceTest {
     @Test
     public void testChangeEmail() {
         //Given
-        Optional<User> optional = Optional.of(this.user);
         User mockUser = this.user;
         mockUser.setEmail("test2@test.com");
         Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
-        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), "Password")).thenReturn(optional);
         ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",user.getPrivateId(),"Password");
 
         //When
@@ -80,8 +84,7 @@ public class UserServiceTest {
     @Test(expected = ResourceNotFoundException.class)
     public void validTestChangeEmail() {
         //Given
-        Optional<User> optional = Optional.empty();
-        Mockito.when(userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password")).thenReturn(optional);
+        Mockito.when(userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password")).thenReturn(Optional.empty());
         ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",this.user.getPrivateId(),"Password");
 
         //When
@@ -91,5 +94,36 @@ public class UserServiceTest {
         assertTrue(isChanged.getBody().isSuccess());
     }
 
+    /** Test of correct data.
+     */
+    @Test
+    public void testChangePassword() {
+        //Given
+        User mockUser = this.user;
+        mockUser.setPassword("NewPassword");
 
+        Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
+        ChangePasswordRequest passwordRequest = new ChangePasswordRequest("NewPassword", mockUser.getPrivateId(), "Password");
+
+        //When
+        ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
+
+        //Then
+        assertTrue(isChanged.getBody().isSuccess());
+    }
+
+    /** Test of valid name and password.
+     */
+    @Test(expected = ResourceNotFoundException.class)
+    public void testValidChangePassword() {
+        //Given
+        ChangePasswordRequest passwordRequest = new ChangePasswordRequest("NewPassword", this.user.getPrivateId(), "Password");
+
+        //When
+        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.empty());
+        ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
+
+        //Then
+        assertTrue(isChanged.getBody().isSuccess());
+    }
 }

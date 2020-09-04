@@ -6,6 +6,7 @@ import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.parser.UrlNumberParser;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
+import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import static com.juniorstart.juniorstart.repository.UserSpecifications.*;
 import com.juniorstart.juniorstart.security.CurrentUser;
@@ -21,7 +22,7 @@ import java.util.UUID;
 /** Represents an user service.
  * @author Grzegorz Szczęsny
  * @author Dawid Wit
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 @Service
@@ -44,7 +45,7 @@ public class UserService {
     }
 
     /** Update user email.
-     * @param changeMail class for change mail request with new email, name and password data.
+     * @param changeMail class for change mail request with new email, privateId and password data.
      * @return ResponseEntity<Boolean> is email has changed in repo.
      * @throws ResourceNotFoundException cannot find user by name and password.
      */
@@ -54,6 +55,19 @@ public class UserService {
         user.setEmail(changeMail.getEmail());
         user = userDao.save(user);
         return ResponseEntity.ok(new ApiResponse(changeMail.getEmail().equals(user.getEmail()), "Email change"));
+    }
+
+    /** Update user password.
+     * @param changePassword class for change password request with new password, privateId and old password data.
+     * @return ResponseEntity<Boolean> is password has changed in repo.
+     * @throws ResourceNotFoundException cannot find user by name and password.
+     */
+    public ResponseEntity<ApiResponse> changePassword(ChangePasswordRequest changePassword) {
+        User user = userDao.findByPrivateIdAndPassword(changePassword.getPrivateId(), changePassword.getOldPassword())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changePassword.getPrivateId()));
+        user.setPassword(changePassword.getNewPassword());
+        user = userDao.save(user);
+        return ResponseEntity.ok(new ApiResponse(changePassword.getNewPassword().equals(user.getPassword()), "Password change"));
     }
 
     public Optional<User> getUserByPrivateId(UUID id) {
