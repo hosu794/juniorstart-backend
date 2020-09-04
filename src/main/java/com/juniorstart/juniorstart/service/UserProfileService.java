@@ -5,9 +5,9 @@ import com.juniorstart.juniorstart.helpers.getLogedUserId;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.UserProfile;
 import com.juniorstart.juniorstart.model.UserTechnology;
+import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 
-import com.juniorstart.juniorstart.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class UserProfileService {
     UserProfileRepository userProfileRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserDao userRepository;
 
   //  Long userId = new getLogedUserId().userID;
 
@@ -45,11 +45,11 @@ public class UserProfileService {
 
         Long userId= 5L;
 
-        Optional<User> foundUser = userRepository.findById(userId);
+        Optional<User> foundUser = userRepository.findByPublicId(userId);
 
         if(foundUser.isPresent()){
             userProfile.setUser(foundUser.get());
-            userProfile.setId(foundUser.get().getId());
+            userProfile.setId(foundUser.get().getPublicId());
             userProfileRepository.save(userProfile);
         }
 
@@ -79,7 +79,6 @@ public class UserProfileService {
 
        System.out.println(foundMentorsByTechnology);
         return foundMentorsByTechnology;
-
     }
 
     public List<UserProfile> findOneMentorByTechnology(String technology){

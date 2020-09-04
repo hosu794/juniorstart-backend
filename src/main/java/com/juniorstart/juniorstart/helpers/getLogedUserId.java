@@ -9,5 +9,5 @@ public class getLogedUserId {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     User customUser = (User)authentication.getPrincipal();
 
-    public Long userID =   customUser.getId();
+    public Long userID =   customUser.getPublicId();
 }

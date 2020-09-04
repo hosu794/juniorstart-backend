@@ -20,7 +20,7 @@ public class UserProfile {
     private Long id;
 
     @OneToOne
-    @MapsId
+    //@MapsId("publicId")
     private User user;
 
 

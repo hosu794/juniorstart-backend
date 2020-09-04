@@ -2,8 +2,8 @@ package com.juniorstart.juniorstart.service;
 
 
 import com.juniorstart.juniorstart.model.*;
+import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
-import com.juniorstart.juniorstart.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class UserProfileTest {
     private UserProfileService userProfileService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserDao userRepository;
 
     @Autowired
     private UserProfileRepository userProfileRepository;
