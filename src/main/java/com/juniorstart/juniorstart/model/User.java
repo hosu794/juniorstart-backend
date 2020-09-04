@@ -42,4 +42,10 @@ public class User {
     private String providerId;
 
 
+    @OneToOne(mappedBy="user", cascade = CascadeType.ALL)
+    private UserProfile userProfile;
+
+
+
+
 }
