@@ -1,15 +1,17 @@
 package com.juniorstart.juniorstart.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.juniorstart.juniorstart.generation.UserIdGenerator;
+import com.juniorstart.juniorstart.util.UserIdGenerator;
+import com.juniorstart.juniorstart.model.audit.DateAudit;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -20,11 +22,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User  {
+public class User extends DateAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
+    @Column(name = "user_id")
     private UUID privateId;
 
     @NaturalId
@@ -56,4 +59,18 @@ public class User  {
     private UserStatus userStatus;
 
     private String providerId;
+
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade =  CascadeType.ALL,
+            mappedBy = "mentor")
+    private Project mentorProject;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "team_members")
+    private Set<Project> projects = new HashSet<>();
+
 }

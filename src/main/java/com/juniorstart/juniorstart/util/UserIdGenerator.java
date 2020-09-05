@@ -1,4 +1,4 @@
-package com.juniorstart.juniorstart.generation;
+package com.juniorstart.juniorstart.util;
 
 public abstract class UserIdGenerator {
     private static Long id = 10000000L;

@@ -9,14 +9,16 @@ import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
 import com.juniorstart.juniorstart.util.numberParser.UrlNumberParser;
+
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
-import static com.juniorstart.juniorstart.repository.UserSpecifications.*;
+import static com.juniorstart.juniorstart.repository.specification.UserSpecifications.*;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
+import com.juniorstart.juniorstart.util.numberParser.UrlNumberParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;

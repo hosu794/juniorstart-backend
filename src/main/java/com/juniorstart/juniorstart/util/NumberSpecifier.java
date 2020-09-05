@@ -1,5 +1,5 @@
-package com.juniorstart.juniorstart.util.numberParser;
 
+package com.juniorstart.juniorstart.util;
 
 import lombok.Getter;
 

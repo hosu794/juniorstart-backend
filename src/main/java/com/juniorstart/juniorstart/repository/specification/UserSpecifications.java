@@ -1,4 +1,4 @@
-package com.juniorstart.juniorstart.repository;
+package com.juniorstart.juniorstart.repository.specification;
 
 import com.juniorstart.juniorstart.model.User;
 import org.springframework.data.jpa.domain.Specification;
