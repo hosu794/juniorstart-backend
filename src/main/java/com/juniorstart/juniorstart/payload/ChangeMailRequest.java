@@ -13,7 +13,7 @@ import java.util.UUID;
  * @since 1.0
  */
 @Getter
-public class ChangeMailRequest {
+public class ChangeMailRequest implements ChangeRequest{
     @Email
     private final String email;
     @NotBlank

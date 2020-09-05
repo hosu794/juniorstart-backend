@@ -14,13 +14,13 @@ import java.util.UUID;
  * @since 1.0
  */
 @Getter
-public class ChangePasswordRequest {
+public class ChangePasswordRequest implements ChangeRequest{
     @Email
     private final String newPassword;
     @NotBlank
     private final UUID privateId;
     @NotBlank
-    private final String oldPassword;
+    private final String Password;
 
     /** Creates an object ot change email by UserService.changeEmail.
      * @param newPassword new password for account.
@@ -30,6 +30,6 @@ public class ChangePasswordRequest {
     public ChangePasswordRequest(@NotBlank @Min(6) @Max(20) String newPassword, UUID privateId, @NotBlank String oldPassword) {
         this.newPassword = newPassword;
         this.privateId = privateId;
-        this.oldPassword = oldPassword;
+        this.Password = oldPassword;
     }
 }
