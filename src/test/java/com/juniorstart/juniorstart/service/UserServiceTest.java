@@ -7,9 +7,12 @@ import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
+import com.juniorstart.juniorstart.security.UserPrincipal;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,6 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,17 +37,22 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
-    @Mock
-    UserDao userDao;
 
-    @InjectMocks
-    UserService userService;
+
+    UserDao userDao = Mockito.mock(UserDao.class);
+    UserService userService = new UserService(userDao);
+    UUID uuid = UUID.randomUUID();
 
     User user;
+    UserPrincipal userPrincipal;
+    Instant createdAt;
+
 
     /** Create user for further tests.
      */
+
     @Before
+
     public void setUp() {
         user = User.builder()
                 .privateId(new UUID(1,5))
@@ -56,9 +66,22 @@ public class UserServiceTest {
                 .password("Password")
                 .provider(AuthProvider.local)
                 .providerId("id").build();
+    createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
 
         Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.of(this.user));
+
+  userPrincipal = UserPrincipal.create(user);
+
+}
+
+    @Test
+    public void should_getCurrentUser() throws Exception {
+
+        Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any())).thenReturn(Optional.of(user));
+        Assert.assertEquals(userService.getCurrentUser(userPrincipal).getEmail(),user.getEmail());
+
     }
+
 
     /** Test of correct data.
      */
@@ -108,6 +131,7 @@ public class UserServiceTest {
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
 
+
         //Then
         assertTrue(isChanged.getBody().isSuccess());
     }
@@ -126,4 +150,5 @@ public class UserServiceTest {
         //Then
         assertTrue(isChanged.getBody().isSuccess());
     }
+
 }
