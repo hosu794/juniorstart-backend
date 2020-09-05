@@ -2,6 +2,7 @@ package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
+import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserService;
@@ -50,5 +51,11 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> changeEmail(@RequestBody @Valid ChangeMailRequest changeMail){
         return userService.changeEmail(changeMail);
+    }
+
+    @PostMapping("changePassword")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordRequest changePassword){
+        return userService.changePassword(changePassword);
     }
 }
