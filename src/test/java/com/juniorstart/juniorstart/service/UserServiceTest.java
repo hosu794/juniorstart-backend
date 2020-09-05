@@ -5,6 +5,7 @@ import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
+import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.junit.Assert;
@@ -30,59 +31,61 @@ import static org.junit.Assert.assertTrue;
 
 /** Represents an user service.
  * @author Dawid Wit
- * @version 1.0
- * @since 1.0
+ * @version 1.2
+ * @since 1.1
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
-
-
-    UserDao userDao = Mockito.mock(UserDao.class);
-    UserService userService = new UserService(userDao);
+    @Mock
+    UserDao userDao;
+    @InjectMocks
+    UserService userService;
     UUID uuid = UUID.randomUUID();
-
     User user;
     UserPrincipal userPrincipal;
-    Instant createdAt;
-
 
     /** Create user for further tests.
      */
-
     @Before
-    public void initialize() throws Exception {
-        createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
+    public void initialize() {
+        user = User.builder()
+                .privateId(uuid)
+                .publicId(10L)
+                .name("Test")
+                .age(18)
+                .hiddenFromSearch(false)
+                .email("test@test.com")
+                .imageUrl("test Url")
+                .emailVerified(true)
+                .password("Password")
+                .provider(AuthProvider.local)
+                .providerId("id").build();
 
-         user = User.builder().name("MockName").password("Password").publicId(12L).provider(AuthProvider.local).email("grzesiek12@gmail.com").emailVerified(true).privateId(uuid).build();
         userPrincipal = UserPrincipal.create(user);
-
-
+        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.of(this.user));
     }
 
     @Test
-    public void should_getCurrentUser() throws Exception {
+    public void should_getCurrentUser()  {
 
         Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any())).thenReturn(Optional.of(user));
         Assert.assertEquals(userService.getCurrentUser(userPrincipal).getEmail(),user.getEmail());
     }
-
 
     /** Test of correct data.
      */
     @Test
     public void testChangeEmail() {
         //Given
-        Optional<User> optional = Optional.of(this.user);
         User mockUser = this.user;
         mockUser.setEmail("test2@test.com");
         Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
-        Mockito.when(userDao.findByNameAndPassword("Test", "Password")).thenReturn(optional);
-        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com","Test","Password");
+        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",user.getPrivateId(),"Password");
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
-        User user = userDao.findByNameAndPassword("Test","Password").get();
+        User user = userDao.findByPrivateIdAndPassword(this.user.getPrivateId(),"Password").get();
 
         //Then
         assertTrue(isChanged.getBody().isSuccess());
@@ -94,9 +97,8 @@ public class UserServiceTest {
     @Test(expected = ResourceNotFoundException.class)
     public void validTestChangeEmail() {
         //Given
-        Optional<User> optional = Optional.empty();
-        Mockito.when(userDao.findByNameAndPassword("Test", "Password")).thenReturn(optional);
-        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com","Test","Password");
+        Mockito.when(userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password")).thenReturn(Optional.empty());
+        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",this.user.getPrivateId(),"Password");
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
@@ -105,8 +107,36 @@ public class UserServiceTest {
         assertTrue(isChanged.getBody().isSuccess());
     }
 
+    /** Test of correct data.
+     */
+    @Test
+    public void testChangePassword() {
+        //Given
+        User mockUser = this.user;
+        mockUser.setPassword("NewPassword");
 
+        Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
+        ChangePasswordRequest passwordRequest = new ChangePasswordRequest("NewPassword", mockUser.getPrivateId(), "Password");
 
+        //When
+        ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
 
+        //Then
+        assertTrue(isChanged.getBody().isSuccess());
+    }
 
+    /** Test of valid name and password.
+     */
+    @Test(expected = ResourceNotFoundException.class)
+    public void testValidChangePassword() {
+        //Given
+        ChangePasswordRequest passwordRequest = new ChangePasswordRequest("NewPassword", this.user.getPrivateId(), "Password");
+
+        //When
+        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.empty());
+        ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
+
+        //Then
+        assertTrue(isChanged.getBody().isSuccess());
+    }
 }
