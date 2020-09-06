@@ -1,4 +1,4 @@
-package com.juniorstart.juniorstart.parser;
+package com.juniorstart.juniorstart.util.numberParser;
 
 import lombok.Getter;
 

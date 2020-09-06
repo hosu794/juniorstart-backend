@@ -3,7 +3,7 @@ package com.juniorstart.juniorstart.service;
 import com.juniorstart.juniorstart.exception.AgeSpecifierNotFoundException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.parser.UrlNumberParser;
+import com.juniorstart.juniorstart.util.numberParser.UrlNumberParser;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
