@@ -1,5 +1,6 @@
 package com.juniorstart.juniorstart.payload;
 
+import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +14,7 @@ import java.util.UUID;
  * @since 1.0
  */
 @Getter
-public class ChangeMailRequest implements ChangeRequest{
+public class ChangeMailRequest implements InterfaceChangeRequest {
     @Email
     private final String email;
     @NotBlank
@@ -26,7 +27,7 @@ public class ChangeMailRequest implements ChangeRequest{
      * @param privateId of user who change email.
      * @param password for account.
      */
-    public ChangeMailRequest(@Email @Max(40) String email, UUID privateId, @NotBlank String password) {
+    public ChangeMailRequest(@Max(40) String email, UUID privateId, String password) {
         this.email = email;
         this.privateId = privateId;
         this.password = password;

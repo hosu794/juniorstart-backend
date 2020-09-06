@@ -20,14 +20,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 
 /** Represents an user service.
  * @author Dawid Wit
@@ -43,12 +40,15 @@ public class UserServiceTest {
     UserService userService;
     UUID uuid = UUID.randomUUID();
     User user;
+    User mockUser;
     UserPrincipal userPrincipal;
+    ChangePasswordRequest passwordRequest;
+    ChangeMailRequest mailRequest;
 
     /** Create user for further tests.
      */
     @Before
-    public void initialize() {
+    public void initialize() throws IllegalAccessException, InstantiationException {
         user = User.builder()
                 .privateId(uuid)
                 .publicId(10L)
@@ -62,13 +62,17 @@ public class UserServiceTest {
                 .provider(AuthProvider.local)
                 .providerId("id").build();
 
+        mockUser = user.getClass().newInstance();
         userPrincipal = UserPrincipal.create(user);
+        passwordRequest = new ChangePasswordRequest("NewPassword",user.getPrivateId() , "Password");
+        mailRequest = new ChangeMailRequest("test2@test.com",user.getPrivateId()  ,"Password");
+
+        Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
         Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.of(this.user));
     }
 
     @Test
     public void should_getCurrentUser()  {
-
         Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any())).thenReturn(Optional.of(user));
         Assert.assertEquals(userService.getCurrentUser(userPrincipal).getEmail(),user.getEmail());
     }
@@ -78,10 +82,7 @@ public class UserServiceTest {
     @Test
     public void testChangeEmail() {
         //Given
-        User mockUser = this.user;
         mockUser.setEmail("test2@test.com");
-        Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
-        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",user.getPrivateId(),"Password");
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
@@ -98,7 +99,6 @@ public class UserServiceTest {
     public void validTestChangeEmail() {
         //Given
         Mockito.when(userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password")).thenReturn(Optional.empty());
-        ChangeMailRequest mailRequest = new ChangeMailRequest("test2@test.com",this.user.getPrivateId(),"Password");
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
@@ -112,11 +112,7 @@ public class UserServiceTest {
     @Test
     public void testChangePassword() {
         //Given
-        User mockUser = this.user;
         mockUser.setPassword("NewPassword");
-
-        Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
-        ChangePasswordRequest passwordRequest = new ChangePasswordRequest("NewPassword", mockUser.getPrivateId(), "Password");
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
@@ -129,9 +125,6 @@ public class UserServiceTest {
      */
     @Test(expected = ResourceNotFoundException.class)
     public void testValidChangePassword() {
-        //Given
-        ChangePasswordRequest passwordRequest = new ChangePasswordRequest("NewPassword", this.user.getPrivateId(), "Password");
-
         //When
         Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.empty());
         ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
