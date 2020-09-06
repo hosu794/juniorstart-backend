@@ -1,7 +1,7 @@
-package com.juniorstart.juniorstart.parser;
+package com.juniorstart.juniorstart.util.numberParser;
 
 import com.juniorstart.juniorstart.exception.AgeSpecifierNotFoundException;
-import static com.juniorstart.juniorstart.parser.NumberSpecifier.*;
+import static com.juniorstart.juniorstart.util.numberParser.NumberSpecifier.*;
 import lombok.Getter;
 
 import java.util.regex.Matcher;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class UrlNumberParser {
     public static UrlNumberParserResponse<Integer> parse(String var) {
-        Pattern pattern = Pattern.compile("^(eq|neq|gt|gte|lt|lte|)([0-9])+$");
+        Pattern pattern = Pattern.compile("^(eq|neq|gt|gte|lt|lte|)([0-9]+)$");
         Matcher matcher = pattern.matcher(var);
         if (!matcher.matches()) {
             throw new AgeSpecifierNotFoundException();
