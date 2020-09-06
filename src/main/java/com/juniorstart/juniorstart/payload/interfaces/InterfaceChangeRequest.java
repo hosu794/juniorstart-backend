@@ -1,4 +1,4 @@
-package com.juniorstart.juniorstart.payload;
+package com.juniorstart.juniorstart.payload.interfaces;
 
 import java.util.UUID;
 
@@ -7,7 +7,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 1.0
  */
-public interface ChangeRequest {
+public interface InterfaceChangeRequest {
     UUID getPrivateId();
     String getPassword();
 }

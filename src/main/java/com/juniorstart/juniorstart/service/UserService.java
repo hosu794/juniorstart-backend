@@ -7,7 +7,7 @@ import com.juniorstart.juniorstart.parser.UrlNumberParser;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
-import com.juniorstart.juniorstart.payload.ChangeRequest;
+import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import static com.juniorstart.juniorstart.repository.UserSpecifications.*;
 import com.juniorstart.juniorstart.security.CurrentUser;
@@ -127,7 +127,7 @@ public class UserService {
      * @return User from repository to change chosen data.
      * @throws ResourceNotFoundException cannot find user by name and password.
      */
-    private User getUserForChange(ChangeRequest changeRequest){
+    private User getUserForChange(InterfaceChangeRequest changeRequest){
         return userDao.findByPrivateIdAndPassword(changeRequest.getPrivateId(), changeRequest.getPassword())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeRequest.getPrivateId()));
     }
