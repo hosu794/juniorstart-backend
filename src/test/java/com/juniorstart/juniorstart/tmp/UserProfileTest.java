@@ -1,4 +1,4 @@
-package com.juniorstart.juniorstart.service;
+package com.juniorstart.juniorstart.tmp;
 
 
 import com.juniorstart.juniorstart.model.*;
@@ -9,33 +9,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockBeans;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.transaction.Transactional;
 import java.util.*;
 
+import com.juniorstart.juniorstart.service.UserProfileService;
 
-//@SpringBootTest
 @RunWith(SpringRunner.class)
-//@RunWith(JUnitPlatform.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
 public class UserProfileTest {
 
+    //@MockBean
+   // private UserProfileService userProfileService;
 
-    @MockBean
     private UserProfileService userProfileService;
 
     @Autowired
@@ -48,11 +40,11 @@ public class UserProfileTest {
     private UserTechnologyRepository userTechnologyRepository;
 
 
-
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this); // this is needed for inititalizytion of mocks, if you use @Mock
+        MockitoAnnotations.initMocks(this);
         User user;
+
 
 
         user = User.builder()
@@ -74,36 +66,15 @@ public class UserProfileTest {
 
     }
 
-
     @Test
     public void createUser(){
         List<String> technologyList  = new ArrayList<>();
         technologyList.add("Java");
-
-        List<UserProfile> foundUser4 = userProfileRepository.findByUserTechnology_technologyName("Java");
-
 
         List<UserProfile> foundUser5 = userProfileRepository.findByUserTechnology_technologyNameInAndUserRole(technologyList, ListUserRole.valueOf("MENTOR"));
         List<UserProfile> foundUser6 = userProfileService.findByTechnologyAndRole(technologyList, "MENTOR");
         System.out.println("5555555" + foundUser5 .toString());
         System.out.println("66666" + foundUser6 .toString());
 
-
     }
-
-    /*
-    @Test
-    public void new_test_tmp(){
-
-    }
-
-
-     */
-
-
-
-
-
-
-
 }

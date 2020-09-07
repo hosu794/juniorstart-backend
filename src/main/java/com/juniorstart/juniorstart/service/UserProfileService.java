@@ -1,19 +1,13 @@
 package com.juniorstart.juniorstart.service;
 
-
-import com.juniorstart.juniorstart.helpers.getLogedUserId;
 import com.juniorstart.juniorstart.model.ListUserRole;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.UserProfile;
-import com.juniorstart.juniorstart.model.UserTechnology;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +30,7 @@ public class UserProfileService {
     UserProfileService(UserProfileRepository userProfileRepository){
         this.userProfileRepository=userProfileRepository;
     }
+
 
 
     public UserProfile addUserProfile(UserProfile userProfile){
@@ -73,9 +68,10 @@ public class UserProfileService {
 
 
     public List<UserProfile> findByTechnologyAndRole(List<String> technology, String userRole){
+        System.out.println("99999999999999999999999999" );
+
         List<UserProfile> foundMentorsByTechnology = userProfileRepository.findByUserTechnology_technologyNameInAndUserRole(technology, ListUserRole.valueOf(userRole));
-       //                                            userProfileRepository.findByUserTechnology_technologyNameInAndUserRole(technologyList, ListUserRole.valueOf("MENTOR"));
-        System.out.println(foundMentorsByTechnology);
+        System.out.println("9999999" + foundMentorsByTechnology);
         return foundMentorsByTechnology;
     }
 
