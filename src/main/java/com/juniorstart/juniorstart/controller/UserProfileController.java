@@ -6,6 +6,7 @@ import com.juniorstart.juniorstart.service.UserProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,19 +28,22 @@ public class UserProfileController {
     }
 
 
-    @GetMapping("/technology_role")
-    public ResponseEntity<?>  findMentorByTechnology(@RequestBody List<String> technology, String userRole){
-        List<UserProfile> foundMentors =  userProfileService.findByTechnologyAndRole(technology, userRole);
-        return ResponseEntity.ok(foundMentors);
-    }
-
-
-
-
     @PutMapping("")
     public ResponseEntity<UserProfile> updateUserProfile(@RequestBody UserProfile userProfile){
         userProfileService.updateUserProfile(userProfile);
         return ResponseEntity.ok(userProfile);
+    }
+
+    @GetMapping("/technology_role")
+    public ResponseEntity<?>  findMentorByTechnology(@RequestParam List<String> technology, List<String> userRole){
+        if (!technology.isEmpty() && !userRole.isEmpty()){
+            return ResponseEntity.ok(userProfileService.findByTechnologyAndRole(technology, userRole));
+        }
+        if (!technology.isEmpty()){
+            return ResponseEntity.ok(userProfileService.findByTechnology(technology));
+        }else{
+            return ResponseEntity.ok( userProfileService.findByUserRole(userRole));
+        }
     }
 
 

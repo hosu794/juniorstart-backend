@@ -1,33 +1,29 @@
 package com.juniorstart.juniorstart.tmp;
 
 
+import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
-import com.juniorstart.juniorstart.repository.UserTechnologyRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
-
 import com.juniorstart.juniorstart.service.UserProfileService;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
 public class UserProfileTest {
 
-    //@MockBean
-   // private UserProfileService userProfileService;
-
+    @SpyBean
     private UserProfileService userProfileService;
 
     @Autowired
@@ -36,16 +32,13 @@ public class UserProfileTest {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-    @Autowired
-    private UserTechnologyRepository userTechnologyRepository;
 
+    List<String> technologyList  = new ArrayList<>();
+    List<String> userRoleList  = new ArrayList<>();
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         User user;
-
-
 
         user = User.builder()
                 .name("Test")
@@ -63,18 +56,75 @@ public class UserProfileTest {
         userProfile.setUserRole(ListUserRole.MENTOR);
         userProfile.addUserTechnology(userTechnology);
         userProfileRepository.save(userProfile);
-
     }
 
     @Test
-    public void createUser(){
-        List<String> technologyList  = new ArrayList<>();
-        technologyList.add("Java");
-
-        List<UserProfile> foundUser5 = userProfileRepository.findByUserTechnology_technologyNameInAndUserRole(technologyList, ListUserRole.valueOf("MENTOR"));
-        List<UserProfile> foundUser6 = userProfileService.findByTechnologyAndRole(technologyList, "MENTOR");
-        System.out.println("5555555" + foundUser5 .toString());
-        System.out.println("66666" + foundUser6 .toString());
-
+    public void whenFindUserProfileByRoleAndTechnologyShouldBeFound(){
+        technologyList.add("java");
+        userRoleList.add("MENTOR");
+        List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
+        assertTrue(foundUser.size() != 0);
     }
+
+    @Test
+    public void whenFindUserProfileByRoleAndTechnologyNotExista(){
+        technologyList.add("TechnologyNotExist");
+        List<UserProfile> userNotExist = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
+        assertEquals(0, userNotExist.size());
+    }
+
+    @Test
+    public void whenFindUserProfileByRoleAndTechnologyRoleDoesNotExist(){
+        technologyList.add("Java");
+        userRoleList.add("RoleDoesNotExist");
+
+        Exception exception = assertThrows(
+                BadRequestException.class, () -> {
+                    userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
+                }
+        );
+        assertEquals("Pick value from List", exception.getMessage());
+    }
+
+    @Test
+    public void whenFindUserProfileByRoleAndTechnologyShouldBeEmpty(){
+        technologyList.add("Java");
+        userRoleList.add("JUNIOR");
+
+        List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
+        assertEquals(0, foundUser.size());
+    }
+
+    @Test
+    public void whenFindUserProfileByRole(){
+        userRoleList.add("MENTOR");
+        List<UserProfile> foundUser = userProfileService.findByUserRole(userRoleList);
+        assertTrue(foundUser.size() != 0);
+    }
+
+    @Test
+    public void whenFindUserProfileByTechnology(){
+        technologyList.add("java");
+        List<UserProfile> foundUser = userProfileService.findByTechnology(technologyList);
+        assertTrue(foundUser.size() != 0);
+    }
+
+    @Test
+    public void whenFindUserProfileByRoleNotExist(){
+        userRoleList.add("RoleDoesNotExist");
+        Exception exception = assertThrows(
+                BadRequestException.class, () -> {
+                    userProfileService.findByUserRole(userRoleList);
+                }
+        );
+        assertEquals("Pick value from List", exception.getMessage());
+    }
+
 }
+
+
+
+
+
+
+
