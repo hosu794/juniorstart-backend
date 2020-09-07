@@ -4,31 +4,36 @@ package com.juniorstart.juniorstart.service;
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
+import com.juniorstart.juniorstart.repository.UserTechnologyRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
+
+//@SpringBootTest
 @RunWith(SpringRunner.class)
+//@RunWith(JUnitPlatform.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-//@Rollback(false)
-//@Transactional
 public class UserProfileTest {
+
 
     @MockBean
     private UserProfileService userProfileService;
@@ -39,72 +44,61 @@ public class UserProfileTest {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
+    @Autowired
+    private UserTechnologyRepository userTechnologyRepository;
+
+
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this); // this is needed for inititalizytion of mocks, if you use @Mock
+        User user;
+
+
+        user = User.builder()
+                .name("Test")
+                .email("test@test.com")
+                .emailVerified(true)
+                .password("Test%123")
+                .provider(AuthProvider.google).build();
+        userRepository.save(user);
+
+        UserTechnology userTechnology = new UserTechnology();
+        userTechnology.setTechnologyName("Java");
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUser(user);
+        userProfile.setUserRole(ListUserRole.MENTOR);
+        userProfile.addUserTechnology(userTechnology);
+        userProfileRepository.save(userProfile);
 
     }
 
 
     @Test
     public void createUser(){
-        User user = new User();
-        user.setName("test1");
-        user.setEmail("test1@mail.pl");
-        user.setEmailVerified(true);
-        user.setPassword("Test%123");
-        user.setProvider(AuthProvider.google);
+        List<String> technologyList  = new ArrayList<>();
+        technologyList.add("Java");
 
-        userRepository.save(user);
-        System.out.println("11111111" + userRepository.findAll());
+        List<UserProfile> foundUser4 = userProfileRepository.findByUserTechnology_technologyName("Java");
 
 
-
-        UserTechnology userTechnology = new UserTechnology();
-        userTechnology.setTechnology("Java");
-
-
-        UserProfile userProfile = new UserProfile();
-        userProfile.setUser(user);
-        userProfile.setUserRole(ListUserRole.MENTOR);
-        userProfile.addUserTechnology(userTechnology);
-
-        userProfileRepository.save(userProfile);
-
-        //userProfile.setUserTechnology(userTechnology);
-
-
-
-        List<String> klop  = new ArrayList<>();
-        klop.add("Java");
-
-         List<UserProfile> foundUser = userProfileService.findMentorByTechnology(klop);
-         System.out.println("222222" + foundUser.toString());
-
-
-        List<UserProfile> foundUser2 = userProfileService.findOneMentorByTechnology("Java");
-        System.out.println("222222" + foundUser2.toString());
-
-
-     //   List<UserProfile> foundUser2 = userProfileRepository.findAllByUserTechnologyIn(klop);
-     //   System.out.println("222222" + foundUser2.toString());
-
-
-        List<UserProfile> tmp = userProfileRepository.findAll();
-        System.out.println("33333333" + tmp.toString());
-
-
-
-
-
-
-
-
-
+        List<UserProfile> foundUser5 = userProfileRepository.findByUserTechnology_technologyNameInAndUserRole(technologyList, ListUserRole.valueOf("MENTOR"));
+        List<UserProfile> foundUser6 = userProfileService.findByTechnologyAndRole(technologyList, "MENTOR");
+        System.out.println("5555555" + foundUser5 .toString());
+        System.out.println("66666" + foundUser6 .toString());
 
 
     }
+
+    /*
+    @Test
+    public void new_test_tmp(){
+
+    }
+
+
+     */
 
 
 

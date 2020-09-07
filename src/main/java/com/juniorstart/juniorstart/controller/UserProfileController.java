@@ -25,20 +25,24 @@ public class UserProfileController {
         return ResponseEntity.ok(userProfile);
 
     }
-/*
-    @GetMapping("/mentor_technology")
-    public ResponseEntity<?>  findMentorByTechnology(@RequestBody List<String> technology){
-        List<UserProfile> foundMentors =  userProfileService.findMentorByTechnology(technology);
+
+
+    @GetMapping("/technology_role")
+    public ResponseEntity<?>  findMentorByTechnology(@RequestBody List<String> technology, String userRole){
+        List<UserProfile> foundMentors =  userProfileService.findByTechnologyAndRole(technology, userRole);
         return ResponseEntity.ok(foundMentors);
     }
 
- */
+
+
 
     @PutMapping("")
     public ResponseEntity<UserProfile> updateUserProfile(@RequestBody UserProfile userProfile){
         userProfileService.updateUserProfile(userProfile);
         return ResponseEntity.ok(userProfile);
     }
+
+
 
 
 

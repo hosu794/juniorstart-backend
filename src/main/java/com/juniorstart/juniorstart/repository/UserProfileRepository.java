@@ -17,13 +17,24 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
 
     List<UserProfile> findAll();
 
-    List<UserProfile> findAllByUserTechnologyIn(List<String> technology);
+    List<UserProfile> findAllByUserTechnologyIn(Set<String> technology);
       //List<UserProfile> findAllByUserTechnology_valueIn(List<String> technology);
 
 
 
-    // @Query(value = "SELECT public.users_profile.* FROM public.users_profile WHERE public. = ?1", nativeQuery = true)
-    List<UserProfile> findAllByUserTechnology(String technology);
+    //@Query(value = "SELECT public.users_profile.* FROM public.users_profile WHERE public.users_profile.userTechnology = ?1", nativeQuery = true)
+   // @Query(value = "SELECT o from UserProfile  o where ?1 member of o.userTechnology")
+
+
+    List<UserProfile> findByUserTechnology_technologyName(String technologyName);
+    List<UserProfile> findByUserTechnology_technologyNameInAndUserRole(List<String>technologyName, ListUserRole userRole);
+
+
+
+
+
+
+
 
 
 

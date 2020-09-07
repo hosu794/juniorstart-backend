@@ -2,17 +2,20 @@ package com.juniorstart.juniorstart.model;
 
 
 import com.juniorstart.juniorstart.model.UserProfile;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(exclude="usersProfile")
 @Entity
-@Table(name = "users_technology")
+@Table(name = "technologies")
 public class UserTechnology {
 
 
@@ -20,11 +23,10 @@ public class UserTechnology {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String technology;
+    private String technologyName;
 
     @ManyToMany(mappedBy="userTechnology")
-    private Set<UserProfile> userProfile = new HashSet<>();
-
+    private Set<UserProfile> usersProfile = new HashSet<>();
 
 
 }

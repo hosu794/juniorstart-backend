@@ -16,6 +16,7 @@ import java.util.UUID;
         @UniqueConstraint(columnNames = "email")
 })
 @Data
+//@EqualsAndHashCode(exclude="userProfile")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,4 +53,10 @@ public class User  {
     private AuthProvider provider;
 
     private String providerId;
+
+
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private UserProfile userProfile;
+
+
 }
