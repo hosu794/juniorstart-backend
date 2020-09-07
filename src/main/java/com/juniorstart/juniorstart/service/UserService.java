@@ -3,9 +3,11 @@ package com.juniorstart.juniorstart.service;
 import com.juniorstart.juniorstart.exception.AgeSpecifierNotFoundException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.parser.UrlNumberParser;
+import com.juniorstart.juniorstart.util.numberParser.UrlNumberParser;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
+import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
+import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import static com.juniorstart.juniorstart.repository.UserSpecifications.*;
 import com.juniorstart.juniorstart.security.CurrentUser;
@@ -21,8 +23,8 @@ import java.util.UUID;
 /** Represents an user service.
  * @author Grzegorz Szczęsny
  * @author Dawid Wit
- * @version 1.1
- * @since 1.0
+ * @version 1.2
+ * @since 1.1
  */
 @Service
 @Slf4j
@@ -44,16 +46,27 @@ public class UserService {
     }
 
     /** Update user email.
-     * @param changeMail class for change mail request with new email, name and password data.
-     * @return ResponseEntity<Boolean> is email has changed in repo.
+     * @param changeMail class for change mail request with new email, privateId and password data.
+     * @return ResponseEntity<ApiResponse> is email has changed in repo.
      * @throws ResourceNotFoundException cannot find user by name and password.
      */
     public ResponseEntity<ApiResponse> changeEmail(ChangeMailRequest changeMail) {
-        User user = userDao.findByNameAndPassword(changeMail.getName(), changeMail.getPassword())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeMail.getName()));
+        User user = getUserForChange(changeMail);
         user.setEmail(changeMail.getEmail());
         user = userDao.save(user);
-        return ResponseEntity.ok(new ApiResponse(changeMail.getEmail().equals(user.getEmail()), "Email change"));
+        return changeChangeRequest(changeMail.getEmail().equals(user.getEmail()),"Email");
+    }
+
+    /** Update user password.
+     * @param changePassword class for change password request with new password, privateId and old password data.
+     * @return ResponseEntity<ApiResponse> is password has changed in repo.
+     * @throws ResourceNotFoundException cannot find user by name and password.
+     */
+    public ResponseEntity<ApiResponse> changePassword(ChangePasswordRequest changePassword) {
+        User user = getUserForChange(changePassword);
+        user.setPassword(changePassword.getNewPassword());
+        user = userDao.save(user);
+        return changeChangeRequest(changePassword.getNewPassword().equals(user.getPassword())," Password");
     }
 
     public Optional<User> getUserByPrivateId(UUID id) {
@@ -107,5 +120,28 @@ public class UserService {
 
     public User save(User user) {
         return userDao.save(user);
+    }
+
+    /** Refactored code for getting user from Database.
+     * @param changeRequest is interface common for all change user data requests.
+     * @return User from repository to change chosen data.
+     * @throws ResourceNotFoundException cannot find user by name and password.
+     */
+    private User getUserForChange(InterfaceChangeRequest changeRequest){
+        return userDao.findByPrivateIdAndPassword(changeRequest.getPrivateId(), changeRequest.getPassword())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeRequest.getPrivateId()));
+    }
+
+    /** Refactored code for getting user from Database.
+     * @param changeCondition is for checking isd date changed in repository .
+     * @param parameter name of changed parameter.
+     * @return ResponseEntity<ApiResponse> response for controller.
+     * @throws RuntimeException when parameter hasn't change.
+     */
+    private ResponseEntity<ApiResponse> changeChangeRequest(boolean changeCondition,String parameter){
+        if (changeCondition) {
+            return ResponseEntity.ok(new ApiResponse(true,parameter + " has change"));
+        }
+        throw new RuntimeException(parameter + " hasn't change");
     }
 }
