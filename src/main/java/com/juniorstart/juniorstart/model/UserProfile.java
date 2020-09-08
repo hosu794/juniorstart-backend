@@ -1,8 +1,6 @@
 package com.juniorstart.juniorstart.model;
 
-
 import lombok.*;
-
 import javax.persistence.Entity;
 import javax.persistence.*;
 import java.util.HashSet;
@@ -18,26 +16,21 @@ import java.util.UUID;
 @Table(name="users_profile")
 @Builder
 public class UserProfile {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID privateId;
-    //private Long id;
 
     @OneToOne
     @MapsId
     private User user;
 
     @Enumerated(EnumType.STRING)
-    private ListUserRole userRole;
-
+    private UserRole userRole;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name="join_user_technology",
     joinColumns = {@JoinColumn(name="user_id")},
     inverseJoinColumns = {@JoinColumn(name="technology_id")})
     private Set<UserTechnology> userTechnology = new HashSet<>();
-
 
     public void addUserTechnology(UserTechnology technology){
         this.userTechnology.add(technology);
@@ -46,17 +39,6 @@ public class UserProfile {
     public void removeUserTechnology(UserTechnology technology){
         userTechnology.remove(technology);
         technology.getUsersProfile().remove(this);
-    }
-
-
-    @Override
-    public String toString() {
-        return "UserProfile{" +
-                "id=" + privateId +
-                ", user=" + user +
-                ", userRole=" + userRole +
-                ", userTechnology=" + userTechnology+
-                '}';
     }
 
 

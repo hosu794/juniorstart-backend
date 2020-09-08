@@ -2,46 +2,43 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
-import com.juniorstart.juniorstart.model.ListUserRole;
+import com.juniorstart.juniorstart.model.UserRole;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.UserProfile;
-import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.text.WordUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-
+/** Represents an userProfile service.
+ * @author Rafał maduzia
+ * @version 1.0
+ */
 @Service
 @Slf4j
 public class UserProfileService {
 
-    @Autowired
-    UserProfileRepository userProfileRepository;
+    final private UserProfileRepository userProfileRepository;
+    final private UserDao userRepository;
 
-    @Autowired
-    UserDao userRepository;
-
-  //  Long userId = new getLogedUserId().userID;
-
-
-    UserProfileService(UserProfileRepository userProfileRepository){
-        this.userProfileRepository=userProfileRepository;
+    public UserProfileService(UserDao userDao, UserProfileRepository userProfileRepository) {
+        this.userProfileRepository = userProfileRepository;
+        this.userRepository = userDao;
     }
 
+
+    //Ignore This, Future for Next task
+  //  Long userId = new getLogedUserId().userID;
+
     //TODO GONNA WORK ON ADD USER PROFILE ON NEXT TASK
-    public UserProfile addUserProfile(UserProfile userProfile){
+    public UserProfile addUserProfile(UserProfile userProfile) {
 
         //Long userId = new getLogedUserId().userID;
         //Long tmp = userId;
@@ -59,10 +56,9 @@ public class UserProfileService {
     }
 
     //TODO GONNA WORK ON UPDATE USER PROFILE ON NEXT TASK
-    public UserProfile updateUserProfile(UserProfile userProfile){
+    public UserProfile updateUserProfile(UserProfile userProfile) {
 
         Long userId= 5L;
-
 
         Optional<UserProfile> foundUser = userProfileRepository.findById(userId);
 
@@ -72,36 +68,52 @@ public class UserProfileService {
         return userProfile;
     }
 
-    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<String> userRole){
-        List<ListUserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+    /** Get a List of UserProfile.
+     * @param technology Technology name you are looking for
+     * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
+     * @return list of UserProfile
+     * @throws ResourceNotFoundException if userRole isn't valid
+     */
+    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<String> userRole) {
+        List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
         return userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, convertedUserRole);
     }
 
-
-    public List<UserProfile> findByTechnology(List<String> technology){
+    /** Get a List of UserProfile.
+     * @param technology Technology name you are looking for
+     * @return list of UserProfile
+     */
+    public List<UserProfile> findByTechnology(List<String> technology) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
         return userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology);
     }
 
-
-    public List<UserProfile> findByUserRole(List<String> userRole){
-        List<ListUserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+    /** Get a List of UserProfile.
+     * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
+     * @return list of UserProfile
+     * @throws ResourceNotFoundException if userRole isn't valid
+     */
+    public List<UserProfile> findByUserRole(List<String> userRole) {
+        List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
         return userProfileRepository.findByUserRoleIn(convertedUserRole);
 
     }
 
-
-    public List<ListUserRole> validateAndReturnAsEnum(List<String> userRole){
+    /** Validate Listof String and return ENUM values of UserRole.
+     * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
+     * @return list of UserProfile
+     * @throws ResourceNotFoundException if userRole isn't valid
+     */
+    public List<UserRole> validateAndReturnAsEnum(List<String> userRole) {
         for (String value : userRole) {
-            if (!EnumUtils.isValidEnumIgnoreCase(ListUserRole.class, value)) {
+            if (!EnumUtils.isValidEnumIgnoreCase(UserRole.class, value)) {
                 throw new BadRequestException("Pick value from List");
             }
         }
         return userRole.stream()
                 .map(String::toUpperCase)
-                .map(ListUserRole::valueOf).collect(Collectors.toList());
-
+                .map(UserRole::valueOf).collect(Collectors.toList());
     }
 
 }

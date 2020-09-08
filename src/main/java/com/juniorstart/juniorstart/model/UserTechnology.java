@@ -1,13 +1,9 @@
 package com.juniorstart.juniorstart.model;
 
-
-import com.juniorstart.juniorstart.model.UserProfile;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-
 
 @Getter
 @Setter
@@ -18,7 +14,6 @@ import java.util.Set;
 @Table(name = "technologies")
 public class UserTechnology {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +22,5 @@ public class UserTechnology {
 
     @ManyToMany(mappedBy="userTechnology")
     private Set<UserProfile> usersProfile = new HashSet<>();
-
 
 }

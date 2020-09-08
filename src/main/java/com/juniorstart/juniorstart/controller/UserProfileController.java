@@ -6,7 +6,6 @@ import com.juniorstart.juniorstart.service.UserProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -14,7 +13,6 @@ import java.util.List;
 public class UserProfileController {
 
     private UserProfileService userProfileService;
-
 
     public UserProfileController(UserProfileService userProfileService){
         this.userProfileService = userProfileService;
@@ -24,9 +22,7 @@ public class UserProfileController {
     public ResponseEntity<UserProfile> addUserProfile(@RequestBody UserProfile userProfile){
         userProfileService.addUserProfile(userProfile);
         return ResponseEntity.ok(userProfile);
-
     }
-
 
     @PutMapping("")
     public ResponseEntity<UserProfile> updateUserProfile(@RequestBody UserProfile userProfile){
@@ -45,11 +41,4 @@ public class UserProfileController {
             return ResponseEntity.ok( userProfileService.findByUserRole(userRole));
         }
     }
-
-
-
-
-
-
-
 }
