@@ -1,27 +1,39 @@
 package com.juniorstart.juniorstart.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.juniorstart.juniorstart.generation.UserIdGenerator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.UUID;
 
-
-@Getter
-@Setter
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class User  {
 
-   
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
+    private UUID privateId;
+
+    @NaturalId
+    private Long publicId = UserIdGenerator.generateId();
+
     private String name;
+
+    private Integer age;
+
+    private boolean hiddenFromSearch;
 
     @Email
     @Column(nullable = false)
@@ -40,6 +52,4 @@ public class User {
     private AuthProvider provider;
 
     private String providerId;
-
-
 }
