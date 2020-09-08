@@ -1,12 +1,9 @@
-package com.juniorstart.juniorstart.tmp;
-
+package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -14,10 +11,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
-import com.juniorstart.juniorstart.service.UserProfileService;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/** Represents an user service.
+ * @author Rafał Maduzia
+ * @version 1.0
+ */
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
@@ -32,17 +34,15 @@ public class UserProfileTest {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-
     List<String> technologyList  = new ArrayList<>();
     List<String> userRoleList  = new ArrayList<>();
 
     @Before
     public void setUp() {
         User user;
-
         user = User.builder()
                 .name("Test")
-                .email("test@test.com")
+                .email("test2@test.com")
                 .emailVerified(true)
                 .password("Test%123")
                 .provider(AuthProvider.google).build();
@@ -59,7 +59,7 @@ public class UserProfileTest {
     }
 
     @Test
-    public void whenFindUserProfileByRoleAndTechnologyShouldBeFound(){
+    public void Should_FindUserProfileByRoleAndTechnology() {
         technologyList.add("java");
         userRoleList.add("MENTOR");
         List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
@@ -67,17 +67,16 @@ public class UserProfileTest {
     }
 
     @Test
-    public void whenFindUserProfileByRoleAndTechnologyNotExista(){
+    public void Should_NotExistsFindUserProfileByRoleAndTechnology() {
         technologyList.add("TechnologyNotExist");
         List<UserProfile> userNotExist = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
         assertEquals(0, userNotExist.size());
     }
 
     @Test
-    public void whenFindUserProfileByRoleAndTechnologyRoleDoesNotExist(){
+    public void Should_NotExistsFindUserProfileByRoleAndTechnologyRole() {
         technologyList.add("Java");
         userRoleList.add("RoleDoesNotExist");
-
         Exception exception = assertThrows(
                 BadRequestException.class, () -> {
                     userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
@@ -87,30 +86,29 @@ public class UserProfileTest {
     }
 
     @Test
-    public void whenFindUserProfileByRoleAndTechnologyShouldBeEmpty(){
+    public void Should_BeEmptyFindUserProfileByRoleAndTechnologyShouldBeEmpty() {
         technologyList.add("Java");
         userRoleList.add("JUNIOR");
-
         List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
         assertEquals(0, foundUser.size());
     }
 
     @Test
-    public void whenFindUserProfileByRole(){
+    public void Should_FindUserProfileByRole() {
         userRoleList.add("MENTOR");
         List<UserProfile> foundUser = userProfileService.findByUserRole(userRoleList);
         assertTrue(foundUser.size() != 0);
     }
 
     @Test
-    public void whenFindUserProfileByTechnology(){
+    public void Should_FindUserProfileByTechnology() {
         technologyList.add("java");
         List<UserProfile> foundUser = userProfileService.findByTechnology(technologyList);
         assertTrue(foundUser.size() != 0);
     }
 
     @Test
-    public void whenFindUserProfileByRoleNotExist(){
+    public void Should_NotExistsFindUserProfileByRoleNotExist() {
         userRoleList.add("RoleDoesNotExist");
         Exception exception = assertThrows(
                 BadRequestException.class, () -> {
@@ -119,7 +117,6 @@ public class UserProfileTest {
         );
         assertEquals("Pick value from List", exception.getMessage());
     }
-
 }
 
 

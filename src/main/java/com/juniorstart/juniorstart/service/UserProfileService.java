@@ -22,7 +22,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
+/** Represents an userProfile service.
+ * @author Rafał maduzia
+ * @version 1.0
+ */
 @Service
 @Slf4j
 public class UserProfileService {
@@ -33,15 +36,15 @@ public class UserProfileService {
     @Autowired
     UserDao userRepository;
 
+    //Ignore This, Future for Next task
   //  Long userId = new getLogedUserId().userID;
 
-
-    UserProfileService(UserProfileRepository userProfileRepository){
+    UserProfileService(UserProfileRepository userProfileRepository) {
         this.userProfileRepository=userProfileRepository;
     }
 
     //TODO GONNA WORK ON ADD USER PROFILE ON NEXT TASK
-    public UserProfile addUserProfile(UserProfile userProfile){
+    public UserProfile addUserProfile(UserProfile userProfile) {
 
         //Long userId = new getLogedUserId().userID;
         //Long tmp = userId;
@@ -59,10 +62,9 @@ public class UserProfileService {
     }
 
     //TODO GONNA WORK ON UPDATE USER PROFILE ON NEXT TASK
-    public UserProfile updateUserProfile(UserProfile userProfile){
+    public UserProfile updateUserProfile(UserProfile userProfile) {
 
         Long userId= 5L;
-
 
         Optional<UserProfile> foundUser = userProfileRepository.findById(userId);
 
@@ -72,27 +74,44 @@ public class UserProfileService {
         return userProfile;
     }
 
-    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<String> userRole){
+    /** Get a List of UserProfile.
+     * @param technology Technology name you are looking for
+     * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
+     * @return list of UserProfile
+     * @throws ResourceNotFoundException if userRole isn't valid
+     */
+    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<String> userRole) {
         List<ListUserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
         return userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, convertedUserRole);
     }
 
-
-    public List<UserProfile> findByTechnology(List<String> technology){
+    /** Get a List of UserProfile.
+     * @param technology Technology name you are looking for
+     * @return list of UserProfile
+     */
+    public List<UserProfile> findByTechnology(List<String> technology) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
         return userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology);
     }
 
-
-    public List<UserProfile> findByUserRole(List<String> userRole){
+    /** Get a List of UserProfile.
+     * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
+     * @return list of UserProfile
+     * @throws ResourceNotFoundException if userRole isn't valid
+     */
+    public List<UserProfile> findByUserRole(List<String> userRole) {
         List<ListUserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
         return userProfileRepository.findByUserRoleIn(convertedUserRole);
 
     }
 
-
-    public List<ListUserRole> validateAndReturnAsEnum(List<String> userRole){
+    /** Validate Listof String and return ENUM values of ListUserRole.
+     * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
+     * @return list of UserProfile
+     * @throws ResourceNotFoundException if userRole isn't valid
+     */
+    public List<ListUserRole> validateAndReturnAsEnum(List<String> userRole) {
         for (String value : userRole) {
             if (!EnumUtils.isValidEnumIgnoreCase(ListUserRole.class, value)) {
                 throw new BadRequestException("Pick value from List");
@@ -101,7 +120,6 @@ public class UserProfileService {
         return userRole.stream()
                 .map(String::toUpperCase)
                 .map(ListUserRole::valueOf).collect(Collectors.toList());
-
     }
 
 }
