@@ -1,8 +1,6 @@
 package com.juniorstart.juniorstart.model;
 
-
 import lombok.*;
-
 import javax.persistence.Entity;
 import javax.persistence.*;
 import java.util.HashSet;
@@ -26,7 +24,7 @@ public class UserProfile {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    private ListUserRole userRole;
+    private UserRole userRole;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name="join_user_technology",

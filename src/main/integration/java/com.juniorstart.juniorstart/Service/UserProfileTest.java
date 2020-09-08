@@ -53,7 +53,7 @@ public class UserProfileTest {
 
         UserProfile userProfile = new UserProfile();
         userProfile.setUser(user);
-        userProfile.setUserRole(ListUserRole.MENTOR);
+        userProfile.setUserRole(UserRole.MENTOR);
         userProfile.addUserTechnology(userTechnology);
         userProfileRepository.save(userProfile);
     }

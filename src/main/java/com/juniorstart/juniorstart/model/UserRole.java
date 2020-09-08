@@ -1,5 +1,5 @@
 package com.juniorstart.juniorstart.model;
 
-public enum ListUserRole {
+public enum UserRole {
     MENTOR, HR, JUNIOR, MID, SENIOR
 }
