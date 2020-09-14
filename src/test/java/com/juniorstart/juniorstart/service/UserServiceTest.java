@@ -1,5 +1,6 @@
 package com.juniorstart.juniorstart.service;
 
+import com.juniorstart.juniorstart.email.MailService;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
@@ -34,8 +35,11 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
+
     @Mock
     UserDao userDao;
+    @Mock
+    MailService mailService;
     @InjectMocks
     UserService userService;
     UUID uuid = UUID.randomUUID();
