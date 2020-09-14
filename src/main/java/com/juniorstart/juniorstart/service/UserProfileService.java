@@ -2,6 +2,7 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
+import com.juniorstart.juniorstart.helpers.getLogedUserId;
 import com.juniorstart.juniorstart.model.UserRole;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.UserProfile;
@@ -35,7 +36,7 @@ public class UserProfileService {
 
 
     //Ignore This, Future for Next task
-  //  Long userId = new getLogedUserId().userID;
+    //Long userId = new getLogedUserId().userID;
 
     //TODO GONNA WORK ON ADD USER PROFILE ON NEXT TASK
     public UserProfile addUserProfile(UserProfile userProfile) {

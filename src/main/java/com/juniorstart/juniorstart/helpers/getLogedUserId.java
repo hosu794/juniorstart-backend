@@ -1,13 +1,12 @@
 package com.juniorstart.juniorstart.helpers;
 
-import com.juniorstart.juniorstart.model.User;
-import org.springframework.security.core.Authentication;
+import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.UUID;
 
 public class getLogedUserId {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User customUser = (User)authentication.getPrincipal();
-
-    public Long userID =   customUser.getPublicId();
+    UserPrincipal myUserDetails = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UUID userId=myUserDetails.getId();
 }
