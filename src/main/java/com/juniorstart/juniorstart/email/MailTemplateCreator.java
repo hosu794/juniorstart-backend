@@ -25,13 +25,13 @@ public class MailTemplateCreator {
      */
     public String buildEmailTemplate(TemplateValues values){
         Context context = new ContextBuilder()
-                .addVariable("topic",EmileMassages.topic(values.getChangedData()))
-                .addVariable("welcome",EmileMassages.welcome(values.getName()))
-                .addVariable("message",EmileMassages.message(values.getChangedData(),values.getDataValue()))
-                .addVariable("button",EmileMassages.buttonName(values.getChangedData()))
-                .addVariable("change_url",EmileMassages.changeLink(values.getChangeDataLink()))
-                .addVariable("goodbye", EmileMassages.goodbye())
-                .addVariable("app_name",EmileMassages.appName()).build();
+                .addVariable("topic", EmailMassageTemplate.topic(values.getChangedData()))
+                .addVariable("welcome", EmailMassageTemplate.welcome(values.getName()))
+                .addVariable("message", EmailMassageTemplate.message(values.getChangedData(),values.getDataValue()))
+                .addVariable("button", EmailMassageTemplate.buttonName(values.getChangedData()))
+                .addVariable("change_url", EmailMassageTemplate.changeLink(values.getChangeDataLink()))
+                .addVariable("goodbye", EmailMassageTemplate.goodbye())
+                .addVariable("app_name", EmailMassageTemplate.appName()).build();
 
         return templateEngine.process("email/Email-alert-template.html",context);
     }

@@ -1,15 +1,11 @@
 package com.juniorstart.juniorstart.email;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
-
 
 /** Service class for sending emails 10-09-2020.
  * @author Dawid Wit
@@ -17,11 +13,11 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
+@Slf4j
 public class MailService {
 
     private JavaMailSender javaMailSender;
     private MailTemplateCreator mailCreatorService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleMailMessage.class);
 
     /** Creates an object with data for sending email.
      * @param javaMailSender class with method to send emails.
@@ -36,13 +32,13 @@ public class MailService {
      * @param mail holding data for createMimeMessage() method.
      */
     public void send(final Mail mail) {
-        LOGGER.info("Starting email preparation");
+        log.info("Starting email preparation");
         try {
             MimeMessagePreparator mailMessage = createMimeMessage(mail);
             javaMailSender.send(mailMessage);
-            LOGGER.info("Email has been sent");
+            log.info("Email has been sent");
         } catch (MailException e) {
-            LOGGER.error("Failed to process email sending: ", e);
+            log.error("Failed to process email sending: ", e);
         }
     }
 
@@ -54,7 +50,7 @@ public class MailService {
         return mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setTo(mail.getMailTo());
-            messageHelper.setSubject(EmileMassages.topic(mail.getTemplateValues().getChangedData()));
+            messageHelper.setSubject(EmailMassageTemplate.topic(mail.getTemplateValues().getChangedData()));
             messageHelper.setText(mailCreatorService.buildEmailTemplate(mail.getTemplateValues()), true);
         };
     }

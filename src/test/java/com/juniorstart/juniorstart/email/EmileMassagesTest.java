@@ -13,7 +13,7 @@ class EmileMassagesTest {
     @DisplayName("Topic message")
     void topic() {
         //When
-        String topicMessage = EmileMassages.topic("Test Data");
+        String topicMessage = EmailMassageTemplate.topic("Test Data");
 
         //Then
         assertThat(topicMessage).isEqualTo("Your Test Data has been changed");
@@ -23,7 +23,7 @@ class EmileMassagesTest {
     @DisplayName("Welcome message")
     void welcome() {
         //When
-        String welcomeMessage = EmileMassages.welcome("Test Name");
+        String welcomeMessage = EmailMassageTemplate.welcome("Test Name");
 
         //Then
         assertThat(welcomeMessage).isEqualTo("Welcome : Test Name.");
@@ -33,7 +33,7 @@ class EmileMassagesTest {
     @DisplayName("Email message")
     void message() {
         //When
-        String emileMessage = EmileMassages.message("Test Data", "Test Value");
+        String emileMessage = EmailMassageTemplate.message("Test Data", "Test Value");
 
         //Then
         assertThat(emileMessage).isEqualTo("Your Test Data has been changed " +
@@ -44,7 +44,7 @@ class EmileMassagesTest {
     @DisplayName("Button sign")
     void buttonName() {
         //When
-        String buttonName = EmileMassages.buttonName("Test Data");
+        String buttonName = EmailMassageTemplate.buttonName("Test Data");
 
         //Then
         assertThat(buttonName).isEqualTo("Change : Test Data.");
@@ -54,7 +54,7 @@ class EmileMassagesTest {
     @DisplayName("Link to change data")
     void changeLink() {
         //When
-        String changeLink = EmileMassages.changeLink("Test link");
+        String changeLink = EmailMassageTemplate.changeLink("Test link");
 
         //Then
         assertThat(changeLink).isEqualTo("Test link");
@@ -64,7 +64,7 @@ class EmileMassagesTest {
     @DisplayName("Goodbye message")
     void goodbye() {
         //When
-        String goodbyeMessage = EmileMassages.goodbye();
+        String goodbyeMessage = EmailMassageTemplate.goodbye();
 
         //Then
         assertThat(goodbyeMessage).isEqualTo("Best regards,");
@@ -74,7 +74,7 @@ class EmileMassagesTest {
     @DisplayName("Display app name")
     void appName() {
         //When
-        String appName = EmileMassages.appName();
+        String appName = EmailMassageTemplate.appName();
 
         //Then
         assertThat(appName).isEqualTo("Junior Start app");

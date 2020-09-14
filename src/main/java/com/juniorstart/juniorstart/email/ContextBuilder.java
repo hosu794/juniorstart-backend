@@ -11,7 +11,7 @@ import org.thymeleaf.context.Context;
 @NoArgsConstructor
 public class ContextBuilder {
 
-    Context context = new Context();
+    private Context context = new Context();
 
     public ContextBuilder addVariable(String name, Object value) {
         context.setVariable(name,value);

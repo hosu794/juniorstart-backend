@@ -37,17 +37,17 @@ import static org.junit.Assert.assertTrue;
 public class UserServiceTest {
 
     @Mock
-    UserDao userDao;
+    private UserDao userDao;
     @Mock
-    MailService mailService;
+    private MailService mailService;
     @InjectMocks
-    UserService userService;
-    UUID uuid = UUID.randomUUID();
-    User user;
-    User mockUser;
-    UserPrincipal userPrincipal;
-    ChangePasswordRequest passwordRequest;
-    ChangeMailRequest mailRequest;
+    private UserService userService;
+    private UUID uuid = UUID.randomUUID();
+    private User user;
+    private User mockUser;
+    private UserPrincipal userPrincipal;
+    private ChangePasswordRequest passwordRequest;
+    private ChangeMailRequest mailRequest;
 
     /** Create user for further tests.
      */

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MailTemplateCreatorTest {
 
     @Autowired
-    MailTemplateCreator creator;
+    private MailTemplateCreator creator;
 
     @Test
     @DisplayName("Test buildEmailTemplate method")
