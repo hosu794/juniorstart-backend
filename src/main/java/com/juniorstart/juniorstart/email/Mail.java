@@ -2,7 +2,6 @@ package com.juniorstart.juniorstart.email;
 
 import lombok.Getter;
 
-
 /** Class for holding data for sending email 10-09-2020.
  * @author Dawid Wit
  * @version 1.0

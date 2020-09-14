@@ -9,11 +9,11 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 1.0
  */
-public class EmileMassages implements Serializable {
+public class EmailMassageTemplate implements Serializable {
 
-    private static EmileMassages instance = new EmileMassages();
+    private static EmailMassageTemplate instance = new EmailMassageTemplate();
 
-    private EmileMassages() {
+    private EmailMassageTemplate() {
     }
 
     public static String topic(String changedData) {
