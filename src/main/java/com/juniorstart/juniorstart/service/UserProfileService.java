@@ -5,6 +5,7 @@ import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.UserRole;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.UserProfile;
+import com.juniorstart.juniorstart.payload.GetUserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 
@@ -37,7 +38,7 @@ public class UserProfileService {
     //Ignore This, Future for Next task
   //  Long userId = new getLogedUserId().userID;
 
-    //TODO GONNA WORK ON ADD USER PROFILE ON NEXT TASK
+    //TODO GONNA WORK ON ADD USER PROFILE ON TASK: #B004
     public UserProfile addUserProfile(UserProfile userProfile) {
 
         //Long userId = new getLogedUserId().userID;
@@ -55,7 +56,7 @@ public class UserProfileService {
         return userProfile;
     }
 
-    //TODO GONNA WORK ON UPDATE USER PROFILE ON NEXT TASK
+    //TODO GONNA WORK ON UPDATE USER PROFILE ON TASK: #B004
     public UserProfile updateUserProfile(UserProfile userProfile) {
 
         Long userId= 5L;
@@ -66,6 +67,24 @@ public class UserProfileService {
             userProfileRepository.save(userProfile);
         }
         return userProfile;
+    }
+
+    /** Main function to Get a List of UserProfile. Checks which method to choose
+     * @param getUserRoleOrTechnologyRequest Technology or UserRole you are looking for
+     * @return list of UserProfile
+     */
+    public List<UserProfile> selectionForSearching(GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest){
+        List<String> technology = getUserRoleOrTechnologyRequest.getTechnology();
+        List<String> userRole = getUserRoleOrTechnologyRequest.getUserRole();
+
+        if (!technology.isEmpty() && !userRole.isEmpty()){
+            return findByTechnologyAndRole(technology, userRole);
+        }
+        if (!technology.isEmpty()){
+            return findByTechnology(technology);
+        }else{
+            return findByUserRole(userRole);
+        }
     }
 
     /** Get a List of UserProfile.
@@ -97,7 +116,6 @@ public class UserProfileService {
     public List<UserProfile> findByUserRole(List<String> userRole) {
         List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
         return userProfileRepository.findByUserRoleIn(convertedUserRole);
-
     }
 
     /** Validate Listof String and return ENUM values of UserRole.
@@ -115,5 +133,4 @@ public class UserProfileService {
                 .map(String::toUpperCase)
                 .map(UserRole::valueOf).collect(Collectors.toList());
     }
-
 }
