@@ -52,4 +52,9 @@ public class User  {
     private AuthProvider provider;
 
     private String providerId;
+    
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade =  CascadeType.ALL,
+            mappedBy = "user")
+    private JobOffer jobOffer;
 }
