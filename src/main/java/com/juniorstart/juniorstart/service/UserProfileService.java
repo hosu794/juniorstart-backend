@@ -38,7 +38,7 @@ public class UserProfileService {
     //Ignore This, Future for Next task
   //  Long userId = new getLogedUserId().userID;
 
-    //TODO GONNA WORK ON ADD USER PROFILE ON TASK: #B004
+    //TODO GONNA WORK ON ADD USER PROFILE ON TASK: #B026
     public UserProfile addUserProfile(UserProfile userProfile) {
 
         //Long userId = new getLogedUserId().userID;
@@ -56,7 +56,7 @@ public class UserProfileService {
         return userProfile;
     }
 
-    //TODO GONNA WORK ON UPDATE USER PROFILE ON TASK: #B004
+    //TODO GONNA WORK ON UPDATE USER PROFILE ON TASK: #B026
     public UserProfile updateUserProfile(UserProfile userProfile) {
 
         Long userId= 5L;

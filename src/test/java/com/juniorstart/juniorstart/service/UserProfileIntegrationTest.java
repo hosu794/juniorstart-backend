@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-public class UserProfileTest {
+public class UserProfileIntegrationTest {
 
     @SpyBean
     private UserProfileService userProfileService;
@@ -34,8 +34,8 @@ public class UserProfileTest {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-    List<String> technologyList  = new ArrayList<>();
-    List<String> userRoleList  = new ArrayList<>();
+    private List<String> technologyList  = new ArrayList<>();
+    private List<String> userRoleList  = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -59,7 +59,7 @@ public class UserProfileTest {
     }
 
     @Test
-    public void Should_FindUserProfileByRoleAndTechnology() {
+    public void should_FindUserProfileByRoleAndTechnology() {
         technologyList.add("java");
         userRoleList.add("MENTOR");
         List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
@@ -67,14 +67,14 @@ public class UserProfileTest {
     }
 
     @Test
-    public void Should_NotExistsFindUserProfileByRoleAndTechnology() {
+    public void should_NotExistsFindUserProfileByRoleAndTechnology() {
         technologyList.add("TechnologyNotExist");
         List<UserProfile> userNotExist = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
         assertEquals(0, userNotExist.size());
     }
 
     @Test
-    public void Should_NotExistsFindUserProfileByRoleAndTechnologyRole() {
+    public void should_NotExistsFindUserProfileByRoleAndTechnologyRole() {
         technologyList.add("Java");
         userRoleList.add("RoleDoesNotExist");
         Exception exception = assertThrows(
@@ -86,7 +86,7 @@ public class UserProfileTest {
     }
 
     @Test
-    public void Should_BeEmptyFindUserProfileByRoleAndTechnologyShouldBeEmpty() {
+    public void should_BeEmptyFindUserProfileByRoleAndTechnologyShouldBeEmpty() {
         technologyList.add("Java");
         userRoleList.add("JUNIOR");
         List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
@@ -94,21 +94,21 @@ public class UserProfileTest {
     }
 
     @Test
-    public void Should_FindUserProfileByRole() {
+    public void should_FindUserProfileByRole() {
         userRoleList.add("MENTOR");
         List<UserProfile> foundUser = userProfileService.findByUserRole(userRoleList);
         assertTrue(foundUser.size() != 0);
     }
 
     @Test
-    public void Should_FindUserProfileByTechnology() {
+    public void should_FindUserProfileByTechnology() {
         technologyList.add("java");
         List<UserProfile> foundUser = userProfileService.findByTechnology(technologyList);
         assertTrue(foundUser.size() != 0);
     }
 
     @Test
-    public void Should_NotExistsFindUserProfileByRoleNotExist() {
+    public void should_NotExistsFindUserProfileByRoleNotExist() {
         userRoleList.add("RoleDoesNotExist");
         Exception exception = assertThrows(
                 BadRequestException.class, () -> {
@@ -118,10 +118,3 @@ public class UserProfileTest {
         assertEquals("Pick value from List", exception.getMessage());
     }
 }
-
-
-
-
-
-
-
