@@ -21,8 +21,8 @@ import com.juniorstart.juniorstart.repository.UserDao;
 public class JobOfferService
 {
 
-	JobOfferRepository jobOfferRepository;
-	UserDao userDao;
+	private final JobOfferRepository jobOfferRepository;
+	private final UserDao userDao;
 
     @Autowired
     public JobOfferService(JobOfferRepository jobOfferRepository, UserDao userDao)
