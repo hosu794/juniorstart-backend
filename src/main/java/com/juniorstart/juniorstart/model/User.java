@@ -9,13 +9,16 @@ import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
-@Data
+@Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,8 +56,15 @@ public class User  {
 
     private String providerId;
     
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
-            mappedBy = "user")
-    private JobOffer jobOffer;
+    @OneToMany(fetch = FetchType.LAZY,
+
+            mappedBy = "offerCreator")
+    private Set<JobOffer> jobOffers= new HashSet<>();
+
+    public void addJobOffer(JobOffer jobOffer){
+        jobOffers.add(jobOffer);
+    }
+    public void deleteJobOffer(JobOffer jobOffer){
+        jobOffers.remove(jobOffer);
+    }
 }

@@ -2,6 +2,7 @@ package com.juniorstart.juniorstart.service;
 
 import java.util.Optional;
 
+import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,13 +32,13 @@ public class JobOfferService
     }
     
 	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest)
-	{	
-		Optional<User>userOptional=userDao.findByPublicId(jobOfferRequest.getPublicId());
-		if(userOptional.isEmpty())
-			throw new BadRequestException("The user of that ID is not found");
+	{
+		Optional<User>userOptional= Optional.ofNullable(userDao.findByPublicId(jobOfferRequest.getPublicId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", jobOfferRequest.getPublicId())));
+
 			
 		User user = userOptional.get();
-				
+
 		JobOffer jobOffer=new JobOffer();
 		jobOffer.setMessage(jobOfferRequest.getMessage());
 		jobOffer.setContact(jobOfferRequest.getContact());
@@ -45,35 +46,38 @@ public class JobOfferService
 		jobOffer.setRequirements(jobOfferRequest.getRequirements());
 		jobOffer.setTechnologies(jobOfferRequest.getTechnologies());
 		jobOffer.setType(jobOfferRequest.getType());
-				
-		user.setJobOffer(jobOffer);
-		jobOffer.setUser(user);
+		jobOffer.setOfferCreator(user);
+		user.addJobOffer(jobOffer);
+		userDao.save(user);
+		jobOfferRepository.save(jobOffer);
 				
 		return ResponseEntity.ok()
-			.body(userDao.save(user).getJobOffer());
+			.body(new ApiResponse(true, "Offer added successfully"));
 	}
 
-	public ResponseEntity<?> deleteJobOffer(long publicId)
+
+
+	public ResponseEntity<?> deleteJobOffer(long publicId, long idJobOffer)
 	{
 		
-		Optional<User>userOptional=userDao.findByPublicId(publicId);
-		if(userOptional.isEmpty())
-			throw new BadRequestException ("The user of that ID is not found");
-		
+		Optional<User>userOptional= Optional.ofNullable(userDao.findByPublicId(publicId)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", publicId)));
 		User user = userOptional.get();
-		JobOffer jobOffer=user.getJobOffer();
-			
-		if(jobOffer!=null)
-		{
-			user.setJobOffer(null);
-			jobOfferRepository.deleteById(jobOffer.getId());
+
+		Optional<JobOffer>jobOfferOptional= Optional.ofNullable(jobOfferRepository.findById(idJobOffer)
+				.orElseThrow(() -> new ResourceNotFoundException("JobOffer", "id", idJobOffer)));
+		JobOffer jobOffer=jobOfferOptional.get();
+
+        if(jobOffer.getOfferCreator().getPublicId()!=publicId)
+            throw new BadRequestException ("The user does not have an offer with this id ");
+
+        user.deleteJobOffer(jobOffer);
+        jobOfferRepository.deleteById(jobOffer.getId());
 				
-			userDao.save(user);
+        userDao.save(user);
 	
-			return ResponseEntity.ok()
-				.body(new ApiResponse(true, "Offer delleted successfully"));
-		}
-		else 
-			throw new BadRequestException("offer does not exist");			
-	} 
+        return ResponseEntity.ok().body(new ApiResponse(true, "Offer delleted successfully"));
+
+
+	}
 }

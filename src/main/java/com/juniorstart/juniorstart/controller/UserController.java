@@ -3,7 +3,6 @@ package com.juniorstart.juniorstart.controller;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
-import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserService;
@@ -14,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 import java.util.Optional;
 
 /** Represents an user service.
@@ -26,22 +25,16 @@ import java.util.Optional;
 @RestController
 public class UserController {
     final private UserService userService;
-    final private UserDao userDao;
+
     @Autowired
-    public UserController(UserService userService,UserDao userDao) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userDao=userDao;
     }
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return userService.getCurrentUser(userPrincipal);
-    }
-    
-    @GetMapping("/all")  
-    public List<User> all() {
-        return userDao.findAll();
     }
 
     @GetMapping("/user")
