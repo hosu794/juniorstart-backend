@@ -78,12 +78,14 @@ public class UserProfileService {
         List<String> userRole = getUserRoleOrTechnologyRequest.getUserRole();
 
         if (!technology.isEmpty() && !userRole.isEmpty()){
-            return findByTechnologyAndRole(technology, userRole);
+            List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+            return findByTechnologyAndRole(technology, convertedUserRole);
         }
         if (!technology.isEmpty()){
             return findByTechnology(technology);
         }else{
-            return findByUserRole(userRole);
+            List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+            return findByUserRole(convertedUserRole);
         }
     }
 
@@ -93,10 +95,9 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<String> userRole) {
-        List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<UserRole> userRole) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
-        return userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, convertedUserRole);
+        return userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, userRole);
     }
 
     /** Get a List of UserProfile.
@@ -113,9 +114,8 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public List<UserProfile> findByUserRole(List<String> userRole) {
-        List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
-        return userProfileRepository.findByUserRoleIn(convertedUserRole);
+    public List<UserProfile> findByUserRole(List<UserRole> userRole) {
+        return userProfileRepository.findByUserRoleIn(userRole);
     }
 
     /** Validate Listof String and return ENUM values of UserRole.
