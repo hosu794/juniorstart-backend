@@ -1,5 +1,8 @@
 package com.juniorstart.juniorstart.service;
 
+import com.juniorstart.juniorstart.email.Mail;
+import com.juniorstart.juniorstart.email.MailService;
+import com.juniorstart.juniorstart.email.TemplateValues;
 import com.juniorstart.juniorstart.exception.AgeSpecifierNotFoundException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
@@ -23,16 +26,18 @@ import java.util.UUID;
 /** Represents an user service.
  * @author Grzegorz Szczęsny
  * @author Dawid Wit
- * @version 1.2
- * @since 1.1
+ * @version 1.3
+ * @since 1.2
  */
 @Service
 @Slf4j
 public class UserService {
     final private UserDao userDao;
+    final private MailService mailService;
 
-    public UserService(UserDao userDao) {
+    public UserService(UserDao userDao, MailService mailService) {
         this.userDao = userDao;
+        this.mailService = mailService;
     }
 
     /** Get a current user credentials.
@@ -52,9 +57,10 @@ public class UserService {
      */
     public ResponseEntity<ApiResponse> changeEmail(ChangeMailRequest changeMail) {
         User user = getUserForChange(changeMail);
+        Mail mail = sendInformationEmile(user,"email","https://www.google.pl/", changeMail.getEmail());
         user.setEmail(changeMail.getEmail());
         user = userDao.save(user);
-        return changeChangeRequest(changeMail.getEmail().equals(user.getEmail()),"Email");
+        return changeChangeRequest(changeMail.getEmail().equals(user.getEmail()),"Email", mail);
     }
 
     /** Update user password.
@@ -64,9 +70,10 @@ public class UserService {
      */
     public ResponseEntity<ApiResponse> changePassword(ChangePasswordRequest changePassword) {
         User user = getUserForChange(changePassword);
+        Mail mail = sendInformationEmile(user,"password","https://www.google.pl/",changePassword.getNewPassword());
         user.setPassword(changePassword.getNewPassword());
         user = userDao.save(user);
-        return changeChangeRequest(changePassword.getNewPassword().equals(user.getPassword())," Password");
+        return changeChangeRequest(changePassword.getNewPassword().equals(user.getPassword())," Password", mail);
     }
 
     public Optional<User> getUserByPrivateId(UUID id) {
@@ -135,13 +142,31 @@ public class UserService {
     /** Refactored code for getting user from Database.
      * @param changeCondition is for checking isd date changed in repository .
      * @param parameter name of changed parameter.
+     * @param mail for sending information emile.
      * @return ResponseEntity<ApiResponse> response for controller.
      * @throws RuntimeException when parameter hasn't change.
      */
-    private ResponseEntity<ApiResponse> changeChangeRequest(boolean changeCondition,String parameter){
+    private ResponseEntity<ApiResponse> changeChangeRequest(boolean changeCondition, String parameter, Mail mail) {
         if (changeCondition) {
+            mailService.send(mail);
             return ResponseEntity.ok(new ApiResponse(true,parameter + " has change"));
         }
         throw new RuntimeException(parameter + " hasn't change");
+    }
+
+    /** Method for creating information email.
+     * @param user User for whom the email is being sent.
+     * @param data name of changed data.
+     * @param value value of changed data.
+     * @return Mail object send to user.
+     */
+    private Mail sendInformationEmile(User user, String data, String link, String value) {
+        TemplateValues values = TemplateValues.builder()
+                .changedData(data)
+                .changeDataLink(link)
+                .dataValue(user.getName())
+                .name(value).build();
+
+        return new Mail(user.getEmail(),values);
     }
 }
