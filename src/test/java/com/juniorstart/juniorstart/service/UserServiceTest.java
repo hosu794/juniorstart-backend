@@ -74,14 +74,14 @@ public class UserServiceTest {
                 .emailVerified(true)
                 .password("Password")
                 .provider(AuthProvider.local)
-                .userStatus(UserStatus.Open)
+                .userStatus(UserStatus.OPEN)
                 .providerId("id").build();
 
         mockUser = user.getClass().newInstance();
         userPrincipal = UserPrincipal.create(user);
         passwordRequest = new ChangePasswordRequest("NewPassword", user.getPrivateId(), "Password");
         mailRequest = new ChangeMailRequest("test2@test.com", user.getPrivateId(), "Password");
-        statusRequest = new ChangeStatusRequest(UserStatus.Open, user.getPrivateId(), "Password");
+        statusRequest = new ChangeStatusRequest(UserStatus.OPEN, user.getPrivateId(), "Password");
 
         Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
         Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.of(this.user));
@@ -157,7 +157,7 @@ public class UserServiceTest {
     @DisplayName("Change status correct")
     public void testChangeStatus() {
         //Given
-        mockUser.setUserStatus(UserStatus.Open);
+        mockUser.setUserStatus(UserStatus.OPEN);
 
         //When
         ResponseEntity<ApiResponse> isChanged = userService.changeStatus(statusRequest);
@@ -185,7 +185,7 @@ public class UserServiceTest {
     @DisplayName("Get status list Test")
     public void testGetStatusList() {
         //Given
-        List<String> templateList = Arrays.asList("Looking_for_a_job", "Hired", "Freelancer", "Open");
+        List<String> templateList = Arrays.asList("LOOKING_FOR_A_JOB", "HIRED", "FREELANCER", "OPEN");
 
         //When
         List<String> statusList = userService.getStatusList().getBody();
