@@ -2,6 +2,7 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.*;
+import com.juniorstart.juniorstart.payload.GetUserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 import org.junit.runner.RunWith;
@@ -35,7 +36,8 @@ public class UserProfileIntegrationTest {
     private UserProfileRepository userProfileRepository;
 
     private List<String> technologyList  = new ArrayList<>();
-    private List<String> userRoleList  = new ArrayList<>();
+    private List<UserRole> userRoleList  = new ArrayList<>();
+    private List<String> userRoleListThrowException  = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -61,7 +63,7 @@ public class UserProfileIntegrationTest {
     @Test
     public void should_FindUserProfileByRoleAndTechnology() {
         technologyList.add("java");
-        userRoleList.add("MENTOR");
+        userRoleList.add(UserRole.MENTOR);
         List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
         assertTrue(foundUser.size() != 0);
     }
@@ -74,28 +76,16 @@ public class UserProfileIntegrationTest {
     }
 
     @Test
-    public void should_NotExistsFindUserProfileByRoleAndTechnologyRole() {
-        technologyList.add("Java");
-        userRoleList.add("RoleDoesNotExist");
-        Exception exception = assertThrows(
-                BadRequestException.class, () -> {
-                    userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
-                }
-        );
-        assertEquals("Pick value from List", exception.getMessage());
-    }
-
-    @Test
     public void should_BeEmptyFindUserProfileByRoleAndTechnologyShouldBeEmpty() {
         technologyList.add("Java");
-        userRoleList.add("JUNIOR");
+        userRoleList.add(UserRole.JUNIOR);
         List<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
         assertEquals(0, foundUser.size());
     }
 
     @Test
     public void should_FindUserProfileByRole() {
-        userRoleList.add("MENTOR");
+        userRoleList.add(UserRole.MENTOR);
         List<UserProfile> foundUser = userProfileService.findByUserRole(userRoleList);
         assertTrue(foundUser.size() != 0);
     }
@@ -108,13 +98,31 @@ public class UserProfileIntegrationTest {
     }
 
     @Test
-    public void should_NotExistsFindUserProfileByRoleNotExist() {
-        userRoleList.add("RoleDoesNotExist");
+    public void should_NotExistsFindUserProfileByRoleAndTechnologyRole() {
+        technologyList.add("Java");
+        userRoleListThrowException.add("RoleDoesNotExist");
+
+        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleListThrowException);
+
         Exception exception = assertThrows(
                 BadRequestException.class, () -> {
-                    userProfileService.findByUserRole(userRoleList);
+                    userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest);
                 }
         );
         assertEquals("Pick value from List", exception.getMessage());
     }
+
+    @Test
+    public void should_NotExistsFindUserProfileByRoleNotExist() {
+        userRoleListThrowException.add("RoleDoesNotExist");
+        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleListThrowException);
+
+        Exception exception = assertThrows(
+                BadRequestException.class, () -> {
+                    userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest);
+                }
+        );
+        assertEquals("Pick value from List", exception.getMessage());
+    }
+
 }
