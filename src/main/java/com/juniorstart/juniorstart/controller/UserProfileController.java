@@ -16,18 +16,6 @@ public class UserProfileController {
         this.userProfileService = userProfileService;
     }
 
-    @PostMapping()
-    public ResponseEntity<UserProfile> addUserProfile(@RequestBody UserProfile userProfile) {
-        userProfileService.addUserProfile(userProfile);
-        return ResponseEntity.ok(userProfile);
-    }
-
-    @PutMapping()
-    public ResponseEntity<UserProfile> updateUserProfile(@RequestBody UserProfile userProfile) {
-        userProfileService.updateUserProfile(userProfile);
-        return ResponseEntity.ok(userProfile);
-    }
-
     @GetMapping("/technology_role")
     public ResponseEntity<?>  findMentorByTechnology(@RequestBody GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest) {
         return ResponseEntity.ok(userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest));
