@@ -10,7 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Test for MailTemplateCreator.class 13-09-2020.
- * @author Dawid Wit
+ * @author Noboseki
  * @version 1.0
  * @since 1.0
  */
