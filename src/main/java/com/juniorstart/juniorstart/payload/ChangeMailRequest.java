@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
@@ -14,13 +15,14 @@ import java.util.UUID;
  * @since 1.0
  */
 @Getter
+@NoArgsConstructor
 public class ChangeMailRequest implements InterfaceChangeRequest {
     @Email
-    private final String email;
+    private String email;
     @NotBlank
-    private final UUID privateId;
+    private UUID privateId;
     @NotBlank
-    private final String password;
+    private String password;
 
     /** Creates an object ot change email by UserService.changeEmail.
      * @param email new mail for account.

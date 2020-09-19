@@ -4,7 +4,7 @@ import com.juniorstart.juniorstart.model.audit.UserStatus;
 import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
@@ -14,14 +14,14 @@ import java.util.UUID;
  * @since 1.0
  */
 @Getter
-@ToString
+@NoArgsConstructor
 public class ChangeStatusRequest implements InterfaceChangeRequest {
     @NotBlank
-    private final UUID privateId;
+    private UUID privateId;
     @NotBlank
-    private final String password;
+    private String password;
     @NotBlank
-    private final UserStatus userStatus;
+    private UserStatus userStatus;
 
     /** Creates an object ot change status by UserService.changeStatus.
      * @param privateId of user who change status.
