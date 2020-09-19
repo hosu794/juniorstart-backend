@@ -19,10 +19,9 @@ import java.util.UUID;
 @Slf4j
 public class UserProfileTechnologyService {
 
-    //@Autowired
 
-    @Autowired
-    UserProfileTechnologyRepository userProfileTechnologyRepository;
+   // @Autowired
+   // UserProfileTechnologyRepository userProfileTechnologyRepository;
 
     final private UserProfileRepository userProfileRepository;
 
@@ -31,21 +30,17 @@ public class UserProfileTechnologyService {
     }
 
 
-    UUID userId = new getLogedUserId().userId;
+    //UUID userId = new getLogedUserId().userId;
 
-    public UserProfile addUserProfileTag(UserTechnology userTechnology){
+
+    /*
+    public UserProfile addUserProfileTechnology(UserTechnology userTechnology){
         Optional<UserProfile> foundUser = userProfileRepository.findByPrivateId(userId);
         if (foundUser.isPresent()){
             foundUser.get().setUserTechnology(userTechnology);
         }
         userTechnology.setUsersProfile(foundUser.get());
         userProfileTechnologyRepository.save(userTechnology);
-
-
-
-
-
-
 
     }
 
@@ -56,6 +51,7 @@ public class UserProfileTechnologyService {
     public UserProfile deleteUserProfileTag(UserTechnology userTechnology){
 
     }
+     */
 
 
 }

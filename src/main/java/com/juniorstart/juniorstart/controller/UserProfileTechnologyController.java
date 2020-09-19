@@ -2,11 +2,9 @@ package com.juniorstart.juniorstart.controller;
 
 
 import com.juniorstart.juniorstart.helpers.getLogedUserId;
-import com.juniorstart.juniorstart.model.UserProfile;
 import com.juniorstart.juniorstart.model.UserTechnology;
 import com.juniorstart.juniorstart.service.UserProfileTechnologyService;
 import com.juniorstart.juniorstart.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,22 +27,22 @@ public class UserProfileTechnologyController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addUserProfileTag(@RequestBody List<UserTechnology> userTechnology){
+    public ResponseEntity<?> addUserProfileTechnology(@RequestBody List<UserTechnology> userTechnology){
 
         return ResponseEntity.ok("cos");
 
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateUserProfileTag(@RequestBody UserTechnology userTechnology){
-        userProfileTechnologyService.
+    public ResponseEntity<?> updateUserProfileTechnology(@RequestBody UserTechnology userTechnology){
+        //userProfileTechnologyService.
         return ResponseEntity.ok("cos");
 
     }
 
 
     @DeleteMapping("")
-    public ResponseEntity<?> deleteUserProfileTag(@RequestBody UserTechnology userTechnology){
+    public ResponseEntity<?> deleteUserProfileTechnology(@RequestBody UserTechnology userTechnology){
 
         return ResponseEntity.ok("cos");
     }

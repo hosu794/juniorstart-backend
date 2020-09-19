@@ -3,9 +3,7 @@ package com.juniorstart.juniorstart.model;
 import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -41,5 +39,44 @@ public class UserProfile {
         technology.getUsersProfile().remove(this);
     }
 
+    public void addUserManyTechnology(Set<UserTechnology> technology){
+
+        /*
+        Iterator value = technology.iterator();
+        while (value.hasNext()) {
+            System.out.println(value.next());
+            this.userTechnology.add(value.next().getClass());
+            technology.getUsersProfile().add(this);
+        }
+
+         */
+        for(UserTechnology userTechnology: technology) {
+            System.out.println(userTechnology);
+            System.out.println("111111111111111111111111");
+            this.userTechnology.add(userTechnology);
+            userTechnology.getUsersProfile().add(this);
+        }
+        /*
+        for(int i=0; i<technology.size() ;i++)
+            System.out.println(i);
+        this.userTechnology.add(technology.getClass().);
+         */
+
+      //  this.userTechnology.add(technology);
+       // technology.getUsersProfile().add(this);
+
+    }
+
+/*
+    @Override
+    public String toString() {
+        return "UserProfile{" +
+                "privateId=" + privateId +
+                ", user=" + user +
+                ", userRole=" + userRole +
+                ", userTechnology=" + userTechnology +
+                '}';
+    }
+ */
 
 }

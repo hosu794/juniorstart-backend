@@ -23,4 +23,18 @@ public class UserTechnology {
     @ManyToMany(mappedBy="userTechnology")
     private Set<UserProfile> usersProfile = new HashSet<>();
 
+
+
+    @Override
+    public String toString() {
+        return "UserTechnology{" +
+                "id=" + id +
+                ", technologyName='" + technologyName + '\'' +
+                ", usersProfile=" + usersProfile +
+                '}';
+    }
+
+
 }
+
+
