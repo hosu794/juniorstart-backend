@@ -1,7 +1,6 @@
 package com.juniorstart.juniorstart.controller;
 
-import com.juniorstart.juniorstart.model.UserProfile;
-import com.juniorstart.juniorstart.payload.GetUserRoleOrTechnologyRequest;
+import com.juniorstart.juniorstart.payload.UserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.service.UserProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,7 @@ public class UserProfileController {
     }
 
     @GetMapping("/technology_role")
-    public ResponseEntity<?>  findMentorByTechnology(@RequestBody GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest) {
-        return ResponseEntity.ok(userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest));
+    public ResponseEntity<?>  findMentorByTechnology(@RequestBody UserRoleOrTechnologyRequest userRoleOrTechnologyRequest) {
+        return ResponseEntity.ok(userProfileService.selectionForSearching(userRoleOrTechnologyRequest));
     }
 }

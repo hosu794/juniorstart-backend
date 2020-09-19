@@ -40,6 +40,4 @@ public class UserProfile {
         userTechnology.remove(technology);
         technology.getUsersProfile().remove(this);
     }
-
-
 }

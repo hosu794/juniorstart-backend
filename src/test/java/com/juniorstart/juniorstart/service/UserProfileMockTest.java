@@ -3,7 +3,7 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.*;
-import com.juniorstart.juniorstart.payload.GetUserRoleOrTechnologyRequest;
+import com.juniorstart.juniorstart.payload.UserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 
@@ -12,9 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -78,36 +81,34 @@ public class UserProfileMockTest {
         technologyList.add("Java");
         userRoleList.add("MENTOR");
         userRoleListEnum.add(UserRole.MENTOR);
-        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleList);
+        UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
         Mockito.when(userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn
                      (technologyList, userRoleListEnum)).thenReturn(Collections.singletonList(userProfile));
 
-        assertEquals(userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest), Collections.singletonList(userProfile));
+        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody(), Collections.singletonList(userProfile));
     }
-
 
     @Test
     public void should_NotExistsFindUserProfileByRoleAndTechnology() {
         technologyList.add("TechnologyNotExist");
-        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleList);
+        UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
         Mockito.when(userProfileRepository.findByUserTechnology_technologyNameIn(technologyList)).thenReturn(Collections.singletonList(userProfile));
 
         assertNull(userProfile);
-        assertEquals(Collections.singletonList(null), userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest));
+        assertEquals(Collections.singletonList(null), userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody());
     }
-
 
     @Test
     public void should_NotExistsFindUserProfileByRoleAndTechnologyRole() {
         technologyList.add("Java");
         userRoleList.add("RoleDoesNotExist");
-        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleList);
+        UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
         Exception exception = assertThrows(
                 BadRequestException.class,
-                () -> userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest),
+                () -> userProfileService.selectionForSearching(userRoleOrTechnologyRequest),
                 "Expected doThing() to throw, but it didn't"
         );
         assertEquals("Pick value from List", exception.getMessage());
@@ -118,44 +119,44 @@ public class UserProfileMockTest {
         technologyList.add("Java");
         userRoleList.add("JUNIOR");
         userRoleListEnum.add(UserRole.JUNIOR);
-        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleList);
+        UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
-        List<UserProfile> foundUser = userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest);
+        ResponseEntity<?> foundUser = userProfileService.selectionForSearching(userRoleOrTechnologyRequest);
         Mockito.when(userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(technologyList, userRoleListEnum)).thenReturn(Collections.singletonList(userProfile));
 
         assertNull(userProfile);
-        assertEquals(0, foundUser.size());
+        assertEquals(new ArrayList<>(Collections.emptyList()), foundUser.getBody());
     }
 
     @Test
     public void should_FindUserProfileByRole() {
         userRoleList.add("MENTOR");
         userRoleListEnum.add((UserRole.MENTOR));
-        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleList);
+        UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
         Mockito.when(userProfileRepository.findByUserRoleIn(userRoleListEnum)).thenReturn(Collections.singletonList(userProfile));
 
-        assertEquals(userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest), Collections.singletonList(userProfile));
+        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody(), Collections.singletonList(userProfile));
     }
 
     @Test
     public void should_FindUserProfileByTechnology() {
         technologyList.add("Java");
-        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleList);
+        UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
         Mockito.when(userProfileRepository.findByUserTechnology_technologyNameIn(technologyList)).thenReturn(Collections.singletonList(userProfile));
 
-        assertEquals(userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest), Collections.singletonList(userProfile));
+        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody(), Collections.singletonList(userProfile));
     }
 
     @Test
     public void should_NotExistsFindUserProfileByRoleNotExist() {
         userRoleList.add("RoleDoesNotExist");
-        GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest = new GetUserRoleOrTechnologyRequest(technologyList, userRoleList);
+        UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
         Exception exception = assertThrows(
                 BadRequestException.class,
-                    () -> userProfileService.selectionForSearching(getUserRoleOrTechnologyRequest),
+                    () -> userProfileService.selectionForSearching(userRoleOrTechnologyRequest),
                 "Expected doThing() to throw, but it didn't"
         );
         assertEquals("Pick value from List", exception.getMessage());

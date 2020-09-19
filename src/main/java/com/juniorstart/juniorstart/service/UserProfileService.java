@@ -4,12 +4,13 @@ import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.UserRole;
 import com.juniorstart.juniorstart.model.UserProfile;
-import com.juniorstart.juniorstart.payload.GetUserRoleOrTechnologyRequest;
+import com.juniorstart.juniorstart.payload.UserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.text.WordUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,18 +31,18 @@ public class UserProfileService {
     }
 
     /** Main function to Get a List of UserProfile. Checks which method to choose
-     * @param getUserRoleOrTechnologyRequest Technology or UserRole you are looking for
+     * @param userRoleOrTechnologyRequest Technology or UserRole you are looking for
      * @return list of UserProfile
      */
-    public List<UserProfile> selectionForSearching(GetUserRoleOrTechnologyRequest getUserRoleOrTechnologyRequest){
-        List<String> technology = getUserRoleOrTechnologyRequest.getTechnology();
-        List<String> userRole = getUserRoleOrTechnologyRequest.getUserRole();
+    public ResponseEntity<?> selectionForSearching(UserRoleOrTechnologyRequest userRoleOrTechnologyRequest){
+        List<String> technology = userRoleOrTechnologyRequest.getTechnology();
+        List<String> userRole = userRoleOrTechnologyRequest.getUserRole();
 
         if (!technology.isEmpty() && !userRole.isEmpty()){
             List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
             return findByTechnologyAndRole(technology, convertedUserRole);
         }
-        if (!technology.isEmpty()){
+        else if (!technology.isEmpty()){
             return findByTechnology(technology);
         }else{
             List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
@@ -55,18 +56,18 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<UserRole> userRole) {
+    public ResponseEntity<?> findByTechnologyAndRole(List<String> technology, List<UserRole> userRole) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
-        return userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, userRole);
+        return ResponseEntity.ok(userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, userRole));
     }
 
     /** Get a List of UserProfile.
      * @param technology Technology name you are looking for
      * @return list of UserProfile
      */
-    public List<UserProfile> findByTechnology(List<String> technology) {
+    public ResponseEntity<?> findByTechnology(List<String> technology) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
-        return userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology);
+        return ResponseEntity.ok(userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology));
     }
 
     /** Get a List of UserProfile.
@@ -74,10 +75,10 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public List<UserProfile> findByUserRole(List<UserRole> userRole) {
-        return userProfileRepository.findByUserRoleIn(userRole);
+    public ResponseEntity<?> findByUserRole(List<UserRole> userRole) {
+        return ResponseEntity.ok(userProfileRepository.findByUserRoleIn(userRole));
     }
-
+//        return ResponseEntity.ok(userProfileService.selectionForSearching(userRoleOrTechnologyRequest));
     /** Validate Listof String and return ENUM values of UserRole.
      * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
      * @return list of UserProfile

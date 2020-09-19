@@ -8,7 +8,7 @@ import java.util.List;
  * @version 1.0
  */
 @Getter
-public class GetUserRoleOrTechnologyRequest {
+public class UserRoleOrTechnologyRequest {
     private final List<String> technology;
     private final List<String> userRole;
 
@@ -16,7 +16,7 @@ public class GetUserRoleOrTechnologyRequest {
      * @param technology find user by technology.
      * @param userRole ind user by role.
      */
-    public GetUserRoleOrTechnologyRequest(List<String> technology, List<String> userRole) {
+    public UserRoleOrTechnologyRequest(List<String> technology, List<String> userRole) {
         this.technology = technology;
         this.userRole = userRole;
     }
