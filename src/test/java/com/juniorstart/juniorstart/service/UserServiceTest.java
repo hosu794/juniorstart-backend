@@ -13,17 +13,14 @@ import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,16 +29,16 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /** Represents an user service.
- * @author Dawid Wit
+ * @author Noboseki
  * @version 1.3
  * @since 1.2
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@RunWith(MockitoJUnitRunner.class)
+@SpringJUnitWebConfig
 public class UserServiceTest {
 
     @Mock
@@ -50,7 +47,6 @@ public class UserServiceTest {
     private MailService mailService;
     @InjectMocks
     private UserService userService;
-    private UUID uuid = UUID.randomUUID();
     private User user;
     private User mockUser;
     private UserPrincipal userPrincipal;
@@ -58,13 +54,10 @@ public class UserServiceTest {
     private ChangeMailRequest mailRequest;
     private ChangeStatusRequest statusRequest;
 
-    /**
-     * Create user for further tests.
-     */
-    @Before
-    public void initialize() throws IllegalAccessException, InstantiationException {
+    @BeforeEach
+    void setUp() throws IllegalAccessException, InstantiationException {
         user = User.builder()
-                .privateId(uuid)
+                .privateId(UUID.randomUUID())
                 .publicId(10L)
                 .name("Test")
                 .age(18)
@@ -83,18 +76,19 @@ public class UserServiceTest {
         mailRequest = new ChangeMailRequest("test2@test.com", user.getPrivateId(), "Password");
         statusRequest = new ChangeStatusRequest(UserStatus.OPEN, user.getPrivateId(), "Password");
 
-        Mockito.when(userDao.save(this.user)).thenReturn(mockUser);
-        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.of(this.user));
+        when(userDao.save(this.user)).thenReturn(mockUser);
+        when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.of(this.user));
     }
 
     @Test
+    @DisplayName("Get Current User correct")
     public void should_getCurrentUser() {
-        Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any())).thenReturn(Optional.of(user));
+        when(userDao.findByPrivateId(ArgumentMatchers.any())).thenReturn(Optional.of(user));
         Assert.assertEquals(userService.getCurrentUser(userPrincipal).getEmail(), user.getEmail());
     }
 
     @Test
-    @DisplayName("Change mail sucess")
+    @DisplayName("Change mail correct")
     public void testChangeEmail() {
         //Given
         mockUser.setEmail("test2@test.com");
@@ -110,19 +104,16 @@ public class UserServiceTest {
         verify(mailService, times(1)).send(any(Mail.class));
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     @DisplayName("Change email valid")
     public void validTestChangeEmail() {
-        //Given
-        Mockito.when(userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password")).thenReturn(Optional.empty());
-
         //When
-        ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
+        when(userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password")).thenReturn(Optional.empty());
 
         //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, times(1)).send(any(Mail.class));
+        assertThrows(ResourceNotFoundException.class, () ->{
+            userService.changeEmail(mailRequest);
+        });
     }
 
     @Test
@@ -140,17 +131,16 @@ public class UserServiceTest {
         verify(mailService, times(1)).send(any(Mail.class));
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     @DisplayName("Change password valid")
     public void testValidChangePassword() {
         //When
-        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.empty());
-        ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
+        when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.empty());
 
         //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, times(1)).send(any(Mail.class));
+        assertThrows(ResourceNotFoundException.class, () ->{
+            userService.changePassword(passwordRequest);
+        });
     }
 
     @Test
@@ -168,17 +158,16 @@ public class UserServiceTest {
         verify(mailService, never()).send(any(Mail.class));
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test
     @DisplayName("Change status valid")
     public void testChangeStatusValid() {
         //When
-        Mockito.when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.empty());
-        ResponseEntity<ApiResponse> isChanged = userService.changeStatus(statusRequest);
+        when(userDao.findByPrivateIdAndPassword(user.getPrivateId(), user.getPassword())).thenReturn(Optional.empty());
 
         //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, never()).send(any(Mail.class));
+        assertThrows(ResourceNotFoundException.class, () ->{
+            userService.changeStatus(statusRequest);
+        });
     }
 
     @Test
