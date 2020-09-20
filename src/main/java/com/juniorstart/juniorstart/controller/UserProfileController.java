@@ -1,8 +1,10 @@
 package com.juniorstart.juniorstart.controller;
 
+import com.juniorstart.juniorstart.model.UserProfile;
+import com.juniorstart.juniorstart.payload.PagedResponse;
 import com.juniorstart.juniorstart.payload.UserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.service.UserProfileService;
-import org.springframework.http.ResponseEntity;
+import com.juniorstart.juniorstart.util.AppConstants;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +18,9 @@ public class UserProfileController {
     }
 
     @GetMapping("/technology_role")
-    public ResponseEntity<?>  findMentorByTechnology(@RequestBody UserRoleOrTechnologyRequest userRoleOrTechnologyRequest) {
-        return ResponseEntity.ok(userProfileService.selectionForSearching(userRoleOrTechnologyRequest));
+    public PagedResponse<UserProfile> findMentorByTechnology(@RequestBody UserRoleOrTechnologyRequest userRoleOrTechnologyRequest,
+                                                             @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+                                                             @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+        return userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size );
     }
 }

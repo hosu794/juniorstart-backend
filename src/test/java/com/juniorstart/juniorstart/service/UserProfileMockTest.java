@@ -12,7 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -40,12 +42,21 @@ public class UserProfileMockTest {
     private List<String> technologyList  = new ArrayList<>();
     private List<String> userRoleList  = new ArrayList<>();
     private List<UserRole> userRoleListEnum  = new ArrayList<>();
+    private List<UserProfile> userProfileOutput = new ArrayList<>();
+
+    private int page = 0;
+    private int size = 8;
+
+    private Pageable pageable = PageRequest.of(page, size);
+    private PageImpl<UserProfile> pageContain = new PageImpl<>(userProfileOutput, pageable, 1);
 
     @BeforeEach
     public void initializeNewList(){
         technologyList  = new ArrayList<>();
         userRoleList  = new ArrayList<>();
         userRoleListEnum  = new ArrayList<>();
+        userProfileOutput = new ArrayList<>();
+
     }
 
     @BeforeAll
@@ -84,9 +95,9 @@ public class UserProfileMockTest {
         UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
         Mockito.when(userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn
-                     (technologyList, userRoleListEnum)).thenReturn(Collections.singletonList(userProfile));
+                     (technologyList, userRoleListEnum, pageable)).thenReturn(pageContain);
 
-        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody(), Collections.singletonList(userProfile));
+        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size).getContent(), pageContain.getContent());
     }
 
     @Test
@@ -94,10 +105,9 @@ public class UserProfileMockTest {
         technologyList.add("TechnologyNotExist");
         UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
-        Mockito.when(userProfileRepository.findByUserTechnology_technologyNameIn(technologyList)).thenReturn(Collections.singletonList(userProfile));
+        Mockito.when(userProfileRepository.findByUserTechnology_technologyNameIn(technologyList,pageable)).thenReturn(pageContain);
 
-        assertNull(userProfile);
-        assertEquals(Collections.singletonList(null), userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody());
+        assertEquals(pageContain.getContent().size(), userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size).getContent().size(), 0);
     }
 
     @Test
@@ -108,7 +118,7 @@ public class UserProfileMockTest {
 
         Exception exception = assertThrows(
                 BadRequestException.class,
-                () -> userProfileService.selectionForSearching(userRoleOrTechnologyRequest),
+                () -> userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size),
                 "Expected doThing() to throw, but it didn't"
         );
         assertEquals("Pick value from List", exception.getMessage());
@@ -121,11 +131,9 @@ public class UserProfileMockTest {
         userRoleListEnum.add(UserRole.JUNIOR);
         UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
-        ResponseEntity<?> foundUser = userProfileService.selectionForSearching(userRoleOrTechnologyRequest);
-        Mockito.when(userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(technologyList, userRoleListEnum)).thenReturn(Collections.singletonList(userProfile));
+        Mockito.when(userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(technologyList, userRoleListEnum, pageable)).thenReturn(pageContain);
 
-        assertNull(userProfile);
-        assertEquals(new ArrayList<>(Collections.emptyList()), foundUser.getBody());
+        assertEquals(pageContain.getContent().size(), userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size).getContent().size(), 0);
     }
 
     @Test
@@ -134,9 +142,9 @@ public class UserProfileMockTest {
         userRoleListEnum.add((UserRole.MENTOR));
         UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
-        Mockito.when(userProfileRepository.findByUserRoleIn(userRoleListEnum)).thenReturn(Collections.singletonList(userProfile));
+        Mockito.when(userProfileRepository.findByUserRoleIn(userRoleListEnum, pageable)).thenReturn(pageContain);
 
-        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody(), Collections.singletonList(userProfile));
+        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size).getContent(), pageContain.getContent());
     }
 
     @Test
@@ -144,9 +152,9 @@ public class UserProfileMockTest {
         technologyList.add("Java");
         UserRoleOrTechnologyRequest userRoleOrTechnologyRequest = new UserRoleOrTechnologyRequest(technologyList, userRoleList);
 
-        Mockito.when(userProfileRepository.findByUserTechnology_technologyNameIn(technologyList)).thenReturn(Collections.singletonList(userProfile));
+        Mockito.when(userProfileRepository.findByUserTechnology_technologyNameIn(technologyList, pageable)).thenReturn(pageContain);
 
-        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest).getBody(), Collections.singletonList(userProfile));
+        assertEquals(userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size).getContent(), pageContain.getContent());
     }
 
     @Test
@@ -156,7 +164,7 @@ public class UserProfileMockTest {
 
         Exception exception = assertThrows(
                 BadRequestException.class,
-                    () -> userProfileService.selectionForSearching(userRoleOrTechnologyRequest),
+                    () -> userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size),
                 "Expected doThing() to throw, but it didn't"
         );
         assertEquals("Pick value from List", exception.getMessage());

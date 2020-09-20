@@ -2,6 +2,7 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.*;
+import com.juniorstart.juniorstart.payload.PagedResponse;
 import com.juniorstart.juniorstart.payload.UserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
 import org.junit.Before;
@@ -40,6 +40,8 @@ public class UserProfileIntegrationTest {
     private List<String> technologyList  = new ArrayList<>();
     private List<UserRole> userRoleList  = new ArrayList<>();
     private List<String> userRoleListThrowException  = new ArrayList<>();
+    private int page = 0;
+    private int size = 8;
 
     @Before
     public void setUp() {
@@ -66,37 +68,37 @@ public class UserProfileIntegrationTest {
     public void should_FindUserProfileByRoleAndTechnology() {
         technologyList.add("java");
         userRoleList.add(UserRole.MENTOR);
-        ResponseEntity<?>foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
-        assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getBody());
+        PagedResponse<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
+        assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 
     @Test
     public void should_NotExistsFindUserProfileByRoleAndTechnology() {
         technologyList.add("TechnologyNotExist");
-        ResponseEntity<?> userNotExist = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
-        assertEquals(new ArrayList<>(Collections.emptyList()), userNotExist.getBody());
+        PagedResponse<UserProfile> userNotExist = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
+        assertEquals(new ArrayList<>(Collections.emptyList()), userNotExist.getContent());
     }
 
     @Test
     public void should_BeEmptyFindUserProfileByRoleAndTechnologyShouldBeEmpty() {
         technologyList.add("Java");
         userRoleList.add(UserRole.JUNIOR);
-        ResponseEntity<?> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList);
-        assertEquals(new ArrayList<>(Collections.emptyList()), foundUser.getBody());
+        PagedResponse<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
+        assertEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 
     @Test
     public void should_FindUserProfileByRole() {
         userRoleList.add(UserRole.MENTOR);
-        ResponseEntity<?> foundUser = userProfileService.findByUserRole(userRoleList);
-        assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getBody());
+        PagedResponse<UserProfile> foundUser = userProfileService.findByUserRole(userRoleList, page, size);
+        assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 
     @Test
     public void should_FindUserProfileByTechnology() {
-        technologyList.add("java");
-        ResponseEntity<?>  foundUser = userProfileService.findByTechnology(technologyList);
-        assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getBody());
+        technologyList.add("Java");
+        PagedResponse<UserProfile> foundUser = userProfileService.findByTechnology(technologyList, page, size );
+        assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 
     @Test
@@ -108,7 +110,7 @@ public class UserProfileIntegrationTest {
 
         Exception exception = assertThrows(
                 BadRequestException.class, () -> {
-                    userProfileService.selectionForSearching(userRoleOrTechnologyRequest);
+                    userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size);
                 }
         );
         assertEquals("Pick value from List", exception.getMessage());
@@ -121,7 +123,7 @@ public class UserProfileIntegrationTest {
 
         Exception exception = assertThrows(
                 BadRequestException.class, () -> {
-                    userProfileService.selectionForSearching(userRoleOrTechnologyRequest);
+                    userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size);
                 }
         );
         assertEquals("Pick value from List", exception.getMessage());
