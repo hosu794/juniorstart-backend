@@ -5,11 +5,15 @@ import com.juniorstart.juniorstart.generation.UserIdGenerator;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -56,4 +60,11 @@ public class User  {
     private UserStatus userStatus;
 
     private String providerId;
+
+    @OneToMany(
+            fetch =  FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            targetEntity = Project.class,
+            mappedBy = "user")
+    private Set<Project> projects = new HashSet<>();
 }
