@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.juniorstart.juniorstart.generation.UserIdGenerator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +21,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User  {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
@@ -56,9 +53,7 @@ public class User  {
 
     private String providerId;
     
-    @OneToMany(fetch = FetchType.LAZY,
-
-            mappedBy = "offerCreator")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator")
     private Set<JobOffer> jobOffers= new HashSet<>();
 
     public void addJobOffer(JobOffer jobOffer){

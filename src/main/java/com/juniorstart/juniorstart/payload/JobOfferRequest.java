@@ -1,11 +1,12 @@
 package com.juniorstart.juniorstart.payload;
 
-
-
+import com.juniorstart.juniorstart.model.JobOfferRequirements;
+import com.juniorstart.juniorstart.model.Technologies;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,11 +25,12 @@ public class JobOfferRequest {
     private String position;
 	
 	@NotBlank
-    private String technologies;
-	
-	@NotBlank
-    private String requirements;
-	
-	@NotBlank
-    private String contact;
+    private List<Technologies> technologies;
+
+    @NotBlank
+    private List<JobOfferRequirements> requirements;
+
+    private String telephoneNumber;
+
+    private String email;
 }
