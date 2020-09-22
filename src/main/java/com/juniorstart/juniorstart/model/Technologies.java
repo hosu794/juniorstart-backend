@@ -17,8 +17,10 @@ public class Technologies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @NotNull
     private String nameTechnology;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "technologies")
     private Set<JobOffer> jobOffers = new HashSet<>();
