@@ -37,8 +37,6 @@ public class JobOfferService {
     }
     
 	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest) {
-		//Set<JobOfferRequirements> jobOfferRequirementsSet= (Set<JobOfferRequirements>) jobOfferRequest.getRequirements().stream().map(w ->w);
-		//System.out.println(jobOfferRequirementsSet.size());
 		Optional<User>userOptional = Optional.ofNullable(userDao.findByPublicId(jobOfferRequest.getPublicId())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", jobOfferRequest.getPublicId())));
 		JobOffer jobOffer = new JobOffer();
@@ -55,7 +53,6 @@ public class JobOfferService {
 		jobOfferRepository.save(jobOffer);
 		return ResponseEntity.ok()
 			.body(jobOfferRepository.save(jobOffer));
-
 	}
 
 	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
