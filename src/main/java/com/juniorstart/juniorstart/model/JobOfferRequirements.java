@@ -5,8 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import javax.persistence.*;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -17,9 +16,4 @@ public class JobOfferRequirements {
 
     @NotNull
     private String textRequirement;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade =  CascadeType.ALL)
-    @JoinColumn(name = "jobOffer_id", nullable = true)
-    private JobOffer jobOffer;
 }

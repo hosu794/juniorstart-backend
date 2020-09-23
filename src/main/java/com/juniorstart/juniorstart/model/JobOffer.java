@@ -34,7 +34,7 @@ public class JobOffer {
 			inverseJoinColumns = @JoinColumn(name = "technology_id"))
 	private Set<Technologies> technologies = new HashSet<>();
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "jobOffer")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<JobOfferRequirements> jobOfferRequirements = new HashSet<>();
 
 	private String telephoneNumber;

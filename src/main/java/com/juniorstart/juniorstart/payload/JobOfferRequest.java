@@ -4,12 +4,12 @@ import com.juniorstart.juniorstart.model.JobOfferRequirements;
 import com.juniorstart.juniorstart.model.Technologies;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Builder
 public class JobOfferRequest {
 	@NotBlank

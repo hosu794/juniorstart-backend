@@ -52,7 +52,7 @@ public class User  {
 
     private String providerId;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
     private Set<JobOffer> jobOffers= new HashSet<>();
 
     public void addJobOffer(JobOffer jobOffer){

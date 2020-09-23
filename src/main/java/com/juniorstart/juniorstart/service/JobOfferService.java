@@ -2,6 +2,8 @@ package com.juniorstart.juniorstart.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.JobOfferRequirements;
 import com.juniorstart.juniorstart.model.Technologies;
@@ -35,6 +37,8 @@ public class JobOfferService {
     }
     
 	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest) {
+		//Set<JobOfferRequirements> jobOfferRequirementsSet= (Set<JobOfferRequirements>) jobOfferRequest.getRequirements().stream().map(w ->w);
+		//System.out.println(jobOfferRequirementsSet.size());
 		Optional<User>userOptional = Optional.ofNullable(userDao.findByPublicId(jobOfferRequest.getPublicId())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", jobOfferRequest.getPublicId())));
 		JobOffer jobOffer = new JobOffer();
@@ -49,12 +53,12 @@ public class JobOfferService {
 		jobOffer.setOfferCreator(user);
 		user.addJobOffer(jobOffer);
 		jobOfferRepository.save(jobOffer);
-		userDao.save(user);
 		return ResponseEntity.ok()
-			.body(new ApiResponse(true,"Offer added successfully"));
+			.body(jobOfferRepository.save(jobOffer));
+
 	}
 
-	private JobOffer addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
+	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
     	for(int i=0;i<technologiesList.size();i++) {
     		String nameTechnology = technologiesList.get(i).getNameTechnology();
 			Optional<Technologies> technologiesOptional = Optional.ofNullable(technologiesRepository.
@@ -62,45 +66,30 @@ public class JobOfferService {
 					.orElseThrow(() -> new ResourceNotFoundException("Technologies", "nameTechnology", nameTechnology)));
 			jobOffer.addTechnologies(technologiesOptional.get());
 		}
-    	return jobOffer;
 	}
 
-	private JobOffer addRequirements(List<JobOfferRequirements> requirement, JobOffer jobOffer) {
+	private void addRequirements(List<JobOfferRequirements> requirement, JobOffer jobOffer) {
 		for(int i=0;i<requirement.size();i++) {
 			JobOfferRequirements jobOfferRequirements = new JobOfferRequirements();
 			jobOfferRequirements.setTextRequirement(requirement.get(i).getTextRequirement());
-			jobOfferRequirements.setJobOffer(jobOffer);
 			jobOffer.addJobRequirements(jobOfferRequirements);
 			jobOfferRequirementsRepository.save(jobOfferRequirements);
 		}
-    	return jobOffer;
 	}
 
 	public ResponseEntity<?> deleteJobOffer(long publicId, long idJobOffer) {
-		Optional<User>userOptional= Optional.ofNullable(userDao.findByPublicId(publicId)
+		Optional<User> userOptional = Optional.ofNullable(userDao.findByPublicId(publicId)
 				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", publicId)));
 		User user = userOptional.get();
-		Optional<JobOffer>jobOfferOptional= Optional.ofNullable(jobOfferRepository.findById(idJobOffer)
+		Optional<JobOffer> jobOfferOptional = Optional.ofNullable(jobOfferRepository.findById(idJobOffer)
 				.orElseThrow(() -> new ResourceNotFoundException("JobOffer", "id", idJobOffer)));
-		JobOffer jobOffer=jobOfferOptional.get();
-        if(jobOffer.getOfferCreator().getPublicId()!=publicId)
-            throw new BadRequestException ("The user does not have an offer with this id");
-		deleteTechnologies(jobOffer);
-		deleteRequirements(jobOffer);
-        user.deleteJobOffer(jobOffer);
-        userDao.save(user);
-        return ResponseEntity.ok().body(new ApiResponse(true, "Offer delleted successfully"));
-	}
-
-	private void deleteRequirements(JobOffer jobOffer) {
-		for (JobOfferRequirements requirement: jobOffer.getJobOfferRequirements())
-			jobOfferRequirementsRepository.deleteById(requirement.getId());
-	}
-
-	private void deleteTechnologies(JobOffer jobOffer) {
-		for (Technologies technologyTmp: jobOffer.getTechnologies()) {
-			technologyTmp.deleteJobOffer(jobOffer);
-			technologiesRepository.save(technologyTmp);
-		}
+		JobOffer jobOffer = jobOfferOptional.get();
+		if (jobOffer.getOfferCreator().getPublicId() != publicId)
+			throw new BadRequestException("The user does not have an offer with this id");
+		user.deleteJobOffer(jobOffer);
+		jobOffer.setOfferCreator(null);
+		userDao.save(user);
+		jobOfferRepository.deleteById(idJobOffer);
+		return ResponseEntity.ok().body(new ApiResponse(true, "Offer delleted successfully"));
 	}
 }
