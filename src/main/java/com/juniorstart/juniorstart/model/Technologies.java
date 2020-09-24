@@ -1,10 +1,8 @@
 package com.juniorstart.juniorstart.model;
 
-
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import javax.persistence.*;
-
 
 @Data
 @Builder
@@ -18,5 +16,5 @@ public class Technologies {
 
     @NotNull
     @Column(unique=true)
-    private String nameTechnology;
+    private String title;
 }

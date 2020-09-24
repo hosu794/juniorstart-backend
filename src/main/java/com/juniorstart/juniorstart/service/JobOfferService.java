@@ -5,16 +5,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
-import com.juniorstart.juniorstart.model.JobOfferRequirements;
-import com.juniorstart.juniorstart.model.Technologies;
+import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.JobOfferRequirementsRepository;
 import com.juniorstart.juniorstart.repository.TechnologiesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.juniorstart.juniorstart.exception.BadRequestException;
-import com.juniorstart.juniorstart.model.JobOffer;
-import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.JobOfferRequest;
 import com.juniorstart.juniorstart.repository.JobOfferRepository;
@@ -49,7 +46,8 @@ public class JobOfferService {
 		jobOffer.setPosition(jobOfferRequest.getPosition());
 		jobOffer.setType(jobOfferRequest.getType());
 		jobOffer.setOfferCreator(user);
-		user.addJobOffer(jobOffer);
+		jobOffer.setTechnologyType(jobOfferRequest.getTechnologyType());
+		user.getJobOffers().add(jobOffer);
 		jobOfferRepository.save(jobOffer);
 		return ResponseEntity.ok()
 			.body(jobOfferRepository.save(jobOffer));
@@ -57,11 +55,11 @@ public class JobOfferService {
 
 	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
     	for(int i=0;i<technologiesList.size();i++) {
-    		String nameTechnology = technologiesList.get(i).getNameTechnology();
+    		String nameTechnology = technologiesList.get(i).getTitle();
 			Optional<Technologies> technologiesOptional = Optional.ofNullable(technologiesRepository.
-					findByNameTechnology(technologiesList.get(i).getNameTechnology())
+					findByTitle(technologiesList.get(i).getTitle())
 					.orElseThrow(() -> new ResourceNotFoundException("Technologies", "nameTechnology", nameTechnology)));
-			jobOffer.addTechnologies(technologiesOptional.get());
+			jobOffer.getTechnologies().add(technologiesOptional.get());
 		}
 	}
 
@@ -69,7 +67,7 @@ public class JobOfferService {
 		for(int i=0;i<requirement.size();i++) {
 			JobOfferRequirements jobOfferRequirements = new JobOfferRequirements();
 			jobOfferRequirements.setTextRequirement(requirement.get(i).getTextRequirement());
-			jobOffer.addJobRequirements(jobOfferRequirements);
+			jobOffer.getJobOfferRequirements().add(jobOfferRequirements);
 			jobOfferRequirementsRepository.save(jobOfferRequirements);
 		}
 	}
@@ -83,7 +81,7 @@ public class JobOfferService {
 		JobOffer jobOffer = jobOfferOptional.get();
 		if (jobOffer.getOfferCreator().getPublicId() != publicId)
 			throw new BadRequestException("The user does not have an offer with this id");
-		user.deleteJobOffer(jobOffer);
+		user.getJobOffers().remove(jobOffer);
 		jobOffer.setOfferCreator(null);
 		userDao.save(user);
 		jobOfferRepository.deleteById(idJobOffer);

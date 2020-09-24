@@ -1,6 +1,5 @@
 package com.juniorstart.juniorstart.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import javax.persistence.*;

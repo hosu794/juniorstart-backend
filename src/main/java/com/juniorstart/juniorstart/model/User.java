@@ -54,11 +54,4 @@ public class User  {
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
     private Set<JobOffer> jobOffers= new HashSet<>();
-
-    public void addJobOffer(JobOffer jobOffer){
-        jobOffers.add(jobOffer);
-    }
-    public void deleteJobOffer(JobOffer jobOffer){
-        jobOffers.remove(jobOffer);
-    }
 }

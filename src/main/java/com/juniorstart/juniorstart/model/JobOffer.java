@@ -21,11 +21,13 @@ public class JobOffer {
 	@NotNull
 	private String message;
 
-	@NotNull
 	private String type;
 
 	@NotNull
 	private String position;
+
+	@Enumerated(EnumType.STRING)
+	private TechnologyType technologyType;
 
 	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinTable(
@@ -45,11 +47,4 @@ public class JobOffer {
 	@ManyToOne (fetch = FetchType.LAZY, optional = true, cascade =  CascadeType.ALL)
     @JoinColumn(name = "offerCreator_id", nullable = true)
     private User offerCreator;
-
-	public void addJobRequirements(JobOfferRequirements jobOfferRequirements){ this.jobOfferRequirements.add(jobOfferRequirements); }
-	public void deleteJobRequirements(JobOfferRequirements jobOfferRequirements){ this.jobOfferRequirements.remove(jobOfferRequirements);}
-	public void addTechnologies(Technologies technology){ this.technologies.add(technology); }
-	public void deleteTechnologies(Technologies technology){
-		this.technologies.remove(technology);
-	}
 }
