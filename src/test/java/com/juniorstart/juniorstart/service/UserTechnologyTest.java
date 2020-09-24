@@ -3,7 +3,7 @@ package com.juniorstart.juniorstart.service;
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
-import com.juniorstart.juniorstart.repository.UserProfileTechnologyRepository;
+import com.juniorstart.juniorstart.repository.UserTechnologyRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,15 +19,14 @@ import java.util.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserProfileTechnologyTest {
-
+public class UserTechnologyTest {
 
     @Spy
     UserDao userRepository;
     @Spy
     UserProfileRepository userProfileRepository;
     @Spy
-    UserProfileTechnologyRepository userProfileTechnologyRepository;
+    UserTechnologyRepository userTechnologyRepository;
     @InjectMocks
     UserProfileService userProfileService;
   //  @InjectMocks
@@ -37,18 +36,77 @@ public class UserProfileTechnologyTest {
     User mockUser;
     UserProfile userProfile;
     UserProfile mockUserProfile;
+    UserTechnology userTechnology1;
+    UserTechnology userTechnology2;
 
-    private List<String> technologyList = new ArrayList<>();
+
 
     private Set<UserTechnology> listOfTechnology = new HashSet<>();
 
-
     @BeforeEach
     public void initializeNewList(){
-        technologyList = new ArrayList<>();
         listOfTechnology = new HashSet<>();
     }
 
+    @BeforeAll
+    public void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        MockitoAnnotations.initMocks(this);
+
+        User user;
+        user = User.builder()
+                .name("Test")
+                .email("test2@test.com")
+                .emailVerified(true)
+                .password("Test%123")
+                .provider(AuthProvider.google).build();
+
+        mockUser = user.getClass().getConstructor().newInstance();
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUser(user);
+        userProfile.setUserRole(UserRole.MENTOR);
+
+        mockUserProfile = userProfile.getClass().getConstructor().newInstance();
+        userRepository.save(user);
+        userProfileRepository.save(userProfile);
+
+        Mockito.when(userRepository.save(this.user)).thenReturn(mockUser);
+        Mockito.when(userProfileRepository.save(this.userProfile)).thenReturn(mockUserProfile);
+
+    }
+
+
+    @Test
+    public void temp(){
+        System.out.println("5");
+    }
+
+
+    @Test
+    public void shouldAddOneUserTechnology(){
+        UserTechnology userTechnology1 = new UserTechnology();
+        userTechnology1.setTechnologyName("technologia1");
+
+        listOfTechnology.add(userTechnology1);
+
+        userProfile.addUserManyTechnology(listOfTechnology);
+
+
+
+
+
+    }
+
+
+
+
+
+}
+
+
+
+
+/*
     @BeforeAll
     public void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         MockitoAnnotations.initMocks(this);
@@ -66,48 +124,47 @@ public class UserProfileTechnologyTest {
 
         mockUser = user.getClass().getConstructor().newInstance();
 
-        UserTechnology userTechnology = new UserTechnology();
-        userTechnology.setTechnologyName("Java");
+
+        // UserTechnology userTechnology1;
+
+        //  UserTechnology userTechnology1 = new UserTechnology();
+        //    userTechnology1.setTechnologyName("Java");
 
         UserTechnology userTechnology1 = new UserTechnology();
-        userTechnology.setTechnologyName("technologia1");
+        userTechnology1.setTechnologyName("technologia1");
         UserTechnology userTechnology2 = new UserTechnology();
-        userTechnology.setTechnologyName("technologia2");
+        userTechnology2.setTechnologyName("technologia2");
         listOfTechnology.add(userTechnology1);
         listOfTechnology.add(userTechnology2);
 
+        // System.out.println("65656565656" + userTechnology2.toString());
+        //  System.out.println("65656565656" + listOfTechnology.toString());
 
 
         UserProfile userProfile = new UserProfile();
         userProfile.setUser(user);
         userProfile.setUserRole(UserRole.MENTOR);
-        userProfile.addUserTechnology(userTechnology);
+        //userProfile.addUserTechnology(userTechnology);
         userProfile.addUserManyTechnology(listOfTechnology);
+
+        userRepository.save(user);
+        userProfileRepository.save(userProfile);
+
 
         mockUserProfile = userProfile.getClass().getConstructor().newInstance();
 
         Mockito.when(userRepository.save(this.user)).thenReturn(mockUser);
         Mockito.when(userProfileRepository.save(this.userProfile)).thenReturn(mockUserProfile);
 
+
+
         System.out.println("33333333333333333");
-        System.out.println(mockUserProfile);
+        // System.out.println(mockUserProfile);
         System.out.println(userProfile.getUserTechnology());
-        System.out.println("4444");
+        //   System.out.println("4444");
         System.out.println(userProfile);
-        System.out.println(userProfileTechnologyRepository.findAll());
-
-
+        System.out.println("77777777" + userTechnologyRepository.findAll());
 
         //System.out.println(mockUserProfile.getUserTechnology().toString());
-
     }
-
-
-    @Test
-    public void temp(){
-        System.out.println("5");
-    }
-
-
-
-}
+ */

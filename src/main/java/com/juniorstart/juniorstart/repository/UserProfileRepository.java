@@ -12,7 +12,6 @@ import java.util.UUID;
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
 
-
     Optional<UserProfile> findByPrivateId(UUID id);
     List<UserProfile> findAll();
     List<UserProfile> findByUserRoleIn(List<UserRole> userRole);

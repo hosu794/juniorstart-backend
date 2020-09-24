@@ -24,7 +24,7 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinTable(name="join_user_technology",
     joinColumns = {@JoinColumn(name="user_id")},
     inverseJoinColumns = {@JoinColumn(name="technology_id")})
@@ -40,43 +40,9 @@ public class UserProfile {
     }
 
     public void addUserManyTechnology(Set<UserTechnology> technology){
-
-        /*
-        Iterator value = technology.iterator();
-        while (value.hasNext()) {
-            System.out.println(value.next());
-            this.userTechnology.add(value.next().getClass());
-            technology.getUsersProfile().add(this);
-        }
-
-         */
         for(UserTechnology userTechnology: technology) {
-            System.out.println(userTechnology);
-            System.out.println("111111111111111111111111");
             this.userTechnology.add(userTechnology);
             userTechnology.getUsersProfile().add(this);
         }
-        /*
-        for(int i=0; i<technology.size() ;i++)
-            System.out.println(i);
-        this.userTechnology.add(technology.getClass().);
-         */
-
-      //  this.userTechnology.add(technology);
-       // technology.getUsersProfile().add(this);
-
     }
-
-/*
-    @Override
-    public String toString() {
-        return "UserProfile{" +
-                "privateId=" + privateId +
-                ", user=" + user +
-                ", userRole=" + userRole +
-                ", userTechnology=" + userTechnology +
-                '}';
-    }
- */
-
 }
