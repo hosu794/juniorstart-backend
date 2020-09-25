@@ -94,6 +94,12 @@ public class UserTechnologyTest {
 
 
 
+    }
+
+
+
+    @Test
+    public void shouldAddManyUserTechnology(){
 
     }
 
