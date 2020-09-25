@@ -1,7 +1,6 @@
 package com.juniorstart.juniorstart.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.*;
@@ -25,7 +24,7 @@ public class JobOfferService {
 
     @Autowired
     public JobOfferService(JobOfferRepository jobOfferRepository, UserDao userDao,
-						   JobOfferRequirementsRepository jobOfferRequirementsRepository, TechnologiesRepository technologiesRepository) {
+				JobOfferRequirementsRepository jobOfferRequirementsRepository, TechnologiesRepository technologiesRepository) {
         this.jobOfferRepository = jobOfferRepository;
         this.userDao = userDao;
         this.jobOfferRequirementsRepository = jobOfferRequirementsRepository;
@@ -33,13 +32,11 @@ public class JobOfferService {
     }
     
 	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest) {
-		Optional<User>userOptional = Optional.ofNullable(userDao.findByPublicId(jobOfferRequest.getPublicId())
-				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", jobOfferRequest.getPublicId())));
+		User user = userDao.findByPublicId(jobOfferRequest.getPublicId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", jobOfferRequest.getPublicId()));
 		JobOffer jobOffer = new JobOffer();
-		User user = userOptional.get();
 		addTechnologies(jobOfferRequest.getTechnologies(), jobOffer);
 		addRequirements(jobOfferRequest.getRequirements(), jobOffer);
-
 		jobOffer.setMessage(jobOfferRequest.getMessage());
 		jobOffer.setEmail(jobOfferRequest.getEmail());
 		jobOffer.setTelephoneNumber(jobOfferRequest.getTelephoneNumber());
@@ -55,25 +52,22 @@ public class JobOfferService {
 
 	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
     	if(technologiesList != null)
-			technologiesList.stream().
-				filter(technologies -> technologiesRepository.findByTitle(technologies.getTitle()).isPresent())
+			technologiesList.stream().filter(technologies -> technologiesRepository.findByTitle(technologies.getTitle()).isPresent())
 				.map(technologies -> jobOffer.getTechnologies().add(technologiesRepository.findByTitle(technologies.getTitle()).get()))
 				.collect(Collectors.toList());
 	}
 
 	private void addRequirements(List<JobOfferRequirements> requirementsList, JobOffer jobOffer) {
 		if(requirementsList != null)
-			requirementsList.stream().map(requirement -> jobOffer.getJobOfferRequirements().
-				add(requirement)).collect(Collectors.toList());
+			requirementsList.stream().map(requirement -> jobOffer.getJobOfferRequirements()
+				.add(requirement)).collect(Collectors.toList());
     }
 
 	public ResponseEntity<?> deleteJobOffer(long publicId, long idJobOffer) {
-		Optional<User> userOptional = Optional.ofNullable(userDao.findByPublicId(publicId)
-				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", publicId)));
-		User user = userOptional.get();
-		Optional<JobOffer> jobOfferOptional = Optional.ofNullable(jobOfferRepository.findById(idJobOffer)
-				.orElseThrow(() -> new ResourceNotFoundException("JobOffer", "id", idJobOffer)));
-		JobOffer jobOffer = jobOfferOptional.get();
+		User user = userDao.findByPublicId(publicId)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", publicId));
+		JobOffer jobOffer = jobOfferRepository.findById(idJobOffer)
+				.orElseThrow(() -> new ResourceNotFoundException("JobOffer", "id", idJobOffer));
 		if (jobOffer.getOfferCreator().getPublicId() != publicId)
 			throw new BadRequestException("The user does not have an offer with this id");
 		user.getJobOffers().remove(jobOffer);
