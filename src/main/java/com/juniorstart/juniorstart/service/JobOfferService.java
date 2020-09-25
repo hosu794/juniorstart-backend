@@ -2,8 +2,7 @@ package com.juniorstart.juniorstart.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
+import java.util.stream.Collectors;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.JobOfferRequirementsRepository;
@@ -40,6 +39,7 @@ public class JobOfferService {
 		User user = userOptional.get();
 		addTechnologies(jobOfferRequest.getTechnologies(), jobOffer);
 		addRequirements(jobOfferRequest.getRequirements(), jobOffer);
+
 		jobOffer.setMessage(jobOfferRequest.getMessage());
 		jobOffer.setEmail(jobOfferRequest.getEmail());
 		jobOffer.setTelephoneNumber(jobOfferRequest.getTelephoneNumber());
@@ -54,27 +54,18 @@ public class JobOfferService {
 	}
 
 	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
-    	if(technologiesList != null) {
-			for (int i = 0; i < technologiesList.size(); i++) {
-				String nameTechnology = technologiesList.get(i).getTitle();
-				Optional<Technologies> technologiesOptional = Optional.ofNullable(technologiesRepository.
-						findByTitle(technologiesList.get(i).getTitle())
-						.orElseThrow(() -> new ResourceNotFoundException("Technologies", "nameTechnology", nameTechnology)));
-				jobOffer.getTechnologies().add(technologiesOptional.get());
-			}
-		}
+    	if(technologiesList != null)
+			technologiesList.stream().
+				filter(technologies -> technologiesRepository.findByTitle(technologies.getTitle()).isPresent())
+				.map(technologies -> jobOffer.getTechnologies().add(technologiesRepository.findByTitle(technologies.getTitle()).get()))
+				.collect(Collectors.toList());
 	}
 
-	private void addRequirements(List<JobOfferRequirements> requirement, JobOffer jobOffer) {
-		if(requirement != null) {
-			for(int i=0;i<requirement.size();i++) {
-				JobOfferRequirements jobOfferRequirements = new JobOfferRequirements();
-				jobOfferRequirements.setTextRequirement(requirement.get(i).getTextRequirement());
-				jobOffer.getJobOfferRequirements().add(jobOfferRequirements);
-				jobOfferRequirementsRepository.save(jobOfferRequirements);
-			}
-		}
-	}
+	private void addRequirements(List<JobOfferRequirements> requirementsList, JobOffer jobOffer) {
+		if(requirementsList != null)
+			requirementsList.stream().map(requirement -> jobOffer.getJobOfferRequirements().
+				add(requirement)).collect(Collectors.toList());
+    }
 
 	public ResponseEntity<?> deleteJobOffer(long publicId, long idJobOffer) {
 		Optional<User> userOptional = Optional.ofNullable(userDao.findByPublicId(publicId)
