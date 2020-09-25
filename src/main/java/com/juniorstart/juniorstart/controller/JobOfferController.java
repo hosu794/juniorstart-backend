@@ -14,7 +14,6 @@ public class JobOfferController
 {
     private final JobOfferService jobOfferService;
 
-    @Autowired
     public JobOfferController(JobOfferService jobOfferService)
     {
         this.jobOfferService = jobOfferService;
@@ -22,17 +21,13 @@ public class JobOfferController
 	
 	@PostMapping
     @PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> addJobOffer(@Valid @RequestBody JobOfferRequest jobOfferRequest)
-	{
+	public ResponseEntity<?> addJobOffer(@Valid @RequestBody JobOfferRequest jobOfferRequest) {
         return jobOfferService.addJobOffer(jobOfferRequest);
 	}
 
 	@DeleteMapping
     @PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> deleteJobOffer(@Valid @RequestParam long publicId, @RequestParam long idJobOffer)
-	{
+	public ResponseEntity<?> deleteJobOffer(@Valid @RequestParam long publicId, @RequestParam long idJobOffer) {
         return jobOfferService.deleteJobOffer(publicId,idJobOffer);
 	}
-
-
 }

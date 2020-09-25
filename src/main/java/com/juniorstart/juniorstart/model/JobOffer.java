@@ -2,6 +2,7 @@ package com.juniorstart.juniorstart.model;
 
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ public class JobOffer {
 
 	private String telephoneNumber;
 
+    @Email
 	private String email;
 
 	@JsonIgnore

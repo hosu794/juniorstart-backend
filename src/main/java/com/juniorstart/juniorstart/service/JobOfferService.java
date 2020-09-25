@@ -54,21 +54,25 @@ public class JobOfferService {
 	}
 
 	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
-    	for(int i=0;i<technologiesList.size();i++) {
-    		String nameTechnology = technologiesList.get(i).getTitle();
-			Optional<Technologies> technologiesOptional = Optional.ofNullable(technologiesRepository.
-					findByTitle(technologiesList.get(i).getTitle())
-					.orElseThrow(() -> new ResourceNotFoundException("Technologies", "nameTechnology", nameTechnology)));
-			jobOffer.getTechnologies().add(technologiesOptional.get());
+    	if(technologiesList != null) {
+			for (int i = 0; i < technologiesList.size(); i++) {
+				String nameTechnology = technologiesList.get(i).getTitle();
+				Optional<Technologies> technologiesOptional = Optional.ofNullable(technologiesRepository.
+						findByTitle(technologiesList.get(i).getTitle())
+						.orElseThrow(() -> new ResourceNotFoundException("Technologies", "nameTechnology", nameTechnology)));
+				jobOffer.getTechnologies().add(technologiesOptional.get());
+			}
 		}
 	}
 
 	private void addRequirements(List<JobOfferRequirements> requirement, JobOffer jobOffer) {
-		for(int i=0;i<requirement.size();i++) {
-			JobOfferRequirements jobOfferRequirements = new JobOfferRequirements();
-			jobOfferRequirements.setTextRequirement(requirement.get(i).getTextRequirement());
-			jobOffer.getJobOfferRequirements().add(jobOfferRequirements);
-			jobOfferRequirementsRepository.save(jobOfferRequirements);
+		if(requirement != null) {
+			for(int i=0;i<requirement.size();i++) {
+				JobOfferRequirements jobOfferRequirements = new JobOfferRequirements();
+				jobOfferRequirements.setTextRequirement(requirement.get(i).getTextRequirement());
+				jobOffer.getJobOfferRequirements().add(jobOfferRequirements);
+				jobOfferRequirementsRepository.save(jobOfferRequirements);
+			}
 		}
 	}
 
