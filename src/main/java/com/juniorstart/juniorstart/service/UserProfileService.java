@@ -64,7 +64,7 @@ public class UserProfileService {
      */
     public PagedResponse<UserProfile> findByTechnologyAndRole(List<String> technology, List<UserRole> userRole, int page, int size) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
-        ValidatePageUtil.validatePageNumberAndSize(page, size);
+        size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<UserProfile> foundUsers = userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, userRole, pageable);
@@ -86,12 +86,11 @@ public class UserProfileService {
      */
     public PagedResponse<UserProfile> findByTechnology(List<String> technology, int page, int size) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
-        ValidatePageUtil.validatePageNumberAndSize(page, size);
+        size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<UserProfile> foundUsers = userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology, pageable);
         return new PagedResponse<>(foundUsers.toList(), foundUsers.getNumber(), foundUsers.getSize(), foundUsers.getTotalElements(), foundUsers.getTotalPages(), foundUsers.isLast());
-        //return getUserProfilePagedResponse(foundUsers);
     }
 
     /** Get a List of UserProfile.
@@ -100,7 +99,7 @@ public class UserProfileService {
      * @throws ResourceNotFoundException if userRole isn't valid
      */
     public PagedResponse<UserProfile> findByUserRole(List<UserRole> userRole, int page, int size) {
-        ValidatePageUtil.validatePageNumberAndSize(page, size);
+        size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<UserProfile> foundUsers = userProfileRepository.findByUserRoleIn(userRole, pageable);

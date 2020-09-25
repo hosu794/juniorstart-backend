@@ -79,7 +79,10 @@ public class UserProfileMockTest {
         UserProfile userProfile = new UserProfile();
         userProfile.setUser(user);
         userProfile.setUserRole(UserRole.MENTOR);
-        userProfile.addUserTechnology(userTechnology);
+
+        Set<UserTechnology> userSetTechnology = new HashSet<>();
+        userSetTechnology.add(userTechnology);
+        userProfile.setUserTechnology(userSetTechnology);
 
         mockUserProfile = userProfile.getClass().getConstructor().newInstance();
 
