@@ -32,15 +32,4 @@ public class UserProfile {
     inverseJoinColumns = {@JoinColumn(name="technology_id")})
     private Set<UserTechnology> userTechnology = new HashSet<>();
 
-    /*
-    public void addUserTechnology(UserTechnology technology){
-        this.userTechnology.add(technology);
-        technology.getUsersProfile().add(this);
-    }
-
-     */
-    public void removeUserTechnology(UserTechnology technology){
-        userTechnology.remove(technology);
-        technology.getUsersProfile().remove(this);
-    }
 }
