@@ -37,7 +37,10 @@ public class UserTechnologyTest {
     UserProfile userProfile;
     UserProfile mockUserProfile;
     UserTechnology userTechnology1;
-    UserTechnology userTechnology2;
+   // UserTechnology userTechnology2;
+
+
+    UUID example_UUID = UUID.randomUUID();
 
 
 
@@ -46,6 +49,9 @@ public class UserTechnologyTest {
     @BeforeEach
     public void initializeNewList(){
         listOfTechnology = new HashSet<>();
+        userTechnology1 = new UserTechnology();
+
+
     }
 
     @BeforeAll
@@ -54,6 +60,8 @@ public class UserTechnologyTest {
 
         User user;
         user = User.builder()
+                .privateId(example_UUID)
+                .publicId(10L)
                 .name("Test")
                 .email("test2@test.com")
                 .emailVerified(true)
@@ -62,36 +70,41 @@ public class UserTechnologyTest {
 
         mockUser = user.getClass().getConstructor().newInstance();
 
+
         UserProfile userProfile = new UserProfile();
+        userProfile.setPrivateId(example_UUID);
         userProfile.setUser(user);
         userProfile.setUserRole(UserRole.MENTOR);
 
         mockUserProfile = userProfile.getClass().getConstructor().newInstance();
+
+
         userRepository.save(user);
         userProfileRepository.save(userProfile);
 
         Mockito.when(userRepository.save(this.user)).thenReturn(mockUser);
         Mockito.when(userProfileRepository.save(this.userProfile)).thenReturn(mockUserProfile);
 
-    }
+        System.out.println(userProfile.getPrivateId());
+        System.out.println("333" + mockUserProfile.getPrivateId());
 
 
-    @Test
-    public void temp(){
-        System.out.println("5");
     }
 
 
     @Test
     public void shouldAddOneUserTechnology(){
-        UserTechnology userTechnology1 = new UserTechnology();
         userTechnology1.setTechnologyName("technologia1");
+        userTechnology1.setId(1L);
 
         listOfTechnology.add(userTechnology1);
 
-        userProfile.addUserManyTechnology(listOfTechnology);
+        mockUserProfile.addUserManyTechnology(listOfTechnology);
 
+        Mockito.when(userProfileRepository.save(mockUserProfile)).thenReturn(mockUserProfile);
 
+        System.out.println(mockUserProfile.getUserTechnology());
+        System.out.println(mockUserProfile.getPrivateId());
 
 
     }
@@ -100,6 +113,8 @@ public class UserTechnologyTest {
 
     @Test
     public void shouldAddManyUserTechnology(){
+
+
 
     }
 

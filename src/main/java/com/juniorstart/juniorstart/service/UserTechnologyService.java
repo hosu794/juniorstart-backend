@@ -36,6 +36,7 @@ public class UserTechnologyService {
                 new ResourceNotFoundException("UserProfile", "ID", currentUser.getId())));
 
         foundUser.get().addUserManyTechnology(userTechnology);
+        //foundUser.get().setUserTechnology(userTechnology);
 
         try {
             userProfileRepository.save(foundUser.get());
