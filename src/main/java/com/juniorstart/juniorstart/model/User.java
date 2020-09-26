@@ -53,5 +53,5 @@ public class User  {
     private String providerId;
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
-    private Set<JobOffer> jobOffers= new HashSet<>();
+    private Set<JobOffer> jobOffers = new HashSet<>();
 }

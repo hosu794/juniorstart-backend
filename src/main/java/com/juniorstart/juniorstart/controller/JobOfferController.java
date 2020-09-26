@@ -1,5 +1,7 @@
 package com.juniorstart.juniorstart.controller;
 
+import com.juniorstart.juniorstart.security.CurrentUser;
+import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,13 +23,13 @@ public class JobOfferController
 	
 	@PostMapping
     @PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> addJobOffer(@Valid @RequestBody JobOfferRequest jobOfferRequest) {
-        return jobOfferService.addJobOffer(jobOfferRequest);
+	public ResponseEntity<?> addJobOffer(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody JobOfferRequest jobOfferRequest) {
+        return jobOfferService.addJobOffer(jobOfferRequest, currentUser);
 	}
 
 	@DeleteMapping
     @PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> deleteJobOffer(@Valid @RequestParam long publicId, @RequestParam long idJobOffer) {
-        return jobOfferService.deleteJobOffer(publicId,idJobOffer);
+	public ResponseEntity<?> deleteJobOffer(@CurrentUser UserPrincipal currentUser, @Valid @RequestParam long idJobOffer) {
+        return jobOfferService.deleteJobOffer(idJobOffer, currentUser);
 	}
 }

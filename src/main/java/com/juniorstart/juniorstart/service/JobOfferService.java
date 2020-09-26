@@ -6,6 +6,7 @@ import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.JobOfferRequirementsRepository;
 import com.juniorstart.juniorstart.repository.TechnologiesRepository;
+import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,9 @@ public class JobOfferService {
 		this.technologiesRepository = technologiesRepository;
     }
     
-	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest) {
-		User user = userDao.findByPublicId(jobOfferRequest.getPublicId())
-				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", jobOfferRequest.getPublicId()));
+	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest, UserPrincipal currentUser) {
+		User user = userDao.findByPrivateId(currentUser.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "privateId", currentUser.getId()));
 		JobOffer jobOffer = new JobOffer();
 		addTechnologies(jobOfferRequest.getTechnologies(), jobOffer);
 		addRequirements(jobOfferRequest.getRequirements(), jobOffer);
@@ -63,12 +64,13 @@ public class JobOfferService {
 				.add(requirement)).collect(Collectors.toList());
     }
 
-	public ResponseEntity<?> deleteJobOffer(long publicId, long idJobOffer) {
-		User user = userDao.findByPublicId(publicId)
-				.orElseThrow(() -> new ResourceNotFoundException("User", "publicId", publicId));
+	public ResponseEntity<?> deleteJobOffer(long idJobOffer, UserPrincipal currentUser) {
+    	System.out.println(currentUser.getId());
+		User user = userDao.findByPrivateId(currentUser.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "privateId", currentUser.getId()));
 		JobOffer jobOffer = jobOfferRepository.findById(idJobOffer)
 				.orElseThrow(() -> new ResourceNotFoundException("JobOffer", "id", idJobOffer));
-		if (jobOffer.getOfferCreator().getPublicId() != publicId)
+		if (!jobOffer.getOfferCreator().getPrivateId().equals(currentUser.getId()))
 			throw new BadRequestException("The user does not have an offer with this id");
 		user.getJobOffers().remove(jobOffer);
 		jobOffer.setOfferCreator(null);

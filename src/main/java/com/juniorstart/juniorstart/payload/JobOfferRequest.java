@@ -13,9 +13,6 @@ import java.util.List;
 @Builder
 public class JobOfferRequest {
 	@NotBlank
-    private long publicId;
-	
-	@NotBlank
     private String message;
 
     private String type;
