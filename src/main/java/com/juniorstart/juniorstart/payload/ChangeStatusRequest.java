@@ -17,9 +17,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ChangeStatusRequest implements InterfaceChangeRequest {
     @NotBlank
-    private UUID privateId;
+    private UUID userPrivateId;
     @NotBlank
-    private String password;
+    private String userPassword;
     @NotBlank
     private UserStatus userStatus;
 
@@ -31,8 +31,8 @@ public class ChangeStatusRequest implements InterfaceChangeRequest {
     public ChangeStatusRequest(UserStatus userStatus,
                                UUID privateId,
                                String password) {
-        this.privateId = privateId;
-        this.password = password;
+        this.userPrivateId = privateId;
+        this.userPassword = password;
         this.userStatus = userStatus;
     }
 }

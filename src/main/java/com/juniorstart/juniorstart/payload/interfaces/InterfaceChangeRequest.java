@@ -8,6 +8,6 @@ import java.util.UUID;
  * @since 1.0
  */
 public interface InterfaceChangeRequest {
-    UUID getPrivateId();
-    String getPassword();
+    UUID getUserPrivateId();
+    String getUserPassword();
 }

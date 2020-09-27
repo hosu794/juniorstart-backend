@@ -18,7 +18,7 @@ import java.util.Optional;
 
 /** Represents an user service.
  * @author Grzegorz Szczęsny
- * @author Dawid Wit
+ * @author Noboseki
  * @version 1.2
  * @since 1.1
  */

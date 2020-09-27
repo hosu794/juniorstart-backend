@@ -21,9 +21,9 @@ public class ChangePasswordRequest implements InterfaceChangeRequest {
     @Email
     private String newPassword;
     @NotBlank
-    private UUID privateId;
+    private UUID userPrivateId;
     @NotBlank
-    private String Password;
+    private String userPassword;
 
     /** Creates an object ot change email by UserService.changeEmail.
      * @param newPassword new password for account.
@@ -32,7 +32,7 @@ public class ChangePasswordRequest implements InterfaceChangeRequest {
      */
     public ChangePasswordRequest(@Min(6) @Max(20) String newPassword, UUID privateId, String oldPassword) {
         this.newPassword = newPassword;
-        this.privateId = privateId;
-        this.Password = oldPassword;
+        this.userPrivateId = privateId;
+        this.userPassword = oldPassword;
     }
 }

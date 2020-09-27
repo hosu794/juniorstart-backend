@@ -3,7 +3,6 @@ package com.juniorstart.juniorstart.service;
 import com.juniorstart.juniorstart.email.Mail;
 import com.juniorstart.juniorstart.email.MailService;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
-import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import com.juniorstart.juniorstart.payload.ApiResponse;
@@ -12,6 +11,7 @@ import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
+import com.juniorstart.juniorstart.util.TestMethods;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,6 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -55,22 +54,9 @@ public class UserServiceTest {
     private ChangeStatusRequest statusRequest;
 
     @BeforeEach
-    void setUp() throws IllegalAccessException, InstantiationException {
-        user = User.builder()
-                .privateId(UUID.randomUUID())
-                .publicId(10L)
-                .name("Test")
-                .age(18)
-                .hiddenFromSearch(false)
-                .email("test@test.com")
-                .imageUrl("test Url")
-                .emailVerified(true)
-                .password("Password")
-                .provider(AuthProvider.local)
-                .userStatus(UserStatus.OPEN)
-                .providerId("id").build();
-
-        mockUser = user.getClass().newInstance();
+    void setUp() {
+        user = TestMethods.getUser();
+        mockUser = TestMethods.getUser();
         userPrincipal = UserPrincipal.create(user);
         passwordRequest = new ChangePasswordRequest("NewPassword", user.getPrivateId(), "Password");
         mailRequest = new ChangeMailRequest("test2@test.com", user.getPrivateId(), "Password");

@@ -10,6 +10,8 @@ import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -56,4 +58,11 @@ public class User  {
     private UserStatus userStatus;
 
     private String providerId;
+
+    @OneToMany(
+            fetch =  FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            targetEntity = Goal.class,
+            mappedBy = "user")
+    private Set<Goal> transactions = new HashSet<>();
 }

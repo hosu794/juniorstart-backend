@@ -1,7 +1,6 @@
 package com.juniorstart.juniorstart.repository;
 
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.model.audit.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

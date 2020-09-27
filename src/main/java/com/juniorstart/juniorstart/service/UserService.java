@@ -163,8 +163,8 @@ public class UserService {
      * @throws ResourceNotFoundException cannot find user by name and password.
      */
     private User getUserForChange(InterfaceChangeRequest changeRequest){
-        return userDao.findByPrivateIdAndPassword(changeRequest.getPrivateId(), changeRequest.getPassword())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeRequest.getPrivateId()));
+        return userDao.findByPrivateIdAndPassword(changeRequest.getUserPrivateId(), changeRequest.getUserPassword())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", changeRequest.getUserPrivateId()));
     }
 
     /** Refactored code for getting user from Database.

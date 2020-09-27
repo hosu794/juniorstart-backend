@@ -20,9 +20,9 @@ public class ChangeMailRequest implements InterfaceChangeRequest {
     @Email
     private String email;
     @NotBlank
-    private UUID privateId;
+    private UUID userPrivateId;
     @NotBlank
-    private String password;
+    private String userPassword;
 
     /** Creates an object ot change email by UserService.changeEmail.
      * @param email new mail for account.
@@ -31,7 +31,8 @@ public class ChangeMailRequest implements InterfaceChangeRequest {
      */
     public ChangeMailRequest(@Max(40) String email, UUID privateId, String password) {
         this.email = email;
-        this.privateId = privateId;
-        this.password = password;
+        this.userPrivateId = privateId;
+        this.userPassword = password;
     }
+
 }
