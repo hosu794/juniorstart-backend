@@ -72,14 +72,14 @@ public class UserProfileIntegrationTest {
     public void should_FindUserProfileByRoleAndTechnology() {
         technologyList.add("java");
         userRoleList.add(UserRole.MENTOR);
-        PagedResponse<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
+        PagedResponse<UserProfile.UserProfileDto> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
         assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 
     @Test
     public void should_NotExistsFindUserProfileByRoleAndTechnology() {
         technologyList.add("TechnologyNotExist");
-        PagedResponse<UserProfile> userNotExist = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
+        PagedResponse<UserProfile.UserProfileDto> userNotExist = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
         assertEquals(new ArrayList<>(Collections.emptyList()), userNotExist.getContent());
     }
 
@@ -87,21 +87,21 @@ public class UserProfileIntegrationTest {
     public void should_BeEmptyFindUserProfileByRoleAndTechnologyShouldBeEmpty() {
         technologyList.add("Java");
         userRoleList.add(UserRole.JUNIOR);
-        PagedResponse<UserProfile> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
+        PagedResponse<UserProfile.UserProfileDto> foundUser = userProfileService.findByTechnologyAndRole(technologyList, userRoleList, page, size);
         assertEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 
     @Test
     public void should_FindUserProfileByRole() {
         userRoleList.add(UserRole.MENTOR);
-        PagedResponse<UserProfile> foundUser = userProfileService.findByUserRole(userRoleList, page, size);
+        PagedResponse<UserProfile.UserProfileDto> foundUser = userProfileService.findByUserRole(userRoleList, page, size);
         assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 
     @Test
     public void should_FindUserProfileByTechnology() {
         technologyList.add("Java");
-        PagedResponse<UserProfile> foundUser = userProfileService.findByTechnology(technologyList, page, size );
+        PagedResponse<UserProfile.UserProfileDto> foundUser = userProfileService.findByTechnology(technologyList, page, size );
         assertNotEquals(new ArrayList<>(Collections.emptyList()), foundUser.getContent());
     }
 

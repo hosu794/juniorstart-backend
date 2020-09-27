@@ -33,19 +33,20 @@ public class UserProfileService {
 
     public UserProfileService(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
+
     }
 
     /** Main function to Get a List of UserProfile. Checks which method to choose
      * @param userRoleOrTechnologyRequest Technology or UserRole you are looking for
      * @return list of UserProfile
      */
-    public PagedResponse<UserProfile> selectionForSearching(UserRoleOrTechnologyRequest userRoleOrTechnologyRequest, int page, int size){
+    public PagedResponse<UserProfile.UserProfileDto> selectionForSearching(UserRoleOrTechnologyRequest userRoleOrTechnologyRequest, int page, int size){
         List<String> technology = userRoleOrTechnologyRequest.getTechnology();
         List<String> userRole = userRoleOrTechnologyRequest.getUserRole();
 
         if (!technology.isEmpty() && !userRole.isEmpty()){
             List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
-            return findByTechnologyAndRole(technology, convertedUserRole, page, size );
+            return findByTechnologyAndRole(technology, convertedUserRole, page, size);
         }
         else if (!technology.isEmpty()){
             return findByTechnology(technology, page, size);
@@ -62,7 +63,7 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public PagedResponse<UserProfile> findByTechnologyAndRole(List<String> technology, List<UserRole> userRole, int page, int size) {
+    public PagedResponse<UserProfile.UserProfileDto> findByTechnologyAndRole(List<String> technology, List<UserRole> userRole, int page, int size) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
         size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
@@ -72,25 +73,25 @@ public class UserProfileService {
         return getUserProfilePagedResponse(foundUsers);
     }
 
-    private PagedResponse<UserProfile> getUserProfilePagedResponse(Page<UserProfile> foundUsers) {
+    private PagedResponse<UserProfile.UserProfileDto> getUserProfilePagedResponse(Page<UserProfile> foundUsers) {
         if(foundUsers.getNumberOfElements() == 0) {
             return new PagedResponse<>(Collections.emptyList(), foundUsers.getNumber(), foundUsers.getSize(), foundUsers.getTotalElements(), foundUsers.getTotalPages(), foundUsers.isLast());
         }
 
-        return new PagedResponse<>(foundUsers.toList(), foundUsers.getNumber(), foundUsers.getSize(), foundUsers.getTotalElements(), foundUsers.getTotalPages(), foundUsers.isLast());
+        return new PagedResponse<>(foundUsers.toList().stream().map(UserProfile::toUserProfileDto).collect(Collectors.toList()), foundUsers.getNumber(), foundUsers.getSize(), foundUsers.getTotalElements(), foundUsers.getTotalPages(), foundUsers.isLast());
     }
 
     /** Get a List of UserProfile.
      * @param technology Technology name you are looking for
      * @return list of UserProfile
      */
-    public PagedResponse<UserProfile> findByTechnology(List<String> technology, int page, int size) {
+    public PagedResponse<UserProfile.UserProfileDto> findByTechnology(List<String> technology, int page, int size) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
         size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<UserProfile> foundUsers = userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology, pageable);
-        return new PagedResponse<>(foundUsers.toList(), foundUsers.getNumber(), foundUsers.getSize(), foundUsers.getTotalElements(), foundUsers.getTotalPages(), foundUsers.isLast());
+        return getUserProfilePagedResponse(foundUsers);
     }
 
     /** Get a List of UserProfile.
@@ -98,7 +99,7 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public PagedResponse<UserProfile> findByUserRole(List<UserRole> userRole, int page, int size) {
+    public PagedResponse<UserProfile.UserProfileDto> findByUserRole(List<UserRole> userRole, int page, int size) {
         size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
         Pageable pageable = PageRequest.of(page, size);

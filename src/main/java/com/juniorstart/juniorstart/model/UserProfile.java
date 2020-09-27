@@ -32,4 +32,19 @@ public class UserProfile {
     inverseJoinColumns = {@JoinColumn(name="technology_id")})
     private Set<UserTechnology> userTechnology = new HashSet<>();
 
+
+    public UserProfileDto toUserProfileDto() {
+        return new UserProfileDto(
+                this.user,
+                this.userRole,
+                this.userTechnology);
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class UserProfileDto {
+        private User user;
+        private UserRole userRole;
+        private Set<UserTechnology> userTechnology;
+    }
 }
