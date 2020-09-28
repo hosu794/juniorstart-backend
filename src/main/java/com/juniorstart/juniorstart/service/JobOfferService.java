@@ -18,7 +18,6 @@ import com.juniorstart.juniorstart.repository.UserDao;
 public class JobOfferService {
 	private final JobOfferRepository jobOfferRepository;
 	private final UserDao userDao;
-
 	private final TechnologiesRepository technologiesRepository;
 
 	public JobOfferService(JobOfferRepository jobOfferRepository, UserDao userDao, TechnologiesRepository technologiesRepository) {
@@ -45,7 +44,7 @@ public class JobOfferService {
 	}
 
 	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
-    	if(technologiesList != null)
+		if(technologiesList != null)
 			technologiesList.stream().filter(technologies -> technologiesRepository.findByTitle(technologies.getTitle()).isPresent())
 				.map(technologies -> jobOffer.getTechnologies().add(technologiesRepository.findByTitle(technologies.getTitle()).get()))
 				.collect(Collectors.toList());

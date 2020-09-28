@@ -24,8 +24,8 @@ import com.juniorstart.juniorstart.repository.UserDao;
 public class JobOfferServiceTest {
 	UserDao userDao = Mockito.mock(UserDao.class);
 	JobOfferRepository jobOfferRepository = Mockito.mock(JobOfferRepository.class);
-    TechnologiesRepository technologiesRepository = Mockito.mock(TechnologiesRepository.class);
-    JobOfferService jobOfferService = new JobOfferService(jobOfferRepository, userDao, technologiesRepository);
+	TechnologiesRepository technologiesRepository = Mockito.mock(TechnologiesRepository.class);
+	JobOfferService jobOfferService = new JobOfferService(jobOfferRepository, userDao, technologiesRepository);
 
 	User user;
 	JobOfferRequest jobOfferRequest;

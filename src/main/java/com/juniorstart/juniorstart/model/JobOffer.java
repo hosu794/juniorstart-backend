@@ -32,9 +32,9 @@ public class JobOffer {
 
 	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinTable(
-			name = "jobOffer_technologies",
-			joinColumns = @JoinColumn(name = "jobOffer_id"),
-			inverseJoinColumns = @JoinColumn(name = "technology_id"))
+		name = "jobOffer_technologies",
+		joinColumns = @JoinColumn(name = "jobOffer_id"),
+		inverseJoinColumns = @JoinColumn(name = "technology_id"))
 	private Set<Technologies> technologies = new HashSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -42,11 +42,11 @@ public class JobOffer {
 
 	private String telephoneNumber;
 
-    @Email
+	@Email
 	private String email;
 
 	@JsonIgnore
 	@ManyToOne (fetch = FetchType.LAZY, optional = true, cascade =  CascadeType.ALL)
-    @JoinColumn(name = "offerCreator_id", nullable = true)
-    private User offerCreator;
+	@JoinColumn(name = "offerCreator_id", nullable = true)
+	private User offerCreator;
 }
