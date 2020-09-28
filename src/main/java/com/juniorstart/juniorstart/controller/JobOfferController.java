@@ -2,7 +2,6 @@ package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +11,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/jobOffer")
-public class JobOfferController
-{
+public class JobOfferController {
     private final JobOfferService jobOfferService;
 
     public JobOfferController(JobOfferService jobOfferService)
