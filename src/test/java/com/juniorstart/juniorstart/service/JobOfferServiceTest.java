@@ -45,19 +45,18 @@ public class JobOfferServiceTest {
         jobOffer.setOfferCreator(user);
     }
 	
-	 @Test
-	 public void should_addJobOffer() throws Exception {
+    @Test
+    public void should_addJobOffer() throws Exception {
          Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
          Mockito.when(jobOfferRepository.save(ArgumentMatchers.any(JobOffer.class))).thenReturn(jobOffer);
          Assert.assertEquals(jobOfferService.addJobOffer(jobOfferRequest, userPrincipal).getStatusCode(), HttpStatus.OK);
-	 }
+	}
 
     @Test
     public void should_deleteJobOffer() throws Exception {
-
         Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any())).thenReturn(Optional.of(user));
         Mockito.when(jobOfferRepository.findById(ArgumentMatchers.any())).thenReturn(Optional.of(jobOffer));
         Mockito.when(userDao.save(ArgumentMatchers.any(User.class))).thenReturn(user);
         Assert.assertEquals(jobOfferService.deleteJobOffer(11L, userPrincipal).getStatusCode(), HttpStatus.OK);
-    }
+	}
 }
