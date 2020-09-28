@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface TechnologiesRepository extends JpaRepository<Technologies, Long> {
-    Optional<Technologies> findByTitle(String title);
+	Optional<Technologies> findByTitle(String title);
 }

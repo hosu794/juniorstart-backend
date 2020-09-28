@@ -21,11 +21,11 @@ public class JobOfferService {
 
 	private final TechnologiesRepository technologiesRepository;
 
-    public JobOfferService(JobOfferRepository jobOfferRepository, UserDao userDao, TechnologiesRepository technologiesRepository) {
-        this.jobOfferRepository = jobOfferRepository;
-        this.userDao = userDao;
+	public JobOfferService(JobOfferRepository jobOfferRepository, UserDao userDao, TechnologiesRepository technologiesRepository) {
+		this.jobOfferRepository = jobOfferRepository;
+		this.userDao = userDao;
 		this.technologiesRepository = technologiesRepository;
-    }
+	}
     
 	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest, UserPrincipal currentUser) {
 		User user = userDao.findByPrivateId(currentUser.getId())
@@ -55,7 +55,7 @@ public class JobOfferService {
 		if(requirementsList != null)
 			requirementsList.stream().map(requirement -> jobOffer.getJobOfferRequirements()
 				.add(requirement)).collect(Collectors.toList());
-    }
+	}
 
 	public ResponseEntity<?> deleteJobOffer(long idJobOffer, UserPrincipal currentUser) {
 		User user = userDao.findByPrivateId(currentUser.getId())
