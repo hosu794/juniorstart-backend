@@ -12,21 +12,20 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("api/v1/jobOffer")
 public class JobOfferController {
-    private final JobOfferService jobOfferService;
+	private final JobOfferService jobOfferService;
 
-	public JobOfferController(JobOfferService jobOfferService)
-    {
-        this.jobOfferService = jobOfferService;
-    }
+	public JobOfferController(JobOfferService jobOfferService) {
+		this.jobOfferService = jobOfferService;
+	}
 	
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> addJobOffer(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody JobOfferRequest jobOfferRequest) {
 		return jobOfferService.addJobOffer(jobOfferRequest, currentUser);
 	}
+
 	@PreAuthorize("hasRole('USER')")
 	@DeleteMapping
-
 	public ResponseEntity<?> deleteJobOffer(@CurrentUser UserPrincipal currentUser, @Valid @RequestParam long idJobOffer) {
 		return jobOfferService.deleteJobOffer(idJobOffer, currentUser);
 	}
