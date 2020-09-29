@@ -13,6 +13,7 @@ import com.juniorstart.juniorstart.util.numberParser.UrlNumberParser;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
+import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
 import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import static com.juniorstart.juniorstart.repository.specification.UserSpecifications.*;
@@ -21,18 +22,20 @@ import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.util.numberParser.UrlNumberParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
+
 /** Represents an user service.
  * @author Grzegorz Szczęsny
- * @author Dawid Wit
+ * @author Noboseki
  * @version 1.4
  * @since 1.3
  */

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
@@ -15,13 +16,14 @@ import java.util.UUID;
  * @since 1.0
  */
 @Getter
+@NoArgsConstructor
 public class ChangePasswordRequest implements InterfaceChangeRequest {
     @Email
-    private final String newPassword;
+    private String newPassword;
     @NotBlank
-    private final UUID privateId;
+    private UUID privateId;
     @NotBlank
-    private final String Password;
+    private String Password;
 
     /** Creates an object ot change email by UserService.changeEmail.
      * @param newPassword new password for account.
