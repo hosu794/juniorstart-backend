@@ -19,12 +19,12 @@ public class JobOffer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@NotNull
+	@Column(nullable = false)
 	private String message;
 
 	private String type;
 
-	@NotNull
+	@Column(nullable = false)
 	private String position;
 
 	@Enumerated(EnumType.STRING)

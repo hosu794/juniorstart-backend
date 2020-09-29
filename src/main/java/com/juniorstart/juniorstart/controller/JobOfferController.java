@@ -1,5 +1,6 @@
 package com.juniorstart.juniorstart.controller;
 
+import com.juniorstart.juniorstart.model.JobOffer;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class JobOfferController {
 	
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> addJobOffer(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody JobOfferRequest jobOfferRequest) {
+	public JobOffer addJobOffer(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody JobOfferRequest jobOfferRequest) {
 		return jobOfferService.addJobOffer(jobOfferRequest, currentUser);
 	}
 

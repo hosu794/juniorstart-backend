@@ -48,7 +48,7 @@ public class JobOfferServiceTest {
 	public void should_addJobOffer() throws Exception {
 		Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
 		Mockito.when(jobOfferRepository.save(ArgumentMatchers.any(JobOffer.class))).thenReturn(jobOffer);
-		Assert.assertEquals(jobOfferService.addJobOffer(jobOfferRequest, userPrincipal).getStatusCode(), HttpStatus.OK);
+		Assert.assertEquals(jobOfferService.addJobOffer(jobOfferRequest, userPrincipal),jobOffer);
 	}
 
 	@Test

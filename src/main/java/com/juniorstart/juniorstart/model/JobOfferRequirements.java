@@ -13,6 +13,6 @@ public class JobOfferRequirements {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
+    @Column(nullable = false)
     private String textRequirement;
 }

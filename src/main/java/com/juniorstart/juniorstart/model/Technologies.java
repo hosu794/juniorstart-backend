@@ -14,7 +14,7 @@ public class Technologies {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
-    @Column(unique=true)
+
+    @Column(unique=true, nullable = false)
     private String title;
 }

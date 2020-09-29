@@ -26,7 +26,7 @@ public class JobOfferService {
 		this.technologiesRepository = technologiesRepository;
 	}
     
-	public ResponseEntity<?> addJobOffer(JobOfferRequest jobOfferRequest, UserPrincipal currentUser) {
+	public JobOffer addJobOffer(JobOfferRequest jobOfferRequest, UserPrincipal currentUser) {
 		User user = userDao.findByPrivateId(currentUser.getId())
 			.orElseThrow(() -> new ResourceNotFoundException("User", "privateId", currentUser.getId()));
 		JobOffer jobOffer = new JobOffer();
@@ -39,8 +39,7 @@ public class JobOfferService {
 		jobOffer.setType(jobOfferRequest.getType());
 		jobOffer.setOfferCreator(user);
 		jobOffer.setTechnologyType(jobOfferRequest.getTechnologyType());
-		return ResponseEntity.ok()
-			.body(jobOfferRepository.save(jobOffer));
+		return jobOfferRepository.save(jobOffer);
 	}
 
 	private void addTechnologies(List<Technologies> technologiesList, JobOffer jobOffer) {
