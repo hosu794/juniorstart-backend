@@ -1,7 +1,6 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;

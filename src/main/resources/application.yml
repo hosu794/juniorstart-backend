@@ -1,3 +1,15 @@
+entities:
+  datasource:
+    url: jdbc:${ENTITIES_DATABASE_DRIVER}://${ENTITIES_DATABASE_URL}:${ENTITIES_DATABASE_PORT}/${ENTITIES_DATABASE_NAME}?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    username: ${ENTITIES_DATABASE_USERNAME}
+    password: ${ENTITIES_DATABASE_PASSWORD}
+
+logs:
+  datasource:
+    url: jdbc:${DATABASE_DRIVER}://${DATABASE_URL}:${DATABASE_PORT}/${DATABASE_NAME}?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
 spring:
   mail:
     host: smtp.gmail.com
@@ -10,12 +22,6 @@ spring:
       auth: true
       starttls.enable: true
       ssl.trust: smtp.gmail.com
-
-  datasource:
-    url: jdbc:${DATABASE_DRIVER}://${DATABASE_URL}:${DATABASE_PORT}/${DATABASE_NAME}?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-
   jpa:
     show-sql: true
     hibernate:
