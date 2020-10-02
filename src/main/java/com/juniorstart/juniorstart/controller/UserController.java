@@ -1,7 +1,6 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.Optional;
 

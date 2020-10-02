@@ -5,11 +5,11 @@ import com.juniorstart.juniorstart.generation.UserIdGenerator;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
-
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -57,7 +57,6 @@ public class User  {
 
     private String providerId;
 
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private UserProfile userProfile;
-
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
+    private Set<JobOffer> jobOffers = new HashSet<>();
 }
