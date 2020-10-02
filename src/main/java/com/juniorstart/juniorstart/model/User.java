@@ -5,23 +5,22 @@ import com.juniorstart.juniorstart.generation.UserIdGenerator;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
-
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
-@Data
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User  {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
@@ -56,4 +55,7 @@ public class User  {
     private UserStatus userStatus;
 
     private String providerId;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
+    private Set<JobOffer> jobOffers = new HashSet<>();
 }
