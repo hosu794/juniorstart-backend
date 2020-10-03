@@ -19,9 +19,9 @@ public class UserProfileController {
 
 
     @GetMapping("/technology_role")
-    public PagedResponse<UserProfile.UserProfileDto> findMentorByTechnology(@RequestBody UserRoleOrTechnologyRequest userRoleOrTechnologyRequest,
-                                                                            @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                                                            @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+    public PagedResponse<UserProfile.UserProfileDto> findByUserRolesAndTechnologies(@RequestBody UserRoleOrTechnologyRequest userRoleOrTechnologyRequest,
+                                                                                    @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+                                                                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
 
         return userProfileService.selectionForSearching(userRoleOrTechnologyRequest, page, size);
     }
