@@ -17,7 +17,6 @@ public class UserProfileController {
         this.userProfileService = userProfileService;
     }
 
-
     @GetMapping("/technology_role")
     public PagedResponse<UserProfile.UserProfileDto> findByUserRolesAndTechnologies(@RequestBody UserRoleOrTechnologyRequest userRoleOrTechnologyRequest,
                                                                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
