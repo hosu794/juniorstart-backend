@@ -36,20 +36,4 @@ public class DatabasesConfig {
                 .type(HikariDataSource.class)
                 .build();
     }
-
-    // Log database
-    @Bean
-    @ConfigurationProperties("logs.datasource")
-    public DataSourceProperties logsDataSourceProperties() {
-        return new DataSourceProperties();
-    }
-
-    @Bean
-    @ConfigurationProperties("logs.datasource")
-    public DataSource logsDataSource() {
-        return entitiesDataSourceProperties()
-                .initializeDataSourceBuilder()
-                .type(HikariDataSource.class)
-                .build();
-    }
 }
