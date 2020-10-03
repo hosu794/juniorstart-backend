@@ -31,14 +31,14 @@ appender("DATABASE", DBAppender) {
 }
 
 // === CONSOLE LOGGERS ===
+//logger("com.juniorstart", DEBUG, ["CONSOLE"])
 
 // Logger for project level
-logger("com.juniorstart", DEBUG, ["CONSOLE"])
+//logger("com.juniorstart", DEBUG, ["CONSOLE"])
 
 //Logger for spring context
-logger("org", INFO, ["CONSOLE"])
+logger("org", INFO, ["DATABASE"])
 
 // === DATABASE LOGGERS ===
 
 // Logger for project level
-logger("com.juniorstart", DEBUG, ["DATABASE"])
