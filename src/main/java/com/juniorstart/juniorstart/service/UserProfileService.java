@@ -2,20 +2,23 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
-import com.juniorstart.juniorstart.helpers.getLogedUserId;
 import com.juniorstart.juniorstart.model.UserRole;
-import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.UserProfile;
-import com.juniorstart.juniorstart.repository.UserDao;
+import com.juniorstart.juniorstart.payload.PagedResponse;
+import com.juniorstart.juniorstart.payload.UserRoleOrTechnologyRequest;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 
+import com.juniorstart.juniorstart.util.ValidatePageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.text.WordUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /** Represents an userProfile service.
@@ -27,46 +30,31 @@ import java.util.stream.Collectors;
 public class UserProfileService {
 
     final private UserProfileRepository userProfileRepository;
-    final private UserDao userRepository;
 
-    public UserProfileService(UserDao userDao, UserProfileRepository userProfileRepository) {
+    public UserProfileService(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
-        this.userRepository = userDao;
+
     }
 
+    /** Main function to Get a List of UserProfile. Checks which method to choose
+     * @param userRoleOrTechnologyRequest Technology or UserRole you are looking for
+     * @return list of UserProfile
+     */
+    public PagedResponse<UserProfile.UserProfileDto> selectionForSearching(UserRoleOrTechnologyRequest userRoleOrTechnologyRequest, int page, int size){
+        List<String> technology = userRoleOrTechnologyRequest.getTechnology();
+        List<String> userRole = userRoleOrTechnologyRequest.getUserRole();
 
-    //Ignore This, Future for Next task
-    //Long userId = new getLogedUserId().userID;
-
-    //TODO GONNA WORK ON ADD USER PROFILE ON NEXT TASK
-    public UserProfile addUserProfile(UserProfile userProfile) {
-
-        //Long userId = new getLogedUserId().userID;
-        //Long tmp = userId;
-        Long userId= 5L;
-
-        Optional<User> foundUser = userRepository.findByPublicId(userId);
-
-        if(foundUser.isPresent()){
-            userProfile.setUser(foundUser.get());
-            userProfile.setPrivateId(foundUser.get().getPrivateId());
-            userProfileRepository.save(userProfile);
+        if (!technology.isEmpty() && !userRole.isEmpty()){
+            List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+            return findByTechnologyAndRole(technology, convertedUserRole, page, size);
         }
-
-        return userProfile;
-    }
-
-    //TODO GONNA WORK ON UPDATE USER PROFILE ON NEXT TASK
-    public UserProfile updateUserProfile(UserProfile userProfile) {
-
-        Long userId= 5L;
-
-        Optional<UserProfile> foundUser = userProfileRepository.findById(userId);
-
-        if(foundUser.isPresent()){
-            userProfileRepository.save(userProfile);
+        else if (!technology.isEmpty()){
+            return findByTechnology(technology, page, size);
         }
-        return userProfile;
+        else{
+            List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+            return findByUserRole(convertedUserRole, page, size);
+        }
     }
 
     /** Get a List of UserProfile.
@@ -75,19 +63,35 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public List<UserProfile> findByTechnologyAndRole(List<String> technology, List<String> userRole) {
-        List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
+    public PagedResponse<UserProfile.UserProfileDto> findByTechnologyAndRole(List<String> technology, List<UserRole> userRole, int page, int size) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
-        return userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, convertedUserRole);
+        size = ValidatePageUtil.validatePageNumberAndSize(page, size);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserProfile> foundUsers = userProfileRepository.findByUserTechnology_technologyNameInAndUserRoleIn(convertedTechnology, userRole, pageable);
+
+        return getUserProfilePagedResponse(foundUsers);
+    }
+
+    private PagedResponse<UserProfile.UserProfileDto> getUserProfilePagedResponse(Page<UserProfile> foundUsers) {
+        if(foundUsers.getNumberOfElements() == 0) {
+            return new PagedResponse<>(Collections.emptyList(), foundUsers.getNumber(), foundUsers.getSize(), foundUsers.getTotalElements(), foundUsers.getTotalPages(), foundUsers.isLast());
+        }
+
+        return new PagedResponse<>(foundUsers.toList().stream().map(UserProfile::toUserProfileDto).collect(Collectors.toList()), foundUsers.getNumber(), foundUsers.getSize(), foundUsers.getTotalElements(), foundUsers.getTotalPages(), foundUsers.isLast());
     }
 
     /** Get a List of UserProfile.
      * @param technology Technology name you are looking for
      * @return list of UserProfile
      */
-    public List<UserProfile> findByTechnology(List<String> technology) {
+    public PagedResponse<UserProfile.UserProfileDto> findByTechnology(List<String> technology, int page, int size) {
         List<String> convertedTechnology = technology.stream().map(WordUtils::capitalize).collect(Collectors.toList());
-        return userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology);
+        size = ValidatePageUtil.validatePageNumberAndSize(page, size);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserProfile> foundUsers = userProfileRepository.findByUserTechnology_technologyNameIn(convertedTechnology, pageable);
+        return getUserProfilePagedResponse(foundUsers);
     }
 
     /** Get a List of UserProfile.
@@ -95,12 +99,14 @@ public class UserProfileService {
      * @return list of UserProfile
      * @throws ResourceNotFoundException if userRole isn't valid
      */
-    public List<UserProfile> findByUserRole(List<String> userRole) {
-        List<UserRole> convertedUserRole= validateAndReturnAsEnum(userRole);
-        return userProfileRepository.findByUserRoleIn(convertedUserRole);
+    public PagedResponse<UserProfile.UserProfileDto> findByUserRole(List<UserRole> userRole, int page, int size) {
+        size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserProfile> foundUsers = userProfileRepository.findByUserRoleIn(userRole, pageable);
+
+        return getUserProfilePagedResponse(foundUsers);
     }
-
     /** Validate Listof String and return ENUM values of UserRole.
      * @param userRole UserRole(JUNIOR,MENTOR etc) name you are looking for
      * @return list of UserProfile
@@ -116,5 +122,4 @@ public class UserProfileService {
                 .map(String::toUpperCase)
                 .map(UserRole::valueOf).collect(Collectors.toList());
     }
-
 }

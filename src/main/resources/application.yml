@@ -1,3 +1,15 @@
+entities:
+  datasource:
+    url: jdbc:${ENTITIES_DATABASE_DRIVER}://${ENTITIES_DATABASE_URL}:${ENTITIES_DATABASE_PORT}/${ENTITIES_DATABASE_NAME}?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    username: ${ENTITIES_DATABASE_USERNAME}
+    password: ${ENTITIES_DATABASE_PASSWORD}
+
+logs:
+  datasource:
+    url: jdbc:${LOGS_DATABASE_DRIVER}://${LOGS_DATABASE_URL}:${LOGS_DATABASE_PORT}/${LOGS_DATABASE_NAME}?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    username: ${LOGS_DATABASE_USERNAME}
+    password: ${LOGS_DATABASE_PASSWORD}
+
 spring:
   mail:
     host: smtp.gmail.com
@@ -68,12 +80,3 @@ app:
       - http://localhost:3000/oauth2/redirect
       - myandroidapp://oauth2/redirect
       - myiosapp://oauth2/redirect
-
-logging:
-  level:
-    root: OFF
-    org.springframework.boot: ERROR
-    org.springframework.test: ERROR
-    org.springframework.web: ERROR
-    com.juniorstart: ERROR
-    org.hibernate: ERROR

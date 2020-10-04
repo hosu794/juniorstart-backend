@@ -3,7 +3,9 @@ package com.juniorstart.juniorstart.model;
 import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -24,28 +26,25 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name="join_user_technology",
     joinColumns = {@JoinColumn(name="user_id")},
     inverseJoinColumns = {@JoinColumn(name="technology_id")})
     private Set<UserTechnology> userTechnology = new HashSet<>();
 
 
-    public void addUserTechnology(UserTechnology technology){
-        this.userTechnology.add(technology);
-        technology.getUsersProfile().add(this);
-    }
-    public void removeUserTechnology(UserTechnology technology){
-        userTechnology.remove(technology);
-        technology.getUsersProfile().remove(this);
+    public UserProfileDto toUserProfileDto() {
+        return new UserProfileDto(
+                this.user,
+                this.userRole,
+                this.userTechnology);
     }
 
-    public void addUserManyTechnology(Set<UserTechnology> technology){
-        for(UserTechnology userTechnology: technology) {
-            this.userTechnology.add(userTechnology);
-            userTechnology.getUsersProfile().add(this);
-        }
+    @Data
+    @AllArgsConstructor
+    public static class UserProfileDto {
+        private User user;
+        private UserRole userRole;
+        private Set<UserTechnology> userTechnology;
     }
-
-
 }
