@@ -16,11 +16,12 @@ import java.util.UUID;
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
-@Builder
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
@@ -55,7 +56,7 @@ public class User  {
     private UserStatus userStatus;
 
     private String providerId;
-    
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
     private Set<JobOffer> jobOffers = new HashSet<>();
 }
