@@ -78,7 +78,6 @@ public class UserTechnologyTest {
 
         mockUserProfile = userProfile.getClass().getConstructor().newInstance();
 
-
         userRepository.save(user);
         userProfileRepository.save(userProfile);
 
@@ -99,7 +98,8 @@ public class UserTechnologyTest {
 
         listOfTechnology.add(userTechnology1);
 
-        mockUserProfile.addUserManyTechnology(listOfTechnology);
+   //     mockUserProfile.addUserManyTechnology(listOfTechnology);
+        mockUserProfile.setUserTechnology(listOfTechnology);
 
         Mockito.when(userProfileRepository.save(mockUserProfile)).thenReturn(mockUserProfile);
 

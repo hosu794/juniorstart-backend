@@ -35,8 +35,8 @@ public class UserTechnologyService {
         Optional<UserProfile> foundUser = Optional.ofNullable(userProfileRepository.findByPrivateId(currentUser.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("UserProfile", "ID", currentUser.getId())));
 
-        foundUser.get().addUserManyTechnology(userTechnology);
-        //foundUser.get().setUserTechnology(userTechnology);
+        //foundUser.get().addUserManyTechnology(userTechnology);
+        foundUser.get().setUserTechnology(userTechnology);
 
         try {
             userProfileRepository.save(foundUser.get());

@@ -33,6 +33,11 @@ public class UserProfile {
     private Set<UserTechnology> userTechnology = new HashSet<>();
 
 
+    public void addUserTechnology(UserTechnology technology){
+        this.userTechnology.add(technology);
+        technology.getUsersProfile().add(this);
+    }
+
     public UserProfileDto toUserProfileDto() {
         return new UserProfileDto(
                 this.user,

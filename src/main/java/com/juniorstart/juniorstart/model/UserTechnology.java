@@ -40,17 +40,6 @@ public class UserTechnology {
             userSkill.setUserTechnology(this);
         }
     }
-
-    @Override
-    public String toString() {
-        return "UserTechnology{" +
-                "id=" + id +
-                ", technologyName='" + technologyName + '\'' +
-                ", usersProfile=" + usersProfile +
-                '}';
-    }
-
-
 }
 
 
