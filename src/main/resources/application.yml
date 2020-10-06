@@ -30,22 +30,22 @@ spring:
       client:
         registration:
           google:
-            clientId: 276649131286-i47eh3g3711uho1haubcamkafgi42b6g.apps.googleusercontent.com
-            clientSecret: MxN0OSIwdWMAmbjONE-35az0
+            clientId: ${GOOGLE_OAUTH_CLIENT_ID}
+            clientSecret: ${GOOGLE_OAUTH_CLIENT_SECRET}
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - profile
           facebook:
-            clientId: 750150205764190
-            clientSecret: c47717a0479a837e042a2b640ccacd94
+            clientId: ${FACEBOOK_OAUTH_CLIENT_ID}
+            clientSecret: ${FACEBOOK_OAUTH_CLIENT_SECRET}
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}" # Note that facebook now mandates the use of https redirect URIs, so make sure your app supports https in production
             scope:
               - email
               - public_profile
           github:
-            clientId: 220d6357ca62f76bb566
-            clientSecret: 48aad5cbae6192ccb4f972fcb28186b820927f42
+            clientId: ${GITHUB_OAUTH_CLIENT_ID}
+            clientSecret: ${GITHUB_OAUTH_CLIENT_SECRET}
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - user:email
@@ -58,7 +58,7 @@ spring:
 
 app:
   auth:
-    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    tokenSecret: ${APP_AUTH_TOKEN_SECRET}
     tokenExpirationMsec: 864000000
   oauth2:
     # After successfully authenticating with the OAuth2 Provider,
