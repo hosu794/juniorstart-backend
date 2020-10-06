@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import com.juniorstart.juniorstart.model.AuthProvider;
@@ -20,6 +22,7 @@ import com.juniorstart.juniorstart.repository.JobOfferRepository;
 import com.juniorstart.juniorstart.repository.UserDao;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @RunWith(MockitoJUnitRunner.class)
 public class JobOfferServiceTest {
 	UserDao userDao = Mockito.mock(UserDao.class);
