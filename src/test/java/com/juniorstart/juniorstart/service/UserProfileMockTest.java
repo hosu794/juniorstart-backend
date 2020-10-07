@@ -11,6 +11,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserProfileMockTest {
 
