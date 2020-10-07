@@ -8,5 +8,4 @@ import java.util.List;
 
 @Repository
 public interface UserTechnologyRepository extends JpaRepository<UserTechnology, Long> {
-    List<UserTechnology> findAll();
 }

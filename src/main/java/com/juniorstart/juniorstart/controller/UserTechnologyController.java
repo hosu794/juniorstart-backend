@@ -4,7 +4,6 @@ import com.juniorstart.juniorstart.model.UserTechnology;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserTechnologyService;
-import com.juniorstart.juniorstart.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +15,8 @@ public class UserTechnologyController {
 
     private UserTechnologyService userTechnologyService;
 
-    final private UserService userService;
-
-    public UserTechnologyController(UserTechnologyService userTechnologyService,
-                                    UserService userService){
+    public UserTechnologyController(UserTechnologyService userTechnologyService){
         this.userTechnologyService = userTechnologyService;
-        this.userService = userService;
     }
 
     @PreAuthorize("hasRole('USER')")
