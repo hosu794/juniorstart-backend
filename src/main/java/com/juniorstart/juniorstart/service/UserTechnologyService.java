@@ -11,11 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -35,8 +32,7 @@ public class UserTechnologyService {
         Optional<UserProfile> foundUser = Optional.ofNullable(userProfileRepository.findByPrivateId(currentUser.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("UserProfile", "ID", currentUser.getId())));
 
-        //foundUser.get().addUserManyTechnology(userTechnology);
-        foundUser.get().setUserTechnology(userTechnology);
+        foundUser.get().addUserManyTechnology(userTechnology);
 
         try {
             userProfileRepository.save(foundUser.get());
@@ -44,8 +40,6 @@ public class UserTechnologyService {
         }catch(DataIntegrityViolationException exception){
             return ResponseEntity.badRequest().body("Technology already exist");
         }
-
-
     }
 
     public ResponseEntity<?> updateUserTechnology(UserTechnology userTechnology, UserPrincipal currentUser){
