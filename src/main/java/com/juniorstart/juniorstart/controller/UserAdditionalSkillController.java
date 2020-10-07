@@ -15,7 +15,7 @@ import java.util.Set;
 @RequestMapping("/user/additional_skill")
 public class UserAdditionalSkillController {
 
-    final private UserAdditionalSkillService userAdditionalSkillService;
+    private final UserAdditionalSkillService userAdditionalSkillService;
 
     public UserAdditionalSkillController(UserAdditionalSkillService userAdditionalSkillService) {
         this.userAdditionalSkillService = userAdditionalSkillService;
