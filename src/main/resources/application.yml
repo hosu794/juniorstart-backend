@@ -4,12 +4,6 @@ entities:
     username: ${ENTITIES_DATABASE_USERNAME}
     password: ${ENTITIES_DATABASE_PASSWORD}
 
-logs:
-  datasource:
-    url: jdbc:${LOGS_DATABASE_DRIVER}://${LOGS_DATABASE_URL}:${LOGS_DATABASE_PORT}/${LOGS_DATABASE_NAME}?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
-    username: ${LOGS_DATABASE_USERNAME}
-    password: ${LOGS_DATABASE_PASSWORD}
-
 spring:
   mail:
     host: smtp.gmail.com
@@ -30,6 +24,7 @@ spring:
     properties:
       hibernate:
         dialect: ${DATABASE_DIALECT}
+    open-in-view: false
   security:
     oauth2:
       client:
