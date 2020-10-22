@@ -1,4 +1,4 @@
-package com.juniorstart.juniorstart.security;
+package com.juniorstart.juniorstart.security.annotation;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.lang.annotation.*;

@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +36,8 @@ public class User  {
 
     private Integer age;
 
-    private boolean hiddenFromSearch;
+    @Builder.Default
+    private boolean hiddenFromSearch = false;
 
     @Email
     @Column(nullable = false)
@@ -42,21 +45,29 @@ public class User  {
 
     private String imageUrl;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean emailVerified = false;
 
     @JsonIgnore
     private String password;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AuthProvider provider;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserStatus userStatus;
 
     private String providerId;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
     private Set<JobOffer> jobOffers = new HashSet<>();
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            mappedBy = "user")
+    private Set<Goal> goals = new HashSet<>();
 }

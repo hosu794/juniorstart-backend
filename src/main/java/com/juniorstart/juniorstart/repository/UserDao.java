@@ -19,5 +19,7 @@ public interface UserDao extends JpaRepository<User, UUID>, JpaSpecificationExec
     Optional<User> findByEmail(String email);
 
     Optional<User> findByPrivateIdAndPassword(UUID privateId, String password);
+
+    Optional<User> findByEmailAndPassword(String email, String password);
     
 }

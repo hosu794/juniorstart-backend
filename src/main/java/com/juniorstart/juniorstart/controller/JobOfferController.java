@@ -1,7 +1,7 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.JobOffer;
-import com.juniorstart.juniorstart.security.CurrentUser;
+import com.juniorstart.juniorstart.security.annotation.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
