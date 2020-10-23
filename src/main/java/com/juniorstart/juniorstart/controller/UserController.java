@@ -4,7 +4,7 @@ import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
-import com.juniorstart.juniorstart.security.CurrentUser;
+import com.juniorstart.juniorstart.security.annotation.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserService;
 import jakarta.validation.Valid;

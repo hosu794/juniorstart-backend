@@ -13,7 +13,7 @@ import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
 import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
-import com.juniorstart.juniorstart.security.CurrentUser;
+import com.juniorstart.juniorstart.security.annotation.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.util.numberParser.UrlNumberParser;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.UserTechnology;
-import com.juniorstart.juniorstart.security.CurrentUser;
+import com.juniorstart.juniorstart.security.annotation.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserTechnologyService;
 import org.springframework.http.ResponseEntity;
