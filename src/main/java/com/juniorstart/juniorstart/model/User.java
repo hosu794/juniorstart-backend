@@ -2,6 +2,8 @@ package com.juniorstart.juniorstart.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.juniorstart.juniorstart.generation.UserIdGenerator;
+import com.juniorstart.juniorstart.model.audit.DateAudit;
+import com.juniorstart.juniorstart.model.audit.UserDateAudit;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +22,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User  {
+public class User extends DateAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,5 +1,6 @@
 package com.juniorstart.juniorstart.model;
 
+import com.juniorstart.juniorstart.model.audit.UserDateAudit;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Technologies {
+public class Technologies extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
