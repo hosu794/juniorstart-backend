@@ -7,22 +7,14 @@ jobs: # a collection of steps
     docker: # run the steps with Docker
       - image: circleci/openjdk:11-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
         environment: # database's environment
-          JDBC_DATABASE_URL: jdbc:postgresql://localhost:5432/juniorstart
+          JDBC_DATABASE_URL: jdbc:postgresql://localhost:5432/test
           JDBC_DATABASE_USERNAME: postgres
           JDBC_DATABASE_PASSWORD: password
 
       - image: circleci/postgres:9.5-alpine-ram        # ...with this image you can add the postgres's database
         environment:
-          POSTGRES_DB: juniorstart # database's name
+          POSTGRES_DB: test # database's name
           POSTGRES_USER: postgres # database's username
-
-      - image: circleci/postgres:9.5-alpine-ram        # ...with this image you can add the postgres's database
-        environment:
-          POSTGRES_DB: juniorstart_logs
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-
-
 
 
     steps: # a collection of executable commands
@@ -31,18 +23,18 @@ jobs: # a collection of steps
 
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          key: book-shop-{{ checksum "pom.xml" }}
+          key: juniorstart-backend-{{ checksum "pom.xml" }}
 
       - run: mvn dependency:go-offline # gets the project dependencies
 
       - run: sudo apt-get update
 
-      - run: mvn test
+      #- run: mvn test
 
       - save_cache: # saves the project dependencies
           paths:
             - ~/.m2
-          key: book-shop-{{ checksum "pom.xml" }}
+          key: juniorstart-backend-{{ checksum "pom.xml" }}
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
@@ -50,7 +42,7 @@ jobs: # a collection of steps
 
       - store_artifacts: # store the uberjar as an artifact
           # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: target/book-shop-0.0.1-SNAPSHOT.jar
+          path: target/juniorstart-backend-0.0.1-SNAPSHOT.jar
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
 
   deploy:
