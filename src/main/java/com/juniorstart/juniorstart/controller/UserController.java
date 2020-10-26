@@ -4,6 +4,7 @@ import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
+import com.juniorstart.juniorstart.payload.UserSummary;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserService;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * @since 1.1
  */
 @RestController
+@RequestMapping("/api")
 public class UserController {
     final private UserService userService;
 
@@ -33,7 +35,7 @@ public class UserController {
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
-    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+    public UserSummary getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return userService.getCurrentUser(userPrincipal);
     }
 

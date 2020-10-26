@@ -26,6 +26,19 @@ services:
     volumes:
       - "postgres_logs:/var/lib/postgresql/data"
 
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db_postgres_logs
+      - db_postgres_primary
+    ports:
+      - "5555:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    restart: unless-stopped
+
 volumes:
   postgres_primary:
   postgres_logs:

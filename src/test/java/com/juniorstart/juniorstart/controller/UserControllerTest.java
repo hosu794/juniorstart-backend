@@ -71,7 +71,7 @@ class UserControllerTest {
         when(userService.changePassword(any(ChangePasswordRequest.class))).thenReturn(response);
 
         //Then
-        correctMvcPerform("/changePassword", changePasswordJson);
+        correctMvcPerform("/api/changePassword", changePasswordJson);
         verify(userService, times(1)).changePassword(any(ChangePasswordRequest.class));
     }
 
@@ -83,7 +83,7 @@ class UserControllerTest {
         when(userService.changePassword(any(ChangePasswordRequest.class))).thenThrow(ResourceNotFoundException.class);
 
         //Then
-        validMvcPerform("/changePassword", changePasswordJson);
+        validMvcPerform("/api/changePassword", changePasswordJson);
         verify(userService, times(1)).changePassword(any(ChangePasswordRequest.class));
     }
 
@@ -95,7 +95,7 @@ class UserControllerTest {
         when(userService.changeEmail(any(ChangeMailRequest.class))).thenReturn(response);
 
         //Then
-        correctMvcPerform("/changeMail", changeEmailJson);
+        correctMvcPerform("/api/changeMail", changeEmailJson);
         verify(userService, times(1)).changeEmail(any(ChangeMailRequest.class));
     }
 
@@ -107,7 +107,7 @@ class UserControllerTest {
         when(userService.changeEmail(any(ChangeMailRequest.class))).thenThrow(ResourceNotFoundException.class);
 
         //Then
-        validMvcPerform("/changeMail", changeEmailJson);
+        validMvcPerform("/api/changeMail", changeEmailJson);
         verify(userService, times(1)).changeEmail(any(ChangeMailRequest.class));
     }
 
@@ -119,7 +119,7 @@ class UserControllerTest {
         when(userService.changeStatus(any(ChangeStatusRequest.class))).thenReturn(response);
 
         //Then
-        correctMvcPerform("/changeStatus", changeStatusJson);
+        correctMvcPerform("/api/changeStatus", changeStatusJson);
         verify(userService, times(1)).changeStatus(any(ChangeStatusRequest.class));
     }
 
@@ -131,7 +131,7 @@ class UserControllerTest {
         when(userService.changeStatus(any(ChangeStatusRequest.class))).thenThrow(ResourceNotFoundException.class);
 
         //Then
-        validMvcPerform("/changeStatus", changeStatusJson);
+        validMvcPerform("/api/changeStatus", changeStatusJson);
         verify(userService, times(1)).changeStatus(any(ChangeStatusRequest.class));
     }
 
@@ -146,7 +146,7 @@ class UserControllerTest {
 
         when(userService.getStatusList()).thenReturn(ResponseEntity.ok(statuses));
 
-        mockMvc.perform(get("/statusList"))
+        mockMvc.perform(get("/api/statusList"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",hasSize(4)))
                 .andExpect(jsonPath("$.[0]",is("LOOKING_FOR_A_JOB")))
