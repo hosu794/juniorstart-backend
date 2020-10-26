@@ -16,6 +16,14 @@ jobs: # a collection of steps
           POSTGRES_DB: juniorstart # database's name
           POSTGRES_USER: postgres # database's username
 
+      - image: circleci/postgres:9.5-alpine-ram        # ...with this image you can add the postgres's database
+        environment:
+          POSTGRES_DB: juniorstart_logs
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+
+
+
 
     steps: # a collection of executable commands
 
