@@ -3,9 +3,7 @@ package com.juniorstart.juniorstart.model;
 import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -22,6 +20,16 @@ public class UserProfile {
     @OneToOne
     @MapsId
     private User user;
+
+    @OneToMany(mappedBy = "userProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<EmploymentHistory> employmentsHistory = new ArrayList<>();
+
+    private String selfDescription;
+
+    private String careerGoals;
+
+    @Lob
+    private byte[] userPhoto;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
