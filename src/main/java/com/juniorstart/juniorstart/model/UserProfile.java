@@ -52,6 +52,11 @@ public class UserProfile {
         }
     }
 
+    public void addEmploymentHistory(EmploymentHistory employmentHistory) {
+        this.employmentsHistory.add(employmentHistory);
+        employmentHistory.setUserProfile(this);
+    }
+
     public UserProfileDto toUserProfileDto() {
         return new UserProfileDto(
                 this.user,

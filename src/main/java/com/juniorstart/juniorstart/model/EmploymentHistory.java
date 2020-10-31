@@ -16,7 +16,7 @@ public class EmploymentHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String companyName;
 
@@ -32,8 +32,6 @@ public class EmploymentHistory {
 
     @ManyToOne
     private UserProfile userProfile;
-
-
 
 }
 

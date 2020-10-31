@@ -1,6 +1,5 @@
 package com.juniorstart.juniorstart.controller;
 
-
 import com.juniorstart.juniorstart.model.EmploymentHistory;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
@@ -8,7 +7,6 @@ import com.juniorstart.juniorstart.service.EmploymentHistoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/user/employmenthistory")
