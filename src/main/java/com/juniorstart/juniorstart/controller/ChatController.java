@@ -44,7 +44,7 @@ public class ChatController {
     @GetMapping("/messages/{senderId}/{recipientId}/count")
     public ResponseEntity<Long> countNewMessage(@PathVariable String senderId, @PathVariable String recipientId) {
         return ResponseEntity
-                .ok(chatMessageService.countNewMessage(senderId, recipientId));
+                .ok(chatMessageService.countNewMessages(senderId, recipientId));
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
