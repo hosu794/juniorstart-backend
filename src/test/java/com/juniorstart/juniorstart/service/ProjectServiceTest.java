@@ -54,11 +54,7 @@ public class ProjectServiceTest {
     HashMap<Long, User> creatorMap;
     Page<Project> page;
 
-    @Before
-    public void initialize() throws Exception {
-        technology = Technologies.builder().technologyType(TechnologyType.FRONTEND).description("Some description").id(1l).title("Some title").build();
-        createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
-        users = new ArrayList<>();
+    private void initializeUser() throws Exception  {
         user = new User();
         user.setPrivateId(UUID.randomUUID());
         user.setPublicId(21l);
@@ -71,6 +67,9 @@ public class ProjectServiceTest {
         user.setImageUrl("SomeImageUrl");
         user.setUserStatus(UserStatus.LOOKING_FOR_A_JOB);
         user.setEmail("some@example.com");
+    }
+
+    private void initializeProject() throws Exception {
         project = new Project();
         project.setBody("Some body");
         project.setDescription("Some description");
@@ -82,11 +81,9 @@ public class ProjectServiceTest {
         project.setUpdatedBy(user.getPublicId());
         project.setId(12l);
         project.setName("Some Easy name");
-        pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "createdAt");
-        projectList = new ArrayList<>();
-        projectList.add(project);
-        page = MockUtil.createMockPage(projectList);
-        userPrincipal = UserPrincipal.create(user);
+    }
+
+    private void initializeProjectRequest() throws Exception {
         projectRequest = new ProjectRequest();
         projectRequest.setBody(project.getBody());
         projectRequest.setDescription(project.getDescription());
@@ -94,17 +91,34 @@ public class ProjectServiceTest {
         projectRequest.setNumberOfSeats(project.getNumberOfSeats());
         projectRequest.setRepository(project.getRepository());
         projectRequest.setTitle(project.getTitle());
+    }
+
+    private void initializeTechnology() throws Exception {
+        technology = Technologies.builder().technologyType(TechnologyType.FRONTEND).description("Some description").id(1l).title("Some title").build();
         technology.setCreatedAt(createdAt);
         technology.setUpdatedAt(createdAt);
         technology.setCreatedBy(user.getPublicId());
         technology.setUpdatedBy(user.getPublicId());
+    }
+    @Before
+    public void initialize() throws Exception {
+
+        createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
+        users = new ArrayList<>();
+        initializeUser();
+        initializeProject();
+        projectList = new ArrayList<>();
+        projectList.add(project);
+        page = MockUtil.createMockPage(projectList);
+        userPrincipal = UserPrincipal.create(user);
+        initializeProjectRequest();;
+        initializeTechnology();
         project.getTechnologies().add(technology);
         project.setRepository("Some Repo");
         project.setUpdatedAt(createdAt);
         projectSet = new HashSet<>();
         projectSet.add(project);
         technology.setProjects(projectSet);
-
     }
 
     @Test

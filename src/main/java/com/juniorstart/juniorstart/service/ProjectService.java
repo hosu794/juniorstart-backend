@@ -65,7 +65,8 @@ public class ProjectService {
 
         List<ProjectResponse> projectResponses = projects.map(project -> {
 
-            User creator = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(()-> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
+            User creator = userDao.findByPublicId(project.getCreatedBy())
+                    .orElseThrow(()-> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
 
             return ModelMapper.mapProjectToProjectResponse(project, creator);
         }).getContent();
@@ -82,20 +83,14 @@ public class ProjectService {
      * @throws BadRequestException if user has too many projects.
      */
     public Project createProject(UserPrincipal currentUser, ProjectRequest projectRequest) {
-        User user = userDao.findById(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
+        User user = userDao.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
 
         if(userDao.findByEmail(projectRequest.getName()).isPresent()) {
             throw new BadRequestException("Name already in use.");
         }
 
-
-            Project newProject = new Project();
-            newProject.setRepository(projectRequest.getRepository());
-            newProject.setName(projectRequest.getName());
-            newProject.setTitle(projectRequest.getTitle());
-            newProject.setNumberOfSeats(projectRequest.getNumberOfSeats());
-            newProject.setDescription(projectRequest.getDescription());
-            newProject.setBody(projectRequest.getBody());
+            Project newProject = createProjectModel(projectRequest);
 
             return projectRepository.save(newProject);
 
@@ -110,9 +105,12 @@ public class ProjectService {
      * @throws BadRequestException if user hasn't has a ownership of project.
      */
     public ProjectResponse updateProject(UserPrincipal currentUser, Long projectId, ProjectRequest projectRequest) {
-        User user = userDao.findById(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
 
-        Project currentProject = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+        User user = userDao.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
+
+        Project currentProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
 
         long currentUserIdentification = user.getPublicId();
         long projectOwnerIdentification = currentProject.getCreatedBy();
@@ -120,19 +118,11 @@ public class ProjectService {
         boolean isCurrentUserIsOwnerOfProject = currentUserIdentification == projectOwnerIdentification;
 
         if(isCurrentUserIsOwnerOfProject) {
-            currentProject.setRecruiting(projectRequest.isRecruiting());
-            currentProject.setBody(projectRequest.getBody());
-            currentProject.setDescription(projectRequest.getDescription());
-            currentProject.setNumberOfSeats(projectRequest.getNumberOfSeats());
-            currentProject.setTitle(projectRequest.getTitle());
-            currentProject.setName(projectRequest.getName());
-            currentProject.setRepository(projectRequest.getRepository());
 
-            Project updatedProject = projectRepository.save(currentProject);
+            Project updatedProject = updateProjectModel(currentProject, projectRequest);
+            Project result = projectRepository.save(updatedProject);
 
-
-
-            return ModelMapper.mapProjectToProjectResponse(currentProject, user);
+            return ModelMapper.mapProjectToProjectResponse(result, user);
         } else {
             throw new BadRequestException("You are not a owner of this project!");
         }
@@ -147,14 +137,13 @@ public class ProjectService {
      * @throws BadRequestException if user hasn't created a this project.
      */
     public ResponseEntity<?> deleteProject(UserPrincipal currentUser, Long projectId) {
-        Project currentProject = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
+        Project currentProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
 
-        User currentLoggedUser = userDao.findByPrivateId(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentProject.getId()));
+        User currentLoggedUser = userDao.findByPrivateId(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentProject.getId()));
 
-        long currentProjectIdentification = currentProject.getCreatedBy();
-        long currentUserIdentificationNumber = currentLoggedUser.getPublicId();
-
-        boolean isUserCreatedProject = currentProjectIdentification == currentUserIdentificationNumber;
+        boolean isUserCreatedProject = checkUserCreatedProject(currentLoggedUser, currentProject);
 
         if(isUserCreatedProject) {
             projectRepository.delete(currentProject);
@@ -185,7 +174,8 @@ public class ProjectService {
 
         List<ProjectResponse> projectResponses = projects.map(project -> {
 
-            User user = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
+            User user = userDao.findByPublicId(project.getCreatedBy())
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
 
             return ModelMapper.mapProjectToProjectResponse(project, user);
 
@@ -203,9 +193,11 @@ public class ProjectService {
      */
     public ProjectResponse findByName(UserPrincipal currentUser, String name){
 
-        Project project = projectRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Project", "name", name));
+        Project project = projectRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "name", name));
 
-        User creatorOfProject = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
+        User creatorOfProject = userDao.findByPublicId(project.getCreatedBy())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
 
         return ModelMapper.mapProjectToProjectResponse(project, creatorOfProject);
     }
@@ -223,7 +215,8 @@ public class ProjectService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
 
-        Technologies technology = technologiesRepository.findById(technologyId).orElseThrow(() -> new ResourceNotFoundException("Technology", "technologyTitle", technologyId));
+        Technologies technology = technologiesRepository.findById(technologyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Technology", "technologyTitle", technologyId));
         List<Long> longsOfProjects = technology.getProjects().stream().map(Project::getId).collect(Collectors.toList());
         Page<Project> projects = projectRepository.findByIdIn(longsOfProjects, pageable);
 
@@ -233,7 +226,8 @@ public class ProjectService {
 
         List<ProjectResponse> projectResponses = projects.map(project -> {
 
-            User user = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
+            User user = userDao.findByPublicId(project.getCreatedBy())
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
 
             return ModelMapper.mapProjectToProjectResponse(project, user);
 
@@ -244,7 +238,53 @@ public class ProjectService {
 
     }
 
+    /**
+     * Create a {@link Project} from {@link ProjectRequest}
+     * @param projectRequest A request with a credentials.
+     * @return A model ready to save.
+     */
+    private Project createProjectModel(ProjectRequest projectRequest) {
+        Project newProject = new Project();
+        newProject.setRepository(projectRequest.getRepository());
+        newProject.setName(projectRequest.getName());
+        newProject.setTitle(projectRequest.getTitle());
+        newProject.setNumberOfSeats(projectRequest.getNumberOfSeats());
+        newProject.setDescription(projectRequest.getDescription());
+        newProject.setBody(projectRequest.getBody());
 
+        return newProject;
+    }
+
+    /**
+     * Update a {@link Project} with {@link ProjectRequest}
+     * @param currentProject A current project's object.
+     * @param projectRequest A projectRequest that will update a project
+     * @return A updated project ready to save.
+     */
+    private Project updateProjectModel(Project currentProject, ProjectRequest projectRequest) {
+        currentProject.setRecruiting(projectRequest.isRecruiting());
+        currentProject.setBody(projectRequest.getBody());
+        currentProject.setDescription(projectRequest.getDescription());
+        currentProject.setNumberOfSeats(projectRequest.getNumberOfSeats());
+        currentProject.setTitle(projectRequest.getTitle());
+        currentProject.setName(projectRequest.getName());
+        currentProject.setRepository(projectRequest.getRepository());
+
+        return currentProject;
+    }
+
+    /**
+     * Check is current logged user created a project.
+     * @param currentLoggedUser A current user.
+     * @param currentProject A project, that user want update.
+     * @return A true if user created a project.
+     */
+    private boolean checkUserCreatedProject(User currentLoggedUser, Project currentProject) {
+        long currentProjectIdentification = currentProject.getCreatedBy();
+        long currentUserIdentificationNumber = currentLoggedUser.getPublicId();
+
+        return currentProjectIdentification == currentUserIdentificationNumber;
+    }
 
 
 }
