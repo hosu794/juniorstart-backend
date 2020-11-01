@@ -42,11 +42,10 @@ public class EmploymentHistoryService {
 
         Optional<UserProfile> foundUser = findUser(currentUser.getId());
         checkIsCurrentEmployer(employmentHistory);
-        //foundUser.get().getEmploymentsHistory().set(employmentHistory.getId(),employmentHistory);
 
-        foundUser.get().getEmploymentsHistory().get(employmentHistory.getId()).setCompanyName(employmentHistory.getCompanyName());
+        foundUser.get().getEmploymentsHistory().set(employmentHistory.getId(), employmentHistory);
+
         foundUser.get().addEmploymentHistory(employmentHistory);
-
 
         return ResponseEntity.ok(userProfileRepository.save(foundUser.get()));
     }
@@ -54,8 +53,7 @@ public class EmploymentHistoryService {
     public ResponseEntity<?> deleteEmploymentHistory(EmploymentHistory employmentHistory, UserPrincipal currentUser) {
 
         Optional<UserProfile> foundUser = findUser(currentUser.getId());
-//        if (foundUser.get().getEmploymentsHistory().contains(employmentHistory)) {
-        System.out.println(employmentHistory.toString());
+
         if (foundUser.get().getEmploymentsHistory().contains(employmentHistory)) {
         employmentHistoryRepository.deleteById((long) employmentHistory.getId());
         return ResponseEntity.ok().build();

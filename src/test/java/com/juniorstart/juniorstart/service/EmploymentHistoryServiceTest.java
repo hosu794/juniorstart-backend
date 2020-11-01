@@ -4,7 +4,6 @@ import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.EmploymentHistoryRepository;
-import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 
@@ -14,7 +13,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.sql.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,9 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -70,8 +66,6 @@ public class EmploymentHistoryServiceTest {
 
         employmentHistory = EmploymentHistory.builder().id(0).dateStartOfEmployment(startDate)
                 .companyName("companyName").tasksAtWork("Task1").isCurrentEmployment(false).build();
-
-
     }
 
     @Test
@@ -100,11 +94,9 @@ public class EmploymentHistoryServiceTest {
         assertThat(status.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
-
     @Test
     public void should_updateEmploymentHistory() {
 
-       // crt();
         Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
         employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
@@ -116,7 +108,6 @@ public class EmploymentHistoryServiceTest {
         verify(userProfileRepository, times(2)).save(userProfile);
         assertThat(status.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
-
 
     @Test
     public void should_throwExceptionIsCurrentEmployer() {
@@ -132,9 +123,7 @@ public class EmploymentHistoryServiceTest {
                 "Excepted doThing() to throw, but it didn't");
 
         assertEquals("You can't fill end date at current employer", exception.getMessage());
-
     }
-
 
     @Test
     public void should_Delete_EmploymentHistory() {
@@ -150,7 +139,6 @@ public class EmploymentHistoryServiceTest {
         verify(employmentHistoryRepository, times(1)).deleteById(ArgumentMatchers.anyLong());
 
         assertThat(status.getStatusCode()).isEqualTo(HttpStatus.OK);
-
     }
 
     @Test
@@ -158,49 +146,15 @@ public class EmploymentHistoryServiceTest {
 
         employmentHistory.setDateEndOfEmployment(endDate);
 
-
         Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
-        employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
-
-        System.out.println(employmentHistory.toString());
-
-        //employmentHistory.setCompanyName("OtherCompanyName");
-        employmentHistory.setId(6);
-        employmentHistory.setCompanyName("bla");
-
-        System.out.println(employmentHistory.toString());
-
+        employmentHistory.setCompanyName("OtherCompanyName");
 
         Exception exception = assertThrows(
                 ResourceNotFoundException.class,
                 () ->  employmentHistoryService.deleteEmploymentHistory(employmentHistory, userPrincipal),
                 "Expected doThing() to throw, but it didn't");
 
-
-        assertEquals("EmploymentHistory not exists not found with ID : '"+ employmentHistory.getId()+ "'", exception.getMessage());
-
+        assertEquals("EmploymentHistory not found with ID : '"+ employmentHistory.getId()+ "'", exception.getMessage());
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    public void crt () {
-        employmentHistory.setDateEndOfEmployment(endDate);
-        Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
-
-        //employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
-    }
-
-
-
-
 }
