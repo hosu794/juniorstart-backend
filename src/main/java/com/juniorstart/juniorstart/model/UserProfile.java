@@ -9,7 +9,7 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude="userTechnology")
+@EqualsAndHashCode(of = "privateId")
 @Entity
 @Table(name="users_profile")
 @Builder
@@ -22,6 +22,7 @@ public class UserProfile {
     private User user;
 
     @OneToMany(mappedBy = "userProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Builder.Default
     private List<EmploymentHistory> employmentsHistory = new ArrayList<>();
 
     private String selfDescription;

@@ -4,6 +4,7 @@ import com.juniorstart.juniorstart.model.EmploymentHistory;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.EmploymentHistoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,19 +21,19 @@ public class EmploymentHistoryController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("")
-    public ResponseEntity<?> addUserProfileTechnology(@RequestBody EmploymentHistory employmentHistory, @CurrentUser UserPrincipal userPrincipal){
+    public ResponseEntity<?> addEmploymentHistory(@Valid @RequestBody EmploymentHistory employmentHistory, @CurrentUser UserPrincipal userPrincipal){
         return employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
     }
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping("")
-    public ResponseEntity<?> updateUserProfileTechnology(@RequestBody EmploymentHistory employmentHistory, @CurrentUser UserPrincipal userPrincipal){
+    public ResponseEntity<?> updateEmploymentHistory(@Valid @RequestBody EmploymentHistory employmentHistory, @CurrentUser UserPrincipal userPrincipal){
         return employmentHistoryService.updateEmploymentHistory(employmentHistory, userPrincipal);
     }
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("")
-    public ResponseEntity<?> deleteUserProfileTechnology(@RequestBody EmploymentHistory employmentHistory, @CurrentUser UserPrincipal userPrincipal){
+    public ResponseEntity<?> deleteEmploymentHistory(@Valid @RequestBody EmploymentHistory employmentHistory, @CurrentUser UserPrincipal userPrincipal){
         return employmentHistoryService.deleteEmploymentHistory(employmentHistory, userPrincipal);
     }
 

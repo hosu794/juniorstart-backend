@@ -1,17 +1,17 @@
 package com.juniorstart.juniorstart.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Data
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table
+@Builder
 public class EmploymentHistory {
 
     @Id
@@ -28,7 +28,8 @@ public class EmploymentHistory {
     @Column(columnDefinition = "DATE")
     private java.sql.Date dateEndOfEmployment;
 
-    private boolean isCurrentEmployment;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isCurrentEmployment;
 
     @ManyToOne
     private UserProfile userProfile;
