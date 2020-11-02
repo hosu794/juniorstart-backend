@@ -30,7 +30,7 @@ public class UserProfile {
     private String careerGoals;
 
     @Lob
-    private byte[] userPhoto;
+    private byte[] userAvatar;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
@@ -62,7 +62,11 @@ public class UserProfile {
         return new UserProfileDto(
                 this.user,
                 this.userRole,
-                this.userTechnology);
+                this.userTechnology,
+                this.employmentsHistory,
+                this.selfDescription,
+                this.careerGoals,
+                this.userAvatar);
     }
 
     @Data
@@ -71,5 +75,9 @@ public class UserProfile {
         private User user;
         private UserRole userRole;
         private Set<UserTechnology> userTechnology;
+        private List<EmploymentHistory> employmentsHistory;
+        private String selfDescription;
+        private String careerGoals;
+        private byte[] userAvatar;
     }
 }

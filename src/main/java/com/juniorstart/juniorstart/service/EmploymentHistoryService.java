@@ -27,6 +27,12 @@ public class EmploymentHistoryService {
         this.employmentHistoryRepository = employmentHistoryRepository;
     }
 
+    public ResponseEntity<?> getEmploymentHistory(UUID id, UserPrincipal currentUser) {
+
+        findUser(currentUser.getId());
+
+        return ResponseEntity.ok(userProfileRepository.findByPrivateId(id));
+    }
 
     public ResponseEntity<?> addEmploymentHistory(EmploymentHistory employmentHistory, UserPrincipal currentUser) {
 
