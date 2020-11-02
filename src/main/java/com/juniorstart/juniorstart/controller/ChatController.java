@@ -28,10 +28,14 @@ public class ChatController {
 
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage) {
+
+
         var chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true);
         chatMessage.setChatId(chatId.get());
 
         ChatMessage saved = chatMessageService.save(chatMessage);
+
+
 
         simpMessagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(),"/queue/messages",
