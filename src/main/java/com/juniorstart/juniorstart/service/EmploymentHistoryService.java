@@ -23,11 +23,9 @@ public class EmploymentHistoryService {
     private final EmploymentHistoryRepository employmentHistoryRepository;
     private final UserProfileRepository userProfileRepository;
 
-    public ResponseEntity<?> getEmploymentHistory(UUID id, UserPrincipal currentUser) {
+    public ResponseEntity<?> getEmploymentHistory(Long id) {
 
-        findUser(currentUser.getId());
-
-        return ResponseEntity.ok(userProfileRepository.findByPrivateId(id));
+        return ResponseEntity.ok(userProfileRepository.findById(id));
     }
 
     public ResponseEntity<?> addEmploymentHistory(EmploymentHistory employmentHistory, UserPrincipal currentUser) {

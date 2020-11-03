@@ -20,8 +20,8 @@ public class EmploymentHistoryController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping()
-    public ResponseEntity<?> getEmploymentHistory(@RequestBody UUID id, @CurrentUser UserPrincipal userPrincipal){
-        return employmentHistoryService.getEmploymentHistory(id, userPrincipal);
+    public ResponseEntity<?> getEmploymentHistory(@RequestBody Long id){
+        return employmentHistoryService.getEmploymentHistory(id);
     }
 
     @PreAuthorize("hasRole('USER')")
