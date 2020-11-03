@@ -5,6 +5,7 @@ import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.UserProfile;
 import com.juniorstart.juniorstart.repository.UserProfileRepository;
 import com.juniorstart.juniorstart.security.UserPrincipal;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,18 +16,13 @@ import java.util.UUID;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-
 import java.io.ByteArrayOutputStream;
 
-
+@RequiredArgsConstructor
 @Service
 public class UserProfileAvatarService {
 
     final private UserProfileRepository userProfileRepository;
-
-    UserProfileAvatarService(UserProfileRepository userProfileRepository) {
-        this.userProfileRepository = userProfileRepository;
-    }
 
     public ResponseEntity<?> getUserAvatar(UserPrincipal currentUser) {
 

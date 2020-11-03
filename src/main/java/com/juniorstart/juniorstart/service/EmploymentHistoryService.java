@@ -8,24 +8,20 @@ import com.juniorstart.juniorstart.repository.UserProfileRepository;
 import com.juniorstart.juniorstart.repository.EmploymentHistoryRepository;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import groovy.util.logging.Slf4j;
-import net.bytebuddy.pool.TypePool;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
+@RequiredArgsConstructor
 @Slf4j
+@Service
 public class EmploymentHistoryService {
 
-    final private EmploymentHistoryRepository employmentHistoryRepository;
-    final private UserProfileRepository userProfileRepository;
-
-    EmploymentHistoryService(EmploymentHistoryRepository employmentHistoryRepository, UserProfileRepository userProfileRepository) {
-        this.userProfileRepository = userProfileRepository;
-        this.employmentHistoryRepository = employmentHistoryRepository;
-    }
+    private final EmploymentHistoryRepository employmentHistoryRepository;
+    private final UserProfileRepository userProfileRepository;
 
     public ResponseEntity<?> getEmploymentHistory(UUID id, UserPrincipal currentUser) {
 
