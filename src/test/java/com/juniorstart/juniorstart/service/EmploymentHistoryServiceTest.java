@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -72,8 +71,7 @@ public class EmploymentHistoryServiceTest {
     public void should_addEmploymentHistory() {
 
         employmentHistory.setDateEndOfEmployment(endDate);
-
-        Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
+        when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
         ResponseEntity<?> status = employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
 
@@ -85,8 +83,7 @@ public class EmploymentHistoryServiceTest {
     public void should_addRecentEmployer() {
 
         employmentHistory.setIsCurrentEmployment(true);
-
-        Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
+        when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
         ResponseEntity<?> status = employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
 
@@ -97,7 +94,7 @@ public class EmploymentHistoryServiceTest {
     @Test
     public void should_updateEmploymentHistory() {
 
-        Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
+        when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
         employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
 
@@ -115,7 +112,7 @@ public class EmploymentHistoryServiceTest {
         employmentHistory.setDateEndOfEmployment(endDate);
         employmentHistory.setIsCurrentEmployment(true);
 
-        Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
+        when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
         Exception exception = assertThrows(
                 BadRequestException.class,
@@ -130,7 +127,7 @@ public class EmploymentHistoryServiceTest {
 
         employmentHistory.setDateEndOfEmployment(endDate);
 
-        Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
+        when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
         employmentHistoryService.addEmploymentHistory(employmentHistory, userPrincipal);
 
@@ -146,7 +143,7 @@ public class EmploymentHistoryServiceTest {
 
         employmentHistory.setDateEndOfEmployment(endDate);
 
-        Mockito.when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
+        when(userProfileRepository.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(userProfile));
 
         employmentHistory.setCompanyName("OtherCompanyName");
 
