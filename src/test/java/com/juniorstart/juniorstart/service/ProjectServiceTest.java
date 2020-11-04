@@ -2,16 +2,13 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
-import com.juniorstart.juniorstart.payload.ProjectRequest;
-import com.juniorstart.juniorstart.payload.UserSummary;
+import com.juniorstart.juniorstart.payload.*;
 import com.juniorstart.juniorstart.repository.ProjectRepository;
 import com.juniorstart.juniorstart.repository.TechnologiesRepository;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.util.MockUtil;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 
 import java.text.SimpleDateFormat;
@@ -134,12 +132,17 @@ public class ProjectServiceTest {
 
     @Test
     public void should_return_findAll_method() throws Exception {
-       when(projectRepository.findAll(ArgumentMatchers.isA(Pageable.class))).thenReturn(page);
+       when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
        when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
-        Assert.assertTrue(projectService.getAllProjects(0 , 10).getContent().get(0).getBody().contains(project.getBody()));
-        Assert.assertTrue(projectService.getAllProjects( 0 , 10).getContent().get(0).getDescription().contains(project.getDescription()));
-        Assert.assertTrue(projectService.getAllProjects( 0 , 10).getContent().get(0).getName().contains(project.getName()));
-        Assert.assertTrue(projectService.getAllProjects( 0 , 10).getContent().get(0).getTitle().contains(project.getTitle()));
+
+        PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
+        assertTrue(response.getContent().get(0).getBody().contains(project.getBody()));
+        assertTrue(response.getContent().get(0).getDescription().contains(project.getDescription()));
+        assertTrue(response.getContent().get(0).getName().contains(project.getName()));
+        assertTrue(response.getContent().get(0).getTitle().contains(project.getTitle()));
+
+        verify(projectRepository, times(1)).findAll(isA(Pageable.class));
+        verify(userDao, times(1)).findByPublicId(anyLong());
     }
 
 
@@ -153,43 +156,69 @@ public class ProjectServiceTest {
         assertTrue(response.getBody().contains(project.getBody()));
         assertTrue(response.getName().contains(project.getName()));
         assertEquals(response.getRecruiting(), project.getRecruiting());
+        verify(userDao, times(1)).findById(any(UUID.class));
+        verify(projectRepository, times(1)).findByName(anyString());
+        verify(projectRepository, times(1)).save(any(Project.class));
     }
 
     @Test
     public void should_update_project() throws Exception {
-       when(userDao.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
-       when(projectRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(project));
-       when(projectRepository.save(ArgumentMatchers.any(Project.class))).thenReturn(project);
-        assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getName().contains(project.getName()));
-        assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getTitle().contains(project.getTitle()));
-        assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getDescription().contains(project.getDescription()));
+       when(userDao.findById(any(UUID.class))).thenReturn(Optional.of(user));
+       when(projectRepository.findById(anyLong())).thenReturn(Optional.of(project));
+       when(projectRepository.save(any(Project.class))).thenReturn(project);
+
+       ProjectResponse response = projectService.updateProject(userPrincipal, project.getId(), projectRequest);
+
+        assertTrue(response.getName().contains(project.getName()));
+        assertTrue(response.getTitle().contains(project.getTitle()));
+        assertTrue(response.getDescription().contains(project.getDescription()));
+
+        verify(userDao, times(1)).findById(any(UUID.class));
+        verify(projectRepository, times(1)).findById(anyLong());
+        verify(projectRepository, times(1)).save(any(Project.class));
     }
 
     @Test
     public void should_delete_project() throws Exception {
-        when(projectRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(project));
-        when(userDao.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
-        assertEquals(projectService.deleteProject(userPrincipal, project.getId()).getStatusCodeValue(), HTTPResponse.SC_OK);
+        when(projectRepository.findById(anyLong())).thenReturn(Optional.of(project));
+        when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
+        ResponseEntity<?> response = projectService.deleteProject(userPrincipal, project.getId());
+        assertEquals(response.getStatusCodeValue(), HTTPResponse.SC_OK);
+        verify(projectRepository, times(1)).findById(anyLong());
+        verify(userDao, times(1)).findByPrivateId(any(UUID.class));
     }
 
     @Test
     public void should_find_by_Name() throws Exception {
-       when(projectRepository.findByName(ArgumentMatchers.any(String.class))).thenReturn(Optional.of(project));
-       when(userDao.findByPublicId(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(user));
-        assertTrue(projectService.findByName(userPrincipal, project.getName()).getDescription().contains(project.getDescription()));
-        assertTrue(projectService.findByName(userPrincipal, project.getName()).getBody().contains(project.getBody()));
-        assertTrue(projectService.findByName(userPrincipal, project.getName()).getName().contains(project.getName()));
+
+       when(projectRepository.findByName(any(String.class))).thenReturn(Optional.of(project));
+       when(userDao.findByPublicId(any(Long.class))).thenReturn(Optional.of(user));
+
+       ProjectResponse response = projectService.findByName(userPrincipal, project.getName());
+
+        assertTrue(response.getDescription().contains(project.getDescription()));
+        assertTrue(response.getBody().contains(project.getBody()));
+        assertTrue(response.getName().contains(project.getName()));
+
+        verify(projectRepository, times(1)).findByName(anyString());
+        verify(userDao, times(1)).findByPublicId(anyLong());
     }
 
     @Test
     public void should_find_by_technology() throws Exception {
-      when(technologyRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(technology));
-      when(projectRepository.findByIdIn(ArgumentMatchers.anyList(), ArgumentMatchers.isA(Pageable.class))).thenReturn(page);
-       when(userDao.findByPublicId(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(user));
+      when(technologyRepository.findById(anyLong())).thenReturn(Optional.of(technology));
+      when(projectRepository.findByIdIn(anyList(), isA(Pageable.class))).thenReturn(page);
+       when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
 
-      assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getName().contains(project.getName()));
-      assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getBody().contains(project.getBody()));
-     assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getDescription().contains(project.getDescription()));
+       PagedResponse<ProjectResponse> response = projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10);
+
+      assertTrue(response.getContent().get(0).getName().contains(project.getName()));
+      assertTrue(response.getContent().get(0).getBody().contains(project.getBody()));
+     assertTrue(response.getContent().get(0).getDescription().contains(project.getDescription()));
+
+     verify(technologyRepository, times(1)).findById(anyLong());
+     verify(projectRepository, times(1)).findByIdIn(anyList(), isA(Pageable.class));
+     verify(userDao, times(1)).findByPublicId(anyLong());
     }
 
 
