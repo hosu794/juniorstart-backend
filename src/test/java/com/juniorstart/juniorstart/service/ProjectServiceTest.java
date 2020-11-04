@@ -11,33 +11,43 @@ import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.util.MockUtil;
 import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
+
 @ExtendWith(MockitoExtension.class)
 public class ProjectServiceTest {
 
-    ProjectRepository projectRepository = Mockito.mock(ProjectRepository.class);
-    UserDao userDao = Mockito.mock(UserDao.class);
-    TechnologiesRepository technologyRepository = Mockito.mock(TechnologiesRepository.class);
+    @Mock
+    ProjectRepository projectRepository;
 
-    ProjectService projectService = new ProjectService(userDao,projectRepository, technologyRepository);
+    @Mock
+    UserDao userDao;
+
+    @Mock
+    TechnologiesRepository technologyRepository;
+
+    @InjectMocks
+    ProjectService projectService;
 
     Instant createdAt;
     Project project;
@@ -100,7 +110,8 @@ public class ProjectServiceTest {
         technology.setCreatedBy(user.getPublicId());
         technology.setUpdatedBy(user.getPublicId());
     }
-    @Before
+
+    @BeforeEach
     public void initialize() throws Exception {
 
         createdAt = new SimpleDateFormat("yyyy-MM-dd").parse("2020-12-31").toInstant();
@@ -123,8 +134,8 @@ public class ProjectServiceTest {
 
     @Test
     public void should_return_findAll_method() throws Exception {
-        Mockito.when(projectRepository.findAll(ArgumentMatchers.isA(Pageable.class))).thenReturn(page);
-        Mockito.when(userDao.findByPublicId(ArgumentMatchers.anyLong())).thenReturn(Optional.of(user));
+       when(projectRepository.findAll(ArgumentMatchers.isA(Pageable.class))).thenReturn(page);
+       when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
         Assert.assertTrue(projectService.getAllProjects(0 , 10).getContent().get(0).getBody().contains(project.getBody()));
         Assert.assertTrue(projectService.getAllProjects( 0 , 10).getContent().get(0).getDescription().contains(project.getDescription()));
         Assert.assertTrue(projectService.getAllProjects( 0 , 10).getContent().get(0).getName().contains(project.getName()));
@@ -134,49 +145,51 @@ public class ProjectServiceTest {
 
     @Test
     public void should_create_new_project() throws Exception {
-        Mockito.when(userDao.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
-        Mockito.when(userDao.findByEmail(ArgumentMatchers.any(String.class))).thenReturn(Optional.empty());
-        Mockito.when(projectRepository.save(ArgumentMatchers.any(Project.class))).thenReturn(project);
-        Assert.assertTrue(projectService.createProject(userPrincipal, projectRequest).getBody().contains(project.getBody()));
-        Assert.assertTrue(projectService.createProject(userPrincipal, projectRequest).getName().contains(project.getName()));
-        Assert.assertEquals(projectService.createProject(userPrincipal, projectRequest).getRecruiting(), project.getRecruiting());
+
+        when(userDao.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
+        when(projectRepository.findByName(ArgumentMatchers.any(String.class))).thenReturn(Optional.empty());
+        when(projectRepository.save(ArgumentMatchers.any(Project.class))).thenReturn(project);
+        Project response = projectService.createProject(userPrincipal, projectRequest);
+        assertTrue(response.getBody().contains(project.getBody()));
+        assertTrue(response.getName().contains(project.getName()));
+        assertEquals(response.getRecruiting(), project.getRecruiting());
     }
 
     @Test
     public void should_update_project() throws Exception {
-        Mockito.when(userDao.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
-        Mockito.when(projectRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(project));
-        Mockito.when(projectRepository.save(ArgumentMatchers.any(Project.class))).thenReturn(project);
-        Assert.assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getName().contains(project.getName()));
-        Assert.assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getTitle().contains(project.getTitle()));
-        Assert.assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getDescription().contains(project.getDescription()));
+       when(userDao.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
+       when(projectRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(project));
+       when(projectRepository.save(ArgumentMatchers.any(Project.class))).thenReturn(project);
+        assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getName().contains(project.getName()));
+        assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getTitle().contains(project.getTitle()));
+        assertTrue(projectService.updateProject(userPrincipal, project.getId(), projectRequest).getDescription().contains(project.getDescription()));
     }
 
     @Test
     public void should_delete_project() throws Exception {
-        Mockito.when(projectRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(project));
-        Mockito.when(userDao.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
-        Assert.assertEquals(projectService.deleteProject(userPrincipal, project.getId()).getStatusCodeValue(), HTTPResponse.SC_OK);
+        when(projectRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(project));
+        when(userDao.findByPrivateId(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
+        assertEquals(projectService.deleteProject(userPrincipal, project.getId()).getStatusCodeValue(), HTTPResponse.SC_OK);
     }
 
     @Test
     public void should_find_by_Name() throws Exception {
-        Mockito.when(projectRepository.findByName(ArgumentMatchers.any(String.class))).thenReturn(Optional.of(project));
-        Mockito.when(userDao.findByPublicId(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(user));
-        Assert.assertTrue(projectService.findByName(userPrincipal, project.getName()).getDescription().contains(project.getDescription()));
-        Assert.assertTrue(projectService.findByName(userPrincipal, project.getName()).getBody().contains(project.getBody()));
-        Assert.assertTrue(projectService.findByName(userPrincipal, project.getName()).getName().contains(project.getName()));
+       when(projectRepository.findByName(ArgumentMatchers.any(String.class))).thenReturn(Optional.of(project));
+       when(userDao.findByPublicId(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(user));
+        assertTrue(projectService.findByName(userPrincipal, project.getName()).getDescription().contains(project.getDescription()));
+        assertTrue(projectService.findByName(userPrincipal, project.getName()).getBody().contains(project.getBody()));
+        assertTrue(projectService.findByName(userPrincipal, project.getName()).getName().contains(project.getName()));
     }
 
     @Test
     public void should_find_by_technology() throws Exception {
-        Mockito.when(technologyRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(technology));
-        Mockito.when(projectRepository.findByIdIn(ArgumentMatchers.anyList(), ArgumentMatchers.isA(Pageable.class))).thenReturn(page);
-        Mockito.when(userDao.findByPublicId(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(user));
+      when(technologyRepository.findById(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(technology));
+      when(projectRepository.findByIdIn(ArgumentMatchers.anyList(), ArgumentMatchers.isA(Pageable.class))).thenReturn(page);
+       when(userDao.findByPublicId(ArgumentMatchers.any(Long.class))).thenReturn(Optional.of(user));
 
-        Assert.assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getName().contains(project.getName()));
-        Assert.assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getBody().contains(project.getBody()));
-        Assert.assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getDescription().contains(project.getDescription()));
+      assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getName().contains(project.getName()));
+      assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getBody().contains(project.getBody()));
+     assertTrue(projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10).getContent().get(0).getDescription().contains(project.getDescription()));
     }
 
 
