@@ -16,6 +16,7 @@ import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.util.ModelMapper;
 import com.juniorstart.juniorstart.util.ValidatePageUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,14 +37,11 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProjectService {
 
 
-    public ProjectService(UserDao userDao, ProjectRepository projectRepository, TechnologiesRepository technologiesRepository) {
-        this.userDao = userDao;
-        this.projectRepository = projectRepository;
-        this.technologiesRepository = technologiesRepository;
-    }
+
     private final UserDao userDao;
     private final ProjectRepository projectRepository;
     private final TechnologiesRepository technologiesRepository;
@@ -88,16 +86,9 @@ public class ProjectService {
             throw new BadRequestException("Name already in use.");
         }
 
+         Project newProject = createProjectModel(projectRequest);
 
-            Project newProject = new Project();
-            newProject.setRepository(projectRequest.getRepository());
-            newProject.setName(projectRequest.getName());
-            newProject.setTitle(projectRequest.getTitle());
-            newProject.setNumberOfSeats(projectRequest.getNumberOfSeats());
-            newProject.setDescription(projectRequest.getDescription());
-            newProject.setBody(projectRequest.getBody());
-
-            return projectRepository.save(newProject);
+        return projectRepository.save(newProject);
 
     }
 
@@ -117,7 +108,7 @@ public class ProjectService {
         long currentUserIdentification = user.getPublicId();
         long projectOwnerIdentification = currentProject.getCreatedBy();
 
-        boolean isCurrentUserIsOwnerOfProject = currentUserIdentification == projectOwnerIdentification;
+        boolean isCurrentUserIsOwnerOfProject = checkIsUserCreatedProject(currentProject, user);
 
         if(isCurrentUserIsOwnerOfProject) {
             currentProject.setRecruiting(projectRequest.isRecruiting());
@@ -151,10 +142,9 @@ public class ProjectService {
 
         User currentLoggedUser = userDao.findByPrivateId(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentProject.getId()));
 
-        long currentProjectIdentification = currentProject.getCreatedBy();
-        long currentUserIdentificationNumber = currentLoggedUser.getPublicId();
 
-        boolean isUserCreatedProject = currentProjectIdentification == currentUserIdentificationNumber;
+
+        boolean isUserCreatedProject = checkIsUserCreatedProject(currentProject, currentLoggedUser);
 
         if(isUserCreatedProject) {
             projectRepository.delete(currentProject);
@@ -242,6 +232,22 @@ public class ProjectService {
         return new PagedResponse<>(projectResponses, projects.getNumber(), projects.getSize(), projects.getTotalElements(), projects.getTotalPages(), projects.isLast());
 
 
+    }
+
+    private boolean checkIsUserCreatedProject(Project project, User currentUser) {
+        return project.getCreatedBy() == currentUser.getPublicId();
+    }
+
+    private Project createProjectModel(ProjectRequest projectRequest) {
+        Project newProject = new Project();
+        newProject.setRepository(projectRequest.getRepository());
+        newProject.setName(projectRequest.getName());
+        newProject.setTitle(projectRequest.getTitle());
+        newProject.setNumberOfSeats(projectRequest.getNumberOfSeats());
+        newProject.setDescription(projectRequest.getDescription());
+        newProject.setBody(projectRequest.getBody());
+
+        return newProject;
     }
 
 

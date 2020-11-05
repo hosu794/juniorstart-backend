@@ -46,6 +46,7 @@ public abstract class ControllerIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         user = userDao.findByEmail("someEmail").orElseThrow();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
 
     }
 
