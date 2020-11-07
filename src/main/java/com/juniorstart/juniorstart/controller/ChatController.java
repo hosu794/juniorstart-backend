@@ -1,5 +1,6 @@
 package com.juniorstart.juniorstart.controller;
 
+import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.ChatMessage;
 import com.juniorstart.juniorstart.model.ChatNotification;
 import com.juniorstart.juniorstart.service.ChatMessageService;
@@ -27,8 +28,8 @@ public class ChatController {
     public void processMessage(@RequestBody ChatMessage chatMessage) {
 
 
-       // var chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true);
-        chatMessage.setChatId("12");
+        String chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true).orElseThrow(() -> new BadRequestException("Cannot find a chatId"));
+        chatMessage.setChatId(chatId);
 
         ChatMessage saved = chatMessageService.save(chatMessage);
 
