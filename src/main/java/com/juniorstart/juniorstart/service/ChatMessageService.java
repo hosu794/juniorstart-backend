@@ -57,14 +57,16 @@ public class ChatMessageService {
      * @return a {@link List} that contains a messages, which belongs to sender and recipient.
      */
     public List<ChatMessage> findChatMessage(String senderId, String recipientId) {
+
+        System.out.println("Works");
         var chatId = chatRoomService.getChatId(senderId, recipientId, false);
-
+        System.out.println("Works");
         var messages = chatId.map(cId -> chatMessageRepository.findByChatId(cId)).orElse(new ArrayList<>());
-
+        System.out.println("Works");
         if (messages.size() > 0) {
             updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
         }
-
+        System.out.println("Works");
         return  messages;
     }
 
@@ -88,9 +90,7 @@ public class ChatMessageService {
      * @param status
      */
     private void updateStatuses(String senderId, String recipientId, MessageStatus status) {
-        ChatMessage chatMessage = chatMessageRepository.findBySenderIdAndRecipientId(senderId, recipientId).orElseThrow(() -> new ResourceNotFoundException("ChatMessage", "senderId and recipientId", senderId + recipientId));
-        chatMessage.setStatus(status);
-        chatMessageRepository.save(chatMessage);
+        chatMessageRepository.updateStatuses(status, recipientId, senderId);
     }
 
 }
