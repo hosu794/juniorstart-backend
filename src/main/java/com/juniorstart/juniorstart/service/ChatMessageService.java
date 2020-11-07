@@ -73,7 +73,7 @@ public class ChatMessageService {
      * @param id A identification number.
      * @return a found {@link ChatMessage}.
      */
-    public ChatMessage findById(String id) {
+    public ChatMessage findById(Long id) {
         return chatMessageRepository.findById(id).map(chatMessage -> {
             chatMessage.setStatus(MessageStatus.DELIVERED);
             return chatMessageRepository.save(chatMessage);

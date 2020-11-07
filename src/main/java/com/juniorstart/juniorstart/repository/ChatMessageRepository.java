@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
     long countBySenderIdAndRecipientIdAndStatus(
             String senderId, String recipientId, MessageStatus status);

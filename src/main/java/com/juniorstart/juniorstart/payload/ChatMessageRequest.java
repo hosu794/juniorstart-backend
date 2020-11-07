@@ -1,25 +1,22 @@
-package com.juniorstart.juniorstart.model;
+package com.juniorstart.juniorstart.payload;
 
-import lombok.*;
+import com.juniorstart.juniorstart.model.MessageStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.lang.annotation.Documented;
 import java.util.Date;
 
-@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
-public class ChatMessage {
+public class ChatMessageRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String chatId;
     private String senderId;
@@ -29,4 +26,5 @@ public class ChatMessage {
     private String content;
     private Date timestamp;
     private MessageStatus status;
+
 }
