@@ -82,7 +82,7 @@ public class ProjectService {
     public Project createProject(UserPrincipal currentUser, ProjectRequest projectRequest) {
         User user = userDao.findById(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
 
-        if(userDao.findByEmail(projectRequest.getName()).isPresent()) {
+        if(projectRepository.findByName(projectRequest.getName()).isPresent()) {
             throw new BadRequestException("Name already in use.");
         }
 
