@@ -58,15 +58,15 @@ public class ChatMessageService {
      */
     public List<ChatMessage> findChatMessage(String senderId, String recipientId) {
 
-        System.out.println("Works");
+
         var chatId = chatRoomService.getChatId(senderId, recipientId, false);
-        System.out.println("Works");
-        var messages = chatId.map(cId -> chatMessageRepository.findByChatId(cId)).orElse(new ArrayList<>());
-        System.out.println("Works");
+
+        var messages = chatId.map(cId -> chatMessageRepository.findByChatIdByDateAsc(cId)).orElse(new ArrayList<>());
+
         if (messages.size() > 0) {
             updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
         }
-        System.out.println("Works");
+
         return  messages;
     }
 

@@ -25,7 +25,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     @Query("update ChatMessage u set u.status = :status where u.recipientId = :recipientId and u.senderId = :senderId")
     void updateStatuses(@Param(value = "status") MessageStatus status, @Param(value = "recipientId") String recipientId, @Param(value = "senderId") String senderId);
 
+    @Query("SELECT u FROM ChatMessage u WHERE u.chatId = :chatId ORDER BY timestamp ASC")
+    List<ChatMessage> findByChatIdByDateAsc(@Param(value = "chatId") String chatId);
 
-
-    List<ChatMessage> findByChatId(String chatId);
 }
