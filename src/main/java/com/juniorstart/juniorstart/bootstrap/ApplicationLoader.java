@@ -19,7 +19,7 @@ public class ApplicationLoader implements CommandLineRunner {
 
 
     private final UserDao userDao;
-    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public void run(String... args) {
