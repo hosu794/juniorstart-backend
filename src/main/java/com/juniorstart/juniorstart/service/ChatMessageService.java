@@ -104,4 +104,6 @@ public class ChatMessageService {
         chatMessageRepository.updateStatuses(status, recipientId, senderId);
     }
 
+
+
 }
