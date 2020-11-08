@@ -1,9 +1,11 @@
 package com.juniorstart.juniorstart.service;
 
+import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.ChatMessage;
 import com.juniorstart.juniorstart.model.MessageStatus;
 import com.juniorstart.juniorstart.repository.ChatMessageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ChatMessageService {
 
 
+
     public ChatMessageService(ChatMessageRepository chatMessageRepository, ChatRoomService chatRoomService) {
         this.chatMessageRepository = chatMessageRepository;
         this.chatRoomService = chatRoomService;
@@ -27,6 +30,14 @@ public class ChatMessageService {
 
     private final ChatRoomService chatRoomService;
 
+
+
+    public ChatMessage sendMessage(ChatMessage chatMessage) {
+        String chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true).orElseThrow(() -> new BadRequestException("Cannot find a chatId"));
+        chatMessage.setChatId(chatId);
+
+        return save(chatMessage);
+    }
 
     /**
      * Create a new message.

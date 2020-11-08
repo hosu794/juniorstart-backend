@@ -2,6 +2,8 @@ package com.juniorstart.juniorstart.service;
 
 import com.juniorstart.juniorstart.model.ChatRoom;
 import com.juniorstart.juniorstart.repository.ChatRoomRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,13 +14,19 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
+
 public class ChatRoomService {
 
-    public ChatRoomService(ChatRoomRepository chatRoomRepository) {
-        this.chatRoomRepository = chatRoomRepository;
-    }
 
      private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageService chatMessageService;
+
+
+    public ChatRoomService(@Lazy ChatRoomRepository chatRoomRepository,@Lazy ChatMessageService chatMessageService) {
+        this.chatRoomRepository = chatRoomRepository;
+        this.chatMessageService = chatMessageService;
+    }
+
 
     /**
      * Get a chat's room identification string.

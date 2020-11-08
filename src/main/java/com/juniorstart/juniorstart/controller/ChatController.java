@@ -1,15 +1,12 @@
 package com.juniorstart.juniorstart.controller;
 
-import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.ChatMessage;
 import com.juniorstart.juniorstart.model.ChatNotification;
 import com.juniorstart.juniorstart.service.ChatMessageService;
 import com.juniorstart.juniorstart.service.ChatRoomService;
-import com.sun.mail.iap.Response;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,23 +14,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
-@RequiredArgsConstructor
 public class ChatController {
+
 
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
 
+    public ChatController(@Lazy SimpMessagingTemplate simpMessagingTemplate, @Lazy ChatMessageService chatMessageService,@Lazy ChatRoomService chatRoomService) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.chatMessageService = chatMessageService;
+        this.chatRoomService = chatRoomService;
+    }
+
     @MessageMapping("/chat")
     public void processMessage(@RequestBody ChatMessage chatMessage) {
 
-
-        String chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true).orElseThrow(() -> new BadRequestException("Cannot find a chatId"));
-        chatMessage.setChatId(chatId);
-
-        ChatMessage saved = chatMessageService.save(chatMessage);
-
-
+        ChatMessage saved = chatMessageService.sendMessage(chatMessage);
 
         simpMessagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(),"/queue/messages",
@@ -58,7 +55,5 @@ public class ChatController {
     public ResponseEntity<?> findMessage(@PathVariable Long id) {
         return ResponseEntity.ok(chatMessageService.findById(id));
     }
-
-
 
 }
