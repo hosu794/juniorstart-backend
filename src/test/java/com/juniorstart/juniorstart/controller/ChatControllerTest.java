@@ -1,10 +1,17 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.*;
+import com.juniorstart.juniorstart.repository.UserDao;
 import lombok.Value;
 import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.ArgumentMatchers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -15,6 +22,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
+import springfox.documentation.spring.web.json.Json;
 
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
@@ -22,16 +30,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
+import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class ChatControllerTest extends ControllerIntegrationTest {
+
+public class ChatControllerTest extends ControllerIntegrationTest  {
 
 
-    private int port = 8080;
+
+    @LocalServerPort
+    int port;
+
     private String URL;
 
     User recipient;
@@ -41,85 +52,78 @@ public class ChatControllerTest extends ControllerIntegrationTest {
     private static final String SEND_CREATE_MESSAGE_ENDPOINT = "/app/chat";
     private static final String SUBSCRIBE_CREATE_MESSAGE_ENDPOINT = "/queue/messages";
 
-    private CompletableFuture<ChatNotification> completableFuture;
+
+     BlockingQueue<String> blockingQueue;
+     WebSocketStompClient stompClient;
+     ChatRoom chatRoom;
+      ChatNotification chatNotification;
+      String chatId;
+
+    @Autowired
+    UserDao userDao;
 
     @BeforeEach
-    public void initialize() {
-        completableFuture = new CompletableFuture<>();
-        URL =   URL = "ws://localhost:" + port;
+    public void initialize() throws Exception {
+        blockingQueue = new LinkedBlockingDeque<>();
+        stompClient = new WebSocketStompClient(new SockJsClient(
+                asList(new WebSocketTransport(new StandardWebSocketClient()))
+        ));
 
-        recipient = User.builder()
-                .email("SomeEmail")
-                .age(12)
-                .emailVerified(false)
-                .hiddenFromSearch(false)
-                .imageUrl("imageUrl")
-                .name("easyName")
-                .password("easyPassword")
-                .privateId(new UUID(12l, 12l))
-                .provider(AuthProvider.local)
-                .providerId("provider_id")
-                .publicId(12l)
-                .build();
+        sender = new User();
+        sender.setName("SomeName");
+        sender.setEmail("example@example.com");
+        sender.setPassword("password");
+        sender.setProvider(AuthProvider.local);
 
-        sender = User.builder()
-                .email("SomeEmailSender")
-                .age(12)
-                .emailVerified(false)
-                .hiddenFromSearch(false)
-                .imageUrl("imageUrl")
-                .name("easyName")
-                .password("easyPassword")
-                .privateId(new UUID(12l, 12l))
-                .provider(AuthProvider.local)
-                .providerId("provider_id")
-                .publicId(13l)
-                .build();
+        recipient = new User();
+        recipient.setName("someRecipientName");
+        recipient.setEmail("recipient@example.com");
+        recipient.setPassword("passwordRecipient");
+        recipient.setProvider(AuthProvider.local);
+
+
+        sender = userDao.save(sender);
+        recipient = userDao.save(recipient);
 
         chatMessage = ChatMessage.builder()
-                .chatId("12_11")
-                .content("Default Message")
-                .senderId(sender.getPublicId().toString())
-                .recipientId(recipient.getPublicId().toString())
-                .senderId("11")
+                .timestamp(new Date()).status(MessageStatus.DELIVERED).senderName(sender.getName())
                 .recipientName(recipient.getName())
-                .senderName(sender.getName())
-                .status(MessageStatus.DELIVERED)
-                .build();
+                .senderId(sender.getPublicId().toString()).recipientId(recipient.getName()).build();
+
+        chatId = String.format("%s_%s", sender.getPublicId(), recipient.getPublicId());
+
+    }
+
+    @Override
+    void setUp() throws Exception {
+        super.setUp();
+
+
     }
 
     @Test
-    public void should_processMessage() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
-        WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+    public void should_receiveMessageFromTheServer() throws Exception {
+        System.out.println("Something");
 
-        StompSession stompSession = stompClient.connect(URL, new StompSessionHandlerAdapter() {
-        }).get(1, SECONDS);
+        StompSession session = stompClient.connect("http://localhost:" + port + "/ws", new StompSessionHandlerAdapter() {}).get(1, SECONDS);
 
-        stompSession.subscribe("/user/" + recipient.getPublicId() + SUBSCRIBE_CREATE_MESSAGE_ENDPOINT, new CreateGameStompFrameHandler());
-        stompSession.send(SEND_CREATE_MESSAGE_ENDPOINT, chatMessage);
-        ChatNotification notificationResponse = completableFuture.get(5, SECONDS);
+        session.subscribe("/user/" + recipient.getPublicId() + SUBSCRIBE_CREATE_MESSAGE_ENDPOINT, new DefaultStompFrameHandler() {});
 
-        Assert.assertNotNull(notificationResponse);
+         chatNotification = new ChatNotification(ArgumentMatchers.anyLong(), recipient.getPublicId().toString(), recipient.getName());
+
+         session.send("/app/chat", );
+         Assert.assertEquals(chatNotification, blockingQueue.poll(1, SECONDS));
     }
 
-    private List<Transport> createTransportClient() {
-        List<Transport> transports = new ArrayList<>(1);
-        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-        return  transports;
-    }
-
-    private class CreateGameStompFrameHandler implements StompFrameHandler {
+    class DefaultStompFrameHandler implements StompFrameHandler {
         @Override
         public Type getPayloadType(StompHeaders stompHeaders) {
-            System.out.println(stompHeaders.toString());
-            return ChatMessage.class;
+            return ChatNotification.class;
         }
 
         @Override
         public void handleFrame(StompHeaders stompHeaders, Object o) {
-            System.out.println((ChatNotification) o);
-            completableFuture.complete((ChatNotification) o);
+            blockingQueue.offer(new String((byte[]) o));
         }
     }
 

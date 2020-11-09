@@ -1,6 +1,7 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.google.gson.Gson;
+import com.juniorstart.juniorstart.JuniorstartApplication;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.repository.UserDao;
 import io.swagger.models.HttpMethod;
@@ -20,6 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
