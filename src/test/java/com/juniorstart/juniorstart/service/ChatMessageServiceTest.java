@@ -119,7 +119,7 @@ public class ChatMessageServiceTest {
         verify(chatMessageRepository, times(1)).save(any(ChatMessage.class));
     }
 
-    
+
 
 
 
