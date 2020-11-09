@@ -2,13 +2,9 @@ package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.*;
 import com.juniorstart.juniorstart.repository.UserDao;
-import lombok.Value;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -22,18 +18,17 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
-import springfox.documentation.spring.web.json.Json;
 
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.*;
 
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public class ChatControllerTest extends ControllerIntegrationTest  {
@@ -53,7 +48,7 @@ public class ChatControllerTest extends ControllerIntegrationTest  {
     private static final String SUBSCRIBE_CREATE_MESSAGE_ENDPOINT = "/queue/messages";
 
 
-     BlockingQueue<String> blockingQueue;
+    private CompletableFuture<ChatNotification> completableFuture;
      WebSocketStompClient stompClient;
      ChatRoom chatRoom;
       ChatNotification chatNotification;
@@ -64,10 +59,10 @@ public class ChatControllerTest extends ControllerIntegrationTest  {
 
     @BeforeEach
     public void initialize() throws Exception {
-        blockingQueue = new LinkedBlockingDeque<>();
-        stompClient = new WebSocketStompClient(new SockJsClient(
-                asList(new WebSocketTransport(new StandardWebSocketClient()))
-        ));
+
+        stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        completableFuture = new CompletableFuture<>();
 
         sender = new User();
         sender.setName("SomeName");
@@ -102,20 +97,25 @@ public class ChatControllerTest extends ControllerIntegrationTest  {
     }
 
     @Test
-    public void should_receiveMessageFromTheServer() throws Exception {
+    public void should_receiveMessageFromTheServer() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
         System.out.println("Something");
 
-        StompSession session = stompClient.connect("http://localhost:" + port + "/ws", new StompSessionHandlerAdapter() {}).get(1, SECONDS);
+                StompSession session = stompClient.connect("http://localhost:" + port + "/ws", new StompSessionHandlerAdapter() {}).get(1, SECONDS);
 
-        session.subscribe("/user/" + recipient.getPublicId() + SUBSCRIBE_CREATE_MESSAGE_ENDPOINT, new DefaultStompFrameHandler() {});
 
-         chatNotification = new ChatNotification(ArgumentMatchers.anyLong(), recipient.getPublicId().toString(), recipient.getName());
+        session.subscribe("/user/" + recipient.getPublicId() + SUBSCRIBE_CREATE_MESSAGE_ENDPOINT, new StompSessionHandlerAdapter() {});
 
-         session.send("/app/chat", );
-         Assert.assertEquals(chatNotification, blockingQueue.poll(1, SECONDS));
+         chatNotification = new ChatNotification(12l, recipient.getPublicId().toString(), recipient.getName());
+
+         session.send("/app/chat", chatMessage);
+
+        S
+        ChatNotification response = completableFuture.get(3, SECONDS);
+
+        assertNotNull(response);
     }
 
-    class DefaultStompFrameHandler implements StompFrameHandler {
+    private class CreateGameStompFrameHandler implements StompFrameHandler {
         @Override
         public Type getPayloadType(StompHeaders stompHeaders) {
             return ChatNotification.class;
@@ -123,8 +123,15 @@ public class ChatControllerTest extends ControllerIntegrationTest  {
 
         @Override
         public void handleFrame(StompHeaders stompHeaders, Object o) {
-            blockingQueue.offer(new String((byte[]) o));
+            completableFuture.complete((ChatNotification) o);
         }
+    }
+
+
+    private List<Transport> createTransportClient() {
+        List<Transport> transports = new ArrayList<>(1);
+        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
+        return transports;
     }
 
 }
