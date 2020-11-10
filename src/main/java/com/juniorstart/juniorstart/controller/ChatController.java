@@ -28,11 +28,13 @@ public class ChatController {
         this.chatRoomService = chatRoomService;
     }
 
+
+
     @MessageMapping("/chat")
     public void processMessage(@RequestBody ChatMessage chatMessage) {
 
         ChatMessage saved = chatMessageService.sendMessage(chatMessage);
-        System.out.println("Siemanko");
+
         simpMessagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(),"/queue/messages",
                 new ChatNotification(
