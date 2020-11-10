@@ -49,7 +49,8 @@ public class ChatControllerTest extends ControllerIntegrationTest  {
 
 
     private CompletableFuture<ChatNotification> completableFuture;
-     WebSocketStompClient stompClient;
+
+    WebSocketStompClient stompClient;
      ChatRoom chatRoom;
       ChatNotification chatNotification;
       String chatId;
@@ -60,8 +61,6 @@ public class ChatControllerTest extends ControllerIntegrationTest  {
     @BeforeEach
     public void initialize() throws Exception {
 
-        stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
         completableFuture = new CompletableFuture<>();
 
         sender = new User();
@@ -92,37 +91,36 @@ public class ChatControllerTest extends ControllerIntegrationTest  {
     @Override
     void setUp() throws Exception {
         super.setUp();
-
-
     }
 
     @Test
     public void should_receiveMessageFromTheServer() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
-        System.out.println("Something");
+        stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-                StompSession session = stompClient.connect("http://localhost:" + port + "/ws", new StompSessionHandlerAdapter() {}).get(1, SECONDS);
 
+        StompSession session = stompClient.connect("http://localhost:" + port + "/ws", new StompSessionHandlerAdapter() {}).get(1, SECONDS);
 
-        session.subscribe("/user/" + recipient.getPublicId() + SUBSCRIBE_CREATE_MESSAGE_ENDPOINT, new StompSessionHandlerAdapter() {});
+        session.subscribe("/user/" + chatMessage.getRecipientId() + SUBSCRIBE_CREATE_MESSAGE_ENDPOINT, new CreateChatApplicationStompFrameHandler() {});
 
-         chatNotification = new ChatNotification(12l, recipient.getPublicId().toString(), recipient.getName());
-
-         session.send("/app/chat", chatMessage);
-
-        S
-        ChatNotification response = completableFuture.get(3, SECONDS);
+        session.send("/app/chat", chatMessage);
+        System.out.println(completableFuture);
+        ChatNotification response = completableFuture.get(5, SECONDS);
 
         assertNotNull(response);
     }
 
-    private class CreateGameStompFrameHandler implements StompFrameHandler {
+    private class CreateChatApplicationStompFrameHandler implements StompFrameHandler {
         @Override
         public Type getPayloadType(StompHeaders stompHeaders) {
+            System.out.println("String");
+            System.out.println(stompHeaders.toString());
             return ChatNotification.class;
         }
 
         @Override
         public void handleFrame(StompHeaders stompHeaders, Object o) {
+            System.out.println((ChatNotification) o);
             completableFuture.complete((ChatNotification) o);
         }
     }

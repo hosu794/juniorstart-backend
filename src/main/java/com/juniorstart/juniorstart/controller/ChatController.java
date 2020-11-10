@@ -7,6 +7,7 @@ import com.juniorstart.juniorstart.service.ChatRoomService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,7 @@ public class ChatController {
     public void processMessage(@RequestBody ChatMessage chatMessage) {
 
         ChatMessage saved = chatMessageService.sendMessage(chatMessage);
-
+        System.out.println("Siemanko");
         simpMessagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(),"/queue/messages",
                 new ChatNotification(
