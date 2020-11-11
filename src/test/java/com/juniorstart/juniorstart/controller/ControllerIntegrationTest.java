@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.MvcResult;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class ControllerIntegrationTest {
 
     protected final String TEST_NAME = "Test Name";
@@ -35,12 +37,9 @@ public abstract class ControllerIntegrationTest {
 
     protected Gson gson = new Gson();
 
-
     @Autowired
     UserDao userDao;
 
-
-    protected User admin;
     protected User user;
 
     @BeforeEach
@@ -50,25 +49,7 @@ public abstract class ControllerIntegrationTest {
 
     }
 
-    protected MvcResult useBasicMvc(HttpMethod httpMethod, String url,
-                                    Integer status) throws Exception {
-        switch (httpMethod) {
-            case POST:
-                return mockMvc.perform(post(url))
-                        .andExpect(status().is(status)).andReturn();
-            case GET:
-                return mockMvc.perform(get(url))
-                        .andExpect(status().is(status)).andReturn();
-            case PUT:
-                return mockMvc.perform(put(url))
-                        .andExpect(status().is(status)).andReturn();
-            case DELETE:
-                return mockMvc.perform(delete(url))
-                        .andExpect(status().is(status)).andReturn();
-            default:
-                throw new RuntimeException();
-        }
-    }
+
 }
 
 

@@ -1,31 +1,16 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.*;
-import com.juniorstart.juniorstart.model.audit.UserStatus;
 import com.juniorstart.juniorstart.payload.ProjectRequest;
-import com.juniorstart.juniorstart.payload.UserSummary;
 import com.juniorstart.juniorstart.repository.ProjectRepository;
 import com.juniorstart.juniorstart.repository.TechnologiesRepository;
 import com.juniorstart.juniorstart.repository.UserDao;
-import com.juniorstart.juniorstart.security.UserPrincipal;
-import com.juniorstart.juniorstart.util.MockUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 
 import org.springframework.security.test.context.support.WithUserDetails;
 import static org.hamcrest.core.Is.is;
-
-
-
-import java.time.Instant;
-import java.util.*;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -36,8 +21,6 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
     private final String BASIC_PROJECT_URL = "/api/project";
     private final String GET_ALL_URL = BASIC_PROJECT_URL;
-
-
 
     Project project;
     Technologies technology;
@@ -57,7 +40,6 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         super.setUp();
-
 
         user = User.builder()
                 .name("name")
@@ -94,11 +76,11 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
     }
 
-    @AfterEach
-    public void afterAll() {
-        userDao.delete(user);
-        projectRepository.deleteAll();
-    }
+//    @AfterEach
+//    public void afterAll() {
+//        userDao.delete(user);
+//        projectRepository.deleteAll();
+//    }
 
     @Test
     @WithUserDetails("someEmail")
@@ -141,7 +123,6 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
         String jsonRequest = gson.toJson(projectRequest);
 
-
         mockMvc.perform(post(BASIC_PROJECT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
@@ -173,9 +154,6 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
                 .andExpect(jsonPath("$.name",is(projectRequest.getName())))
                 .andExpect(jsonPath("$.description",is(projectRequest.getDescription())));
     }
-
-
-
 
 }
 

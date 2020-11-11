@@ -24,38 +24,44 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @GetMapping
-    public PagedResponse<ProjectResponse> findAll(@CurrentUser UserPrincipal currentUser, @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+    public PagedResponse<ProjectResponse> findAll(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
                                                   @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
         return projectService.getAllProjects(page, size);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public Project createProject(@CurrentUser UserPrincipal currentUser, @RequestBody @Valid ProjectRequest projectRequest) {
-        return projectService.createProject(currentUser, projectRequest);
+    public Project createProject(@CurrentUser UserPrincipal currentUser,
+                                 @RequestBody @Valid ProjectRequest projectRequest) {
+        return projectService.createProject(projectRequest);
     }
 
     @PutMapping("/{projectId}")
     @PreAuthorize("hasRole('USER')")
-    public ProjectResponse updateProject(@CurrentUser UserPrincipal currentUser, @PathVariable Long projectId, @RequestBody @Valid ProjectRequest projectRequest) {
+    public ProjectResponse updateProject(@CurrentUser UserPrincipal currentUser,
+                                         @PathVariable Long projectId,
+                                         @RequestBody @Valid ProjectRequest projectRequest) {
         return projectService.updateProject(currentUser, projectId, projectRequest);
     }
 
     @DeleteMapping("/{projectId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deleteProject(@CurrentUser UserPrincipal currentUser, @PathVariable Long projectId) {
+    public ResponseEntity<?> deleteProject(@CurrentUser UserPrincipal currentUser,
+                                           @PathVariable Long projectId) {
         return projectService.deleteProject(currentUser, projectId);
     }
 
     @GetMapping("/title/{title}")
-    public PagedResponse<ProjectResponse> findByTitle(@CurrentUser UserPrincipal currentUser, @PathVariable String title, @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+    public PagedResponse<ProjectResponse> findByTitle(@CurrentUser UserPrincipal currentUser,
+                                                      @PathVariable String title, @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
                                                       @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        return projectService.findByTitle(currentUser, title,page ,size);
+        return projectService.findByTitle(title,page ,size);
     }
 
     @GetMapping("/name/{name}")
-    public ProjectResponse findByName(@CurrentUser UserPrincipal currentUser, @PathVariable String name) {
-        return projectService.findByName(currentUser, name);
+    public ProjectResponse findByName(@CurrentUser UserPrincipal currentUser,
+                                      @PathVariable String name) {
+        return projectService.findByName(name);
     }
 
   

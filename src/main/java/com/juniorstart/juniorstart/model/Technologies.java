@@ -12,6 +12,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = "title")
+})
 public class Technologies extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +25,7 @@ public class Technologies extends UserDateAudit {
     private TechnologyType technologyType;
 
 
-    @Column(unique=true, nullable = false)
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)

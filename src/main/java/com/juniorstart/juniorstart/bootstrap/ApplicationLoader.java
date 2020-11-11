@@ -19,6 +19,7 @@ public class ApplicationLoader implements CommandLineRunner {
 
 
     private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -47,7 +48,7 @@ public class ApplicationLoader implements CommandLineRunner {
                     .imageUrl("some_url")
                     .hiddenFromSearch(false)
                     .age(12)
-                    .password("Some password")
+                    .password(passwordEncoder.encode("Some password"))
                     .provider(AuthProvider.local)
                     .name("Somename")
                     .emailVerified(false)

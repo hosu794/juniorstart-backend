@@ -19,15 +19,14 @@ public class ModelMapper {
      */
     public static ProjectResponse mapProjectToProjectResponse(Project project, User user) {
 
-        ProjectResponse projectResponse = new ProjectResponse();
-        projectResponse.setId(project.getId());
-        projectResponse.setTitle(project.getTitle());
-        projectResponse.setDescription(project.getDescription());
-        projectResponse.setBody(project.getBody());
-        projectResponse.setNumberOfSeats(project.getNumberOfSeats());
-        projectResponse.setRepository(project.getRepository());
-        projectResponse.setName(project.getName());
-
-        return projectResponse;
+        return ProjectResponse.builder()
+                .id(project.getId())
+                .title(project.getTitle())
+                .description(project.getDescription())
+                .body(project.getBody())
+                .numberOfSeats(project.getNumberOfSeats())
+                .repository(project.getRepository())
+                .name(project.getName())
+                .build();
     }
 }

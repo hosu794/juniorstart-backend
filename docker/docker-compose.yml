@@ -42,3 +42,6 @@ services:
 volumes:
   postgres_primary:
   postgres_logs:
+
+
+

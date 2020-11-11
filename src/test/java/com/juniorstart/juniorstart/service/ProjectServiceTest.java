@@ -50,16 +50,12 @@ public class ProjectServiceTest {
     Instant createdAt;
     Project project;
     Technologies technology;
-    UserSummary userSummary;
     User user;
-    UserSummary mentor;
-    Pageable pageable;
     List<Project> projectList;
     List<User> users;
     UserPrincipal userPrincipal;
     ProjectRequest projectRequest;
     Set<Project> projectSet;
-    HashMap<Long, User> creatorMap;
     Page<Project> page;
 
     private void initializeUser() throws Exception  {
@@ -136,6 +132,7 @@ public class ProjectServiceTest {
        when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
 
         PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
+
         assertTrue(response.getContent().get(0).getBody().contains(project.getBody()));
         assertTrue(response.getContent().get(0).getDescription().contains(project.getDescription()));
         assertTrue(response.getContent().get(0).getName().contains(project.getName()));
@@ -149,14 +146,15 @@ public class ProjectServiceTest {
     @Test
     public void should_create_new_project() throws Exception {
 
-        when(userDao.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.of(user));
         when(projectRepository.findByName(ArgumentMatchers.any(String.class))).thenReturn(Optional.empty());
         when(projectRepository.save(ArgumentMatchers.any(Project.class))).thenReturn(project);
-        Project response = projectService.createProject(userPrincipal, projectRequest);
+
+        Project response = projectService.createProject(projectRequest);
+
         assertTrue(response.getBody().contains(project.getBody()));
         assertTrue(response.getName().contains(project.getName()));
         assertEquals(response.getRecruiting(), project.getRecruiting());
-        verify(userDao, times(1)).findById(any(UUID.class));
+
         verify(projectRepository, times(1)).findByName(anyString());
         verify(projectRepository, times(1)).save(any(Project.class));
     }
@@ -180,10 +178,14 @@ public class ProjectServiceTest {
 
     @Test
     public void should_delete_project() throws Exception {
+
         when(projectRepository.findById(anyLong())).thenReturn(Optional.of(project));
         when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
+
         ResponseEntity<?> response = projectService.deleteProject(userPrincipal, project.getId());
+
         assertEquals(response.getStatusCodeValue(), HTTPResponse.SC_OK);
+
         verify(projectRepository, times(1)).findById(anyLong());
         verify(userDao, times(1)).findByPrivateId(any(UUID.class));
     }
@@ -194,7 +196,7 @@ public class ProjectServiceTest {
        when(projectRepository.findByName(any(String.class))).thenReturn(Optional.of(project));
        when(userDao.findByPublicId(any(Long.class))).thenReturn(Optional.of(user));
 
-       ProjectResponse response = projectService.findByName(userPrincipal, project.getName());
+       ProjectResponse response = projectService.findByName(project.getName());
 
         assertTrue(response.getDescription().contains(project.getDescription()));
         assertTrue(response.getBody().contains(project.getBody()));
@@ -210,7 +212,7 @@ public class ProjectServiceTest {
       when(projectRepository.findByIdIn(anyList(), isA(Pageable.class))).thenReturn(page);
        when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
 
-       PagedResponse<ProjectResponse> response = projectService.findByTechnology(userPrincipal, technology.getId(), 0, 10);
+       PagedResponse<ProjectResponse> response = projectService.findByTechnology(technology.getId(), 0, 10);
 
       assertTrue(response.getContent().get(0).getName().contains(project.getName()));
       assertTrue(response.getContent().get(0).getBody().contains(project.getBody()));
@@ -220,9 +222,5 @@ public class ProjectServiceTest {
      verify(projectRepository, times(1)).findByIdIn(anyList(), isA(Pageable.class));
      verify(userDao, times(1)).findByPublicId(anyLong());
     }
-
-
-
-
-
+    
 }
