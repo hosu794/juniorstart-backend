@@ -78,5 +78,4 @@ workflows: # workflows for the project
                 - master
           requires:
             - build
-            -
 
