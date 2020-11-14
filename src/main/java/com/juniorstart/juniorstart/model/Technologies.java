@@ -28,11 +28,5 @@ public class Technologies extends UserDateAudit {
     @Column(nullable = false)
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            mappedBy = "technologies")
-    private Set<Project> projects = new HashSet<>();
+
 }

@@ -17,9 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApplicationLoader implements CommandLineRunner {
 
-
     private final UserDao userDao;
-
 
     @Override
     public void run(String... args) {
@@ -34,8 +32,7 @@ public class ApplicationLoader implements CommandLineRunner {
     }
 
     private boolean checkBootstrap() {
-        boolean isUser = userDao.findAll().isEmpty();
-
+        boolean isUser = userDao.findByEmail("someEmail").isEmpty();
 
         return isUser;
     }

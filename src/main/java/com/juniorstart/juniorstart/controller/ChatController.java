@@ -28,8 +28,6 @@ public class ChatController {
         this.chatRoomService = chatRoomService;
     }
 
-
-
     @MessageMapping("/chat")
     public void processMessage(@RequestBody ChatMessage chatMessage) {
 

@@ -95,7 +95,26 @@ public class UserService {
         return changeResponse(request.getUserStatus().equals(user.getUserStatus())," Status", null);
     }
 
+    /**
+     * Get all users except current logged.
+     * @param currentUser A current user's credentials object.
+     * @return A list of users except a current logged .
+     */
+    public List<UserSummary> findAllUserSummaries(UserPrincipal currentUser) {
+
+        User loadedUser = userDao.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
+
+        List<User> users = userDao.findAll();
+
+        return users
+                .stream()
+                .filter(user -> !user.getEmail().equals(loadedUser.getEmail()))
+                .map(this::convertToUserSummary).collect(Collectors.toList());
+    }
+
     /** Method for getting all user statuses.
+     * @return A {@link ResponseEntity} with a list of user's statuses.
      */
     public ResponseEntity<List<String>> getStatusList(){
         List<String> statuses = Stream
@@ -198,6 +217,16 @@ public class UserService {
                 .dataValue(user.getName())
                 .name(value).build();
 
-        return new Mail(user.getEmail(),values);
+        return new Mail(user.getEmail(), values);
     }
+
+    /**
+     * Convert {@link User} to {@link UserSummary}
+     * @param user A user object.
+     * @return a converted user summary.
+     */
+    private UserSummary convertToUserSummary(User user) {
+        return UserSummary.builder().email(user.getEmail()).name(user.getName()).id(user.getPublicId()).build();
+    }
+
 }

@@ -5,8 +5,10 @@ import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.ChatMessage;
 import com.juniorstart.juniorstart.model.MessageStatus;
 import com.juniorstart.juniorstart.repository.ChatMessageRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,23 +19,17 @@ import java.util.List;
  * @version 1.0
  */
 @Service
+@RequiredArgsConstructor
 public class ChatMessageService {
 
-
-
-    public ChatMessageService(ChatMessageRepository chatMessageRepository, ChatRoomService chatRoomService) {
-        this.chatMessageRepository = chatMessageRepository;
-        this.chatRoomService = chatRoomService;
-    }
-
     private final ChatMessageRepository chatMessageRepository;
-
     private final ChatRoomService chatRoomService;
 
-
-
     public ChatMessage sendMessage(ChatMessage chatMessage) {
-        String chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true).orElseThrow(() -> new BadRequestException("Cannot find a chatId"));
+
+        String chatId = chatRoomService.getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true)
+                .orElseThrow(() -> new BadRequestException("Cannot find a chatId"));
+
         chatMessage.setChatId(chatId);
 
         return save(chatMessage);
@@ -60,7 +56,6 @@ public class ChatMessageService {
         return chatMessageRepository.countBySenderIdAndRecipientIdAndStatus(senderId, recipientId, MessageStatus.RECEIVED);
     }
 
-
     /**
      * Find a chat Message by senderId and recipientId
      * @param senderId a sender identification number.
@@ -68,7 +63,6 @@ public class ChatMessageService {
      * @return a {@link List} that contains a messages, which belongs to sender and recipient.
      */
     public List<ChatMessage> findChatMessage(String senderId, String recipientId) {
-
 
         var chatId = chatRoomService.getChatId(senderId, recipientId, false);
 
@@ -93,7 +87,6 @@ public class ChatMessageService {
         }).orElseThrow(() -> new ResourceNotFoundException("ChatMessage", "chatMessageId", id));
     }
 
-
     /**
      * Update statuses if message's list has at least one item.
      * @param senderId A sender identification number.
@@ -103,7 +96,5 @@ public class ChatMessageService {
     private void updateStatuses(String senderId, String recipientId, MessageStatus status) {
         chatMessageRepository.updateStatuses(status, recipientId, senderId);
     }
-
-
 
 }

@@ -11,12 +11,14 @@ import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.Optional;
 
 /** Represents an user service.
@@ -27,18 +29,11 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
+
     final private UserService userService;
     final private UserDao userDao;
-
-
-    @Autowired
-    public UserController(UserService userService, UserDao userDao) {
-        this.userService = userService;
-        this.userDao = userDao;
-    }
-
-
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
@@ -47,15 +42,10 @@ public class UserController {
     }
 
     @GetMapping(value = "/users/summaries")
-    public ResponseEntity<?> findAllUserSummaries(@CurrentUser UserPrincipal currentUser) {
+    public List<UserSummary> findAllUserSummaries(@CurrentUser UserPrincipal currentUser) {
 
-        User loadedUser = userDao.findById(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
+        return userService.findAllUserSummaries(currentUser);
 
-        return ResponseEntity.ok(userDao
-                .findAll()
-                .stream()
-                .filter(user -> !user.getEmail().equals(loadedUser.getEmail()))
-                .map(this::convertTo));
     }
 
     @GetMapping("/user")
@@ -93,7 +83,5 @@ public class UserController {
         return userService.getStatusList();
     }
 
-    private UserSummary convertTo(User user) {
-        return UserSummary.builder().email(user.getEmail()).name(user.getName()).id(user.getPublicId()).build();
-    }
+
 }

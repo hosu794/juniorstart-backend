@@ -12,7 +12,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication
 @RequiredArgsConstructor
-public class JuniorstartApplication implements CommandLineRunner {
+public class JuniorstartApplication {
 
     final private ChatMessageRepository chatMessageRepository;
 
@@ -25,8 +25,4 @@ public class JuniorstartApplication implements CommandLineRunner {
         SpringApplication.run(JuniorstartApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        chatMessageRepository.deleteAll();
-    }
 }
