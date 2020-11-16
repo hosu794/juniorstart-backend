@@ -14,12 +14,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProjectRequest {
 
-    @Min(3)
-    @Max(128)
+    @Min(3) @Max(128)
     private String name;
-    @Max(128)
+
     @NotNull
-    @Min(3)
+    @Min(3) @Max(128)
     private String title;
 
     @NotNull
@@ -28,6 +27,7 @@ public class ProjectRequest {
 
     @Min(10)
     private String body;
+
     @Max(8)
     private long numberOfSeats;
 

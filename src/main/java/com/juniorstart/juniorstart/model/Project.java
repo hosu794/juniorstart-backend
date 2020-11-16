@@ -32,7 +32,7 @@ public class Project  extends UserDateAudit {
     @NotEmpty(message = "Please provide a title")
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(nullable = false)
     @NotEmpty(message = "Please provide a description")
     private String description;
 
@@ -40,7 +40,7 @@ public class Project  extends UserDateAudit {
     @NotEmpty(message = "Please provide a body")
     private String body;
 
-    @Column(name = "numberOfSeats", nullable = false)
+    @Column(nullable = false)
     @NotEmpty(message = "Please provide a number of seats")
     private long numberOfSeats;
 

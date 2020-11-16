@@ -31,8 +31,7 @@ public class ProjectController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public Project createProject(@CurrentUser UserPrincipal currentUser,
-                                 @RequestBody @Valid ProjectRequest projectRequest) {
+    public Project createProject(@RequestBody @Valid ProjectRequest projectRequest) {
         return projectService.createProject(projectRequest);
     }
 
@@ -59,8 +58,7 @@ public class ProjectController {
     }
 
     @GetMapping("/name/{name}")
-    public ProjectResponse findByName(@CurrentUser UserPrincipal currentUser,
-                                      @PathVariable String name) {
+    public ProjectResponse findByName(@PathVariable String name) {
         return projectService.findByName(name);
     }
 

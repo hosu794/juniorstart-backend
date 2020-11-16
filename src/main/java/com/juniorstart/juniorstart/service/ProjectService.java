@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -39,8 +40,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ProjectService {
-
-
 
     private final UserDao userDao;
     private final ProjectRepository projectRepository;
@@ -128,16 +127,7 @@ public class ProjectService {
 
         if(isCurrentUserIsOwnerOfProject) {
 
-            currentProject = Project.builder()
-                    .recruiting(projectRequest.isRecruiting())
-                    .body(projectRequest.getBody())
-                    .description(projectRequest.getDescription())
-                    .numberOfSeats(projectRequest.getNumberOfSeats())
-                    .title(projectRequest.getTitle())
-                    .name(projectRequest.getName())
-                    .repository(projectRequest.getRepository()).build();
-
-            Project updatedProject = projectRepository.save(currentProject);
+            Project updatedProject = updateProjectAndSave(projectRequest, currentProject);
 
             return ModelMapper.mapProjectToProjectResponse(updatedProject, user);
         } else {
@@ -166,7 +156,6 @@ public class ProjectService {
 
     /**
      * Find all projects by title.
-     * @param currentUser A current's user credentials.
      * @param title The project's title
      * @param page A page number
      * @param size A page size
@@ -192,7 +181,12 @@ public class ProjectService {
 
         List<ProjectResponse> projectResponses = projects.map(project -> findUserAndMapProjectToProjectResponse(project)).getContent();
 
-        return new PagedResponse<>(projectResponses, projects.getNumber(), projects.getSize(), projects.getTotalElements(), projects.getTotalPages(), projects.isLast());
+        return new PagedResponse<>(projectResponses,
+                                   projects.getNumber(),
+                                   projects.getSize(),
+                                   projects.getTotalElements(),
+                                   projects.getTotalPages(),
+                                   projects.isLast());
 
     }
 
@@ -221,11 +215,7 @@ public class ProjectService {
                                                            int page,
                                                            int size) {
 
-        ValidatePageUtil.validatePageNumberAndSize(page, size);
-
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
-
-        Page<Project> projects = projectRepository.findByIdIn(findIdsOfProject(technologyId), pageable);
+        Page<Project> projects = validatePageAndFindProjectsByIds(page, size, technologyId);
 
         if(projects.getNumberOfElements() == 0) {
             return new PagedResponse<>(Collections.emptyList(), projects.getNumber(), projects.getSize(), projects.getTotalElements(), projects.getTotalPages(), projects.isLast());
@@ -233,7 +223,12 @@ public class ProjectService {
 
         List<ProjectResponse> projectResponses = projects.map(project -> findUserAndMapProjectToProjectResponse(project)).getContent();
 
-        return new PagedResponse<>(projectResponses, projects.getNumber(), projects.getSize(), projects.getTotalElements(), projects.getTotalPages(), projects.isLast());
+         return new PagedResponse<>(projectResponses,
+                                    projects.getNumber(),
+                                    projects.getSize(),
+                                    projects.getTotalElements(),
+                                    projects.getTotalPages(),
+                                    projects.isLast());
 
     }
 
@@ -272,6 +267,42 @@ public class ProjectService {
     private List<Long> findIdsOfProject(Long technologyId) {
         Technologies technology = technologiesRepository.findById(technologyId).orElseThrow(() -> new ResourceNotFoundException("Technology", "technologyTitle", technologyId));
         return technology.getProjects().stream().map(Project::getId).collect(Collectors.toList());
+    }
+
+    private Project updateProjectAndSave(ProjectRequest projectRequest, Project currentProject) {
+        currentProject = Project.builder()
+                .recruiting(projectRequest.isRecruiting())
+                .body(projectRequest.getBody())
+                .description(projectRequest.getDescription())
+                .numberOfSeats(projectRequest.getNumberOfSeats())
+                .title(projectRequest.getTitle())
+                .name(projectRequest.getName())
+                .repository(projectRequest.getRepository()).build();
+
+        return projectRepository.save(currentProject);
+    }
+
+    private PagedResponse<ProjectResponse> validatePagedResponse(Page<Project> projects) {
+        if(projects.getNumberOfElements() == 0) {
+            return new PagedResponse<>(
+                    Collections.emptyList(),
+                    projects.getNumber(),
+                    projects.getSize(),
+                    projects.getTotalElements(),
+                    projects.getTotalPages(),
+                    projects.isLast());
+        }
+
+        return null;
+
+    }
+
+    private Page<Project> validatePageAndFindProjectsByIds(int page, int size, long technologyId) {
+        ValidatePageUtil.validatePageNumberAndSize(page, size);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
+
+        return projectRepository.findByIdIn(findIdsOfProject(technologyId), pageable);
     }
 
 }

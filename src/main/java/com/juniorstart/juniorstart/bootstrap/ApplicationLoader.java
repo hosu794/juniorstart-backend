@@ -17,10 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApplicationLoader implements CommandLineRunner {
 
-
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
-
 
     @Override
     public void run(String... args) {
@@ -36,7 +34,6 @@ public class ApplicationLoader implements CommandLineRunner {
 
     private boolean checkBootstrap() {
         boolean isUser = userDao.findAll().isEmpty();
-
 
         return isUser;
     }
