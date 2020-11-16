@@ -14,10 +14,9 @@ public class ModelMapper {
 
     /** Map Project's object to a ProjectResponse class, which is send to response.
      * @param project The object that represents a project's credentials.
-     * @param user The object that represents a user's credentials.
      * @return a {@link ProjectResponse} that is send to a frontend.
      */
-    public static ProjectResponse mapProjectToProjectResponse(Project project, User user) {
+    public static ProjectResponse mapProjectToProjectResponse(Project project) {
 
         return ProjectResponse.builder()
                 .id(project.getId())

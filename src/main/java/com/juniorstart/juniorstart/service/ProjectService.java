@@ -76,16 +76,10 @@ public class ProjectService {
 
             User creator = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(()-> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
 
-            return ModelMapper.mapProjectToProjectResponse(project, creator);
+            return ModelMapper.mapProjectToProjectResponse(project);
         }).getContent();
 
-        return new PagedResponse<>(
-                projectResponses,
-                projects.getNumber(),
-                projects.getSize(),
-                projects.getTotalElements(),
-                projects.getTotalPages(),
-                projects.isLast());
+        return responsePagedResponse(projects, projectResponses);
 
     }
 
@@ -129,7 +123,7 @@ public class ProjectService {
 
             Project updatedProject = updateProjectAndSave(projectRequest, currentProject);
 
-            return ModelMapper.mapProjectToProjectResponse(updatedProject, user);
+            return ModelMapper.mapProjectToProjectResponse(updatedProject);
         } else {
             throw new BadRequestException("You are not a owner of this project!");
         }
@@ -163,11 +157,7 @@ public class ProjectService {
      */
     public PagedResponse<ProjectResponse> findByTitle(String title, int page, int size) {
 
-        ValidatePageUtil.validatePageNumberAndSize(page, size);
-
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
-
-        Page<Project> projects = projectRepository.findByTitle(title, pageable);
+        Page<Project> projects = validatePageAndFindByTitle(page, size, title);
 
         if(projects.getNumberOfElements() == 0) {
             return new PagedResponse<>(
@@ -181,12 +171,7 @@ public class ProjectService {
 
         List<ProjectResponse> projectResponses = projects.map(project -> findUserAndMapProjectToProjectResponse(project)).getContent();
 
-        return new PagedResponse<>(projectResponses,
-                                   projects.getNumber(),
-                                   projects.getSize(),
-                                   projects.getTotalElements(),
-                                   projects.getTotalPages(),
-                                   projects.isLast());
+        return responsePagedResponse(projects, projectResponses);
 
     }
 
@@ -201,7 +186,7 @@ public class ProjectService {
 
         User creatorOfProject = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
 
-        return ModelMapper.mapProjectToProjectResponse(project, creatorOfProject);
+        return ModelMapper.mapProjectToProjectResponse(project);
     }
 
     /**
@@ -223,12 +208,7 @@ public class ProjectService {
 
         List<ProjectResponse> projectResponses = projects.map(project -> findUserAndMapProjectToProjectResponse(project)).getContent();
 
-         return new PagedResponse<>(projectResponses,
-                                    projects.getNumber(),
-                                    projects.getSize(),
-                                    projects.getTotalElements(),
-                                    projects.getTotalPages(),
-                                    projects.isLast());
+         return responsePagedResponse(projects, projectResponses);
 
     }
 
@@ -261,7 +241,7 @@ public class ProjectService {
     private ProjectResponse findUserAndMapProjectToProjectResponse(Project project) {
         User user = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
 
-        return ModelMapper.mapProjectToProjectResponse(project, user);
+        return ModelMapper.mapProjectToProjectResponse(project);
     }
 
     private List<Long> findIdsOfProject(Long technologyId) {
@@ -303,6 +283,23 @@ public class ProjectService {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
 
         return projectRepository.findByIdIn(findIdsOfProject(technologyId), pageable);
+    }
+
+    private Page<Project> validatePageAndFindByTitle(int page, int size, String title) {
+        ValidatePageUtil.validatePageNumberAndSize(page, size);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
+
+        return projectRepository.findByTitle(title, pageable);
+    }
+
+    private PagedResponse<ProjectResponse> responsePagedResponse(Page<Project> projects, List<ProjectResponse> projectResponses) {
+        return new PagedResponse<>(projectResponses,
+                projects.getNumber(),
+                projects.getSize(),
+                projects.getTotalElements(),
+                projects.getTotalPages(),
+                projects.isLast());
     }
 
 }
