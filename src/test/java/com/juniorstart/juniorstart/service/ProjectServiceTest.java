@@ -129,7 +129,7 @@ public class ProjectServiceTest {
     @Test
     public void should_return_findAll_method() throws Exception {
        when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
-       when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
+
 
         PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
 
@@ -139,7 +139,7 @@ public class ProjectServiceTest {
         assertTrue(response.getContent().get(0).getTitle().contains(project.getTitle()));
 
         verify(projectRepository, times(1)).findAll(isA(Pageable.class));
-        verify(userDao, times(1)).findByPublicId(anyLong());
+
     }
 
 
@@ -161,7 +161,9 @@ public class ProjectServiceTest {
 
     @Test
     public void should_update_project() throws Exception {
-       when(userDao.findById(any(UUID.class))).thenReturn(Optional.of(user));
+
+
+       when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
        when(projectRepository.findById(anyLong())).thenReturn(Optional.of(project));
        when(projectRepository.save(any(Project.class))).thenReturn(project);
 
@@ -171,7 +173,7 @@ public class ProjectServiceTest {
         assertTrue(response.getTitle().contains(project.getTitle()));
         assertTrue(response.getDescription().contains(project.getDescription()));
 
-        verify(userDao, times(1)).findById(any(UUID.class));
+        verify(userDao, times(1)).findByPrivateId(any(UUID.class));
         verify(projectRepository, times(1)).findById(anyLong());
         verify(projectRepository, times(1)).save(any(Project.class));
     }
@@ -210,7 +212,7 @@ public class ProjectServiceTest {
     public void should_find_by_technology() throws Exception {
       when(technologyRepository.findById(anyLong())).thenReturn(Optional.of(technology));
       when(projectRepository.findByIdIn(anyList(), isA(Pageable.class))).thenReturn(page);
-       when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
+
 
        PagedResponse<ProjectResponse> response = projectService.findByTechnology(technology.getId(), 0, 10);
 
@@ -220,7 +222,6 @@ public class ProjectServiceTest {
 
      verify(technologyRepository, times(1)).findById(anyLong());
      verify(projectRepository, times(1)).findByIdIn(anyList(), isA(Pageable.class));
-     verify(userDao, times(1)).findByPublicId(anyLong());
     }
     
 }

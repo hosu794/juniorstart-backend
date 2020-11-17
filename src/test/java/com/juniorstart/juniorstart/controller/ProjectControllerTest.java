@@ -76,11 +76,6 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
     }
 
-//    @AfterEach
-//    public void afterAll() {
-//        userDao.delete(user);
-//        projectRepository.deleteAll();
-//    }
 
     @Test
     @WithUserDetails("someEmail")

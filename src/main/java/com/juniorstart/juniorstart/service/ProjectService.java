@@ -5,7 +5,6 @@ import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.Project;
 import com.juniorstart.juniorstart.model.Technologies;
 import com.juniorstart.juniorstart.model.User;
-import com.juniorstart.juniorstart.model.UserProfile;
 import com.juniorstart.juniorstart.payload.ApiResponse;
 import com.juniorstart.juniorstart.payload.PagedResponse;
 import com.juniorstart.juniorstart.payload.ProjectRequest;
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -54,30 +53,15 @@ public class ProjectService {
                                                          int size) {
         ValidatePageUtil.validatePageNumberAndSize(page, size);
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.Direction.DESC,
-                "createdAt");
+        Pageable pageable = createPageableByCreatedAt(page, size);
 
-        Page<Project> projects = projectRepository.findAll(pageable);
+        Page<Project> projects = queryPageWithAllProjects(pageable);
 
-        if(projects.getNumberOfElements() == 0) {
-            return new PagedResponse<>(
-                    Collections.emptyList(),
-                    projects.getNumber(),
-                    projects.getSize(),
-                    projects.getTotalElements(),
-                    projects.getTotalPages(),
-                    projects.isLast());
+        if(isPageEmpty(projects)) {
+            return emptyPagedResponse(projects);
         }
 
-        List<ProjectResponse> projectResponses = projects.map(project -> {
-
-            User creator = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(()-> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
-
-            return ModelMapper.mapProjectToProjectResponse(project);
-        }).getContent();
+        List<ProjectResponse> projectResponses = createPagedResponses(projects);
 
         return responsePagedResponse(projects, projectResponses);
 
@@ -91,7 +75,7 @@ public class ProjectService {
      */
     public Project createProject(ProjectRequest projectRequest) {
 
-        if(projectRepository.findByName(projectRequest.getName()).isPresent()) {
+        if(isProjectPresent(projectRequest)) {
             throw new BadRequestException("Name already in use.");
         }
 
@@ -113,9 +97,10 @@ public class ProjectService {
                                          Long projectId,
                                          ProjectRequest projectRequest) {
 
-        User user = userDao.findById(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
+        User user = queryUserByPrivateId(currentUser);
 
-        Project currentProject = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+
+        Project currentProject = queryProjectById(projectId);
 
         boolean isCurrentUserIsOwnerOfProject = checkIsUserCreatedProject(currentProject, user);
 
@@ -139,9 +124,9 @@ public class ProjectService {
      */
     public ResponseEntity<?> deleteProject(UserPrincipal currentUser, Long projectId) {
 
-        Project currentProject = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
+        Project currentProject = queryProjectById(projectId);
 
-        User currentLoggedUser = userDao.findByPrivateId(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentProject.getId()));
+        User currentLoggedUser = queryUserByPrivateId(currentUser);
 
         boolean isUserCreatedProject = checkIsUserCreatedProject(currentProject, currentLoggedUser);
 
@@ -159,17 +144,11 @@ public class ProjectService {
 
         Page<Project> projects = validatePageAndFindByTitle(page, size, title);
 
-        if(projects.getNumberOfElements() == 0) {
-            return new PagedResponse<>(
-                    Collections.emptyList(),
-                    projects.getNumber(),
-                    projects.getSize(),
-                    projects.getTotalElements(),
-                    projects.getTotalPages(),
-                    projects.isLast());
+        if(isPageEmpty(projects)) {
+            return emptyPagedResponse(projects);
         }
 
-        List<ProjectResponse> projectResponses = projects.map(project -> findUserAndMapProjectToProjectResponse(project)).getContent();
+        List<ProjectResponse> projectResponses = createPagedResponses(projects);
 
         return responsePagedResponse(projects, projectResponses);
 
@@ -182,9 +161,9 @@ public class ProjectService {
      */
     public ProjectResponse findByName(String name){
 
-        Project project = projectRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Project", "name", name));
+        Project project = queryProjectByName(name);
 
-        User creatorOfProject = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
+        User creatorOfProject = queryUserByPublicId(project);
 
         return ModelMapper.mapProjectToProjectResponse(project);
     }
@@ -202,14 +181,29 @@ public class ProjectService {
 
         Page<Project> projects = validatePageAndFindProjectsByIds(page, size, technologyId);
 
-        if(projects.getNumberOfElements() == 0) {
-            return new PagedResponse<>(Collections.emptyList(), projects.getNumber(), projects.getSize(), projects.getTotalElements(), projects.getTotalPages(), projects.isLast());
+        if(isPageEmpty(projects)) {
+            return emptyPagedResponse(projects);
         }
 
-        List<ProjectResponse> projectResponses = projects.map(project -> findUserAndMapProjectToProjectResponse(project)).getContent();
+        List<ProjectResponse> projectResponses = createPagedResponses(projects);
 
          return responsePagedResponse(projects, projectResponses);
+    }
 
+    /*
+    Helper functions
+     */
+
+    private User queryUserByPrivateId(UserPrincipal currentUser) {
+        return userDao.findByPrivateId(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
+    }
+
+    private Project queryProjectById(long id) {
+        return projectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", id));
+    }
+
+    private User queryUserByPublicId(Project project) {
+        return userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
     }
 
     private boolean checkIsUserCreatedProject(Project project, User currentUser) {
@@ -300,6 +294,52 @@ public class ProjectService {
                 projects.getTotalElements(),
                 projects.getTotalPages(),
                 projects.isLast());
+    }
+
+    private Pageable createPageableByCreatedAt(int page, int size) {
+
+        return PageRequest.of(
+                page,
+                size,
+                Sort.Direction.DESC,
+                "createdAt");
+
+    }
+
+    private Page<Project> queryPageWithAllProjects(Pageable pageable) {
+        return projectRepository.findAll(pageable);
+    }
+
+    private PagedResponse<ProjectResponse> emptyPagedResponse(Page<Project> projects) {
+
+        return new PagedResponse<>(
+                Collections.emptyList(),
+                projects.getNumber(),
+                projects.getSize(),
+                projects.getTotalElements(),
+                projects.getTotalPages(),
+                projects.isLast());
+
+    }
+
+    private boolean isPageEmpty(Page<Project> projects) {
+        return projects.getNumberOfElements() == 0;
+    }
+
+    private List<ProjectResponse> createPagedResponses(Page<Project> projects) {
+        return projects.map(project ->  ModelMapper.mapProjectToProjectResponse(project)).getContent();
+    }
+
+    private boolean isProjectPresent(ProjectRequest projectRequest) {
+        return projectRepository.findByName(projectRequest.getName()).isPresent();
+    }
+
+    private User queryUserByPublicId(UUID uuid) {
+        return userDao.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("User", "userId", uuid));
+    }
+
+    private Project queryProjectByName(String name) {
+        return projectRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Project", "name", name));
     }
 
 }
