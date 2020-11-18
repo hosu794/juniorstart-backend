@@ -57,6 +57,7 @@ public class ProjectServiceTest {
     ProjectRequest projectRequest;
     Set<Project> projectSet;
     Page<Project> page;
+    UUID uuid = new UUID(12l, 12l);
 
     private void initializeUser() throws Exception  {
         user = new User();
@@ -83,7 +84,7 @@ public class ProjectServiceTest {
         project.setCreatedBy(user.getPublicId());
         project.setCreatedAt(createdAt);
         project.setUpdatedBy(user.getPublicId());
-        project.setId(12l);
+        project.setId(uuid);
         project.setName("Some Easy name");
     }
 
@@ -164,7 +165,7 @@ public class ProjectServiceTest {
 
 
        when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
-       when(projectRepository.findById(anyLong())).thenReturn(Optional.of(project));
+       when(projectRepository.findById(any(UUID.class))).thenReturn(Optional.of(project));
        when(projectRepository.save(any(Project.class))).thenReturn(project);
 
        ProjectResponse response = projectService.updateProject(userPrincipal, project.getId(), projectRequest);
@@ -174,21 +175,21 @@ public class ProjectServiceTest {
         assertTrue(response.getDescription().contains(project.getDescription()));
 
         verify(userDao, times(1)).findByPrivateId(any(UUID.class));
-        verify(projectRepository, times(1)).findById(anyLong());
+        verify(projectRepository, times(1)).findById(any(UUID.class));
         verify(projectRepository, times(1)).save(any(Project.class));
     }
 
     @Test
     public void should_delete_project() throws Exception {
 
-        when(projectRepository.findById(anyLong())).thenReturn(Optional.of(project));
+        when(projectRepository.findById(any(UUID.class))).thenReturn(Optional.of(project));
         when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
 
         ResponseEntity<?> response = projectService.deleteProject(userPrincipal, project.getId());
 
         assertEquals(response.getStatusCodeValue(), HTTPResponse.SC_OK);
 
-        verify(projectRepository, times(1)).findById(anyLong());
+        verify(projectRepository, times(1)).findById(any(UUID.class));
         verify(userDao, times(1)).findByPrivateId(any(UUID.class));
     }
 

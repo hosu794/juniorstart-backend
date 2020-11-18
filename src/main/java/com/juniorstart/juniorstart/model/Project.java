@@ -3,10 +3,10 @@ package com.juniorstart.juniorstart.model;
 import com.juniorstart.juniorstart.model.audit.UserDateAudit;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "projects", uniqueConstraints = {
@@ -21,8 +21,8 @@ public class Project  extends UserDateAudit {
 
     @Id
     @Column(name = "project_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    private UUID id;
 
     @Column(nullable = false)
     @NotEmpty(message = "Please provide a name")

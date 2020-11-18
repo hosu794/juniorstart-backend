@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/project")
 public class ProjectController {
@@ -38,7 +40,7 @@ public class ProjectController {
     @PutMapping("/{projectId}")
     @PreAuthorize("hasRole('USER')")
     public ProjectResponse updateProject(@CurrentUser UserPrincipal currentUser,
-                                         @PathVariable Long projectId,
+                                         @PathVariable UUID projectId,
                                          @RequestBody @Valid ProjectRequest projectRequest) {
         return projectService.updateProject(currentUser, projectId, projectRequest);
     }
@@ -46,7 +48,7 @@ public class ProjectController {
     @DeleteMapping("/{projectId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> deleteProject(@CurrentUser UserPrincipal currentUser,
-                                           @PathVariable Long projectId) {
+                                           @PathVariable UUID projectId) {
         return projectService.deleteProject(currentUser, projectId);
     }
 

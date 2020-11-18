@@ -28,8 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class ControllerIntegrationTest {
 
-    protected final String TEST_NAME = "Test Name";
-
     @Autowired
     WebApplicationContext wac;
 
@@ -46,7 +44,6 @@ public abstract class ControllerIntegrationTest {
     void setUp() throws Exception {
         user = userDao.findByEmail("someEmail").orElseThrow();
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
-
     }
 
 

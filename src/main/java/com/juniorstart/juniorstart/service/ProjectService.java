@@ -94,7 +94,7 @@ public class ProjectService {
      * @throws BadRequestException if user hasn't has a ownership of project.
      */
     public ProjectResponse updateProject(UserPrincipal currentUser,
-                                         Long projectId,
+                                         UUID projectId,
                                          ProjectRequest projectRequest) {
 
         User user = queryUserByPrivateId(currentUser);
@@ -122,7 +122,7 @@ public class ProjectService {
      * @return a {@link ResponseEntity} with the message.
      * @throws BadRequestException if user hasn't created a this project.
      */
-    public ResponseEntity<?> deleteProject(UserPrincipal currentUser, Long projectId) {
+    public ResponseEntity<?> deleteProject(UserPrincipal currentUser, UUID projectId) {
 
         Project currentProject = queryProjectById(projectId);
 
@@ -198,7 +198,7 @@ public class ProjectService {
         return userDao.findByPrivateId(currentUser.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", currentUser.getId()));
     }
 
-    private Project queryProjectById(long id) {
+    private Project queryProjectById(UUID id) {
         return projectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", id));
     }
 
@@ -238,7 +238,7 @@ public class ProjectService {
         return ModelMapper.mapProjectToProjectResponse(project);
     }
 
-    private List<Long> findIdsOfProject(Long technologyId) {
+    private List<UUID> findIdsOfProject(Long technologyId) {
         Technologies technology = technologiesRepository.findById(technologyId).orElseThrow(() -> new ResourceNotFoundException("Technology", "technologyTitle", technologyId));
         return technology.getProjects().stream().map(Project::getId).collect(Collectors.toList());
     }

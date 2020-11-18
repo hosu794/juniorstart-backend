@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface ProjectRepository extends JpaRepository<Project, Long> {
+public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     Page<Project> findByTitle(String title, Pageable pageable);
 
@@ -18,6 +19,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<Project> findByRepository(String repository);
 
-    Page<Project> findByIdIn(List<Long> projectsIds, Pageable pageable);
+    Page<Project> findByIdIn(List<UUID> projectsIds, Pageable pageable);
 
 }
