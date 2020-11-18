@@ -33,9 +33,7 @@ public class ApplicationLoader implements CommandLineRunner {
     }
 
     private boolean checkBootstrap() {
-        boolean isUser = userDao.findAll().isEmpty();
-
-        return isUser;
+        return userDao.findAll().isEmpty();
     }
 
     private void loadTaskTimerLoader(boolean isTrue) {

@@ -52,7 +52,8 @@ public class ProjectController {
 
     @GetMapping("/title/{title}")
     public PagedResponse<ProjectResponse> findByTitle(@CurrentUser UserPrincipal currentUser,
-                                                      @PathVariable String title, @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+                                                      @PathVariable String title,
+                                                      @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
                                                       @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
         return projectService.findByTitle(title,page ,size);
     }
