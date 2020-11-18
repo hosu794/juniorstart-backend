@@ -19,11 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ProjectControllerTest extends ControllerIntegrationTest {
 
-    private final String BASIC_PROJECT_URL = "/api/project";
-    private final String GET_ALL_URL = BASIC_PROJECT_URL;
+
+    private final String BASIC_URL = "/api/project";
 
     Project project;
-    Technologies technology;
     User user;
     ProjectRequest projectRequest;
 
@@ -80,7 +79,7 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
     @Test
     @WithUserDetails("someEmail")
     public void getAllProjects() throws Exception {
-        mockMvc.perform(get(GET_ALL_URL))
+        mockMvc.perform(get(BASIC_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.[0].name",is(project.getName())))
                 .andExpect(jsonPath("$.content.[0].title",is(project.getTitle())))
@@ -93,7 +92,7 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
     @Test
     public void getProjectByTitle() throws Exception {
-        mockMvc.perform(get(BASIC_PROJECT_URL + "/title/" + project.getTitle())).andExpect(status().isOk())
+        mockMvc.perform(get(BASIC_URL + "/title/" + project.getTitle())).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.[0].name",is(project.getName())))
                 .andExpect(jsonPath("$.content.[0].title",is(project.getTitle())))
                 .andExpect(jsonPath("$.content.[0].description",is(project.getDescription())))
@@ -105,7 +104,7 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
     @Test
     public void getProjectByName() throws Exception {
-        mockMvc.perform(get(BASIC_PROJECT_URL + "/name/" + project.getName())).andExpect(status().isOk())
+        mockMvc.perform(get(BASIC_URL + "/name/" + project.getName())).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name",is(project.getName())))
                 .andExpect(jsonPath("$.description",is(project.getDescription())))
                 .andExpect(jsonPath("$.repository",is(project.getRepository())))
@@ -118,7 +117,7 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
         String jsonRequest = gson.toJson(projectRequest);
 
-        mockMvc.perform(post(BASIC_PROJECT_URL)
+        mockMvc.perform(post(BASIC_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .content(jsonRequest))
@@ -130,7 +129,7 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
     @Test
     @WithUserDetails("someEmail")
     public void deleteProject() throws Exception {
-        mockMvc.perform(delete(BASIC_PROJECT_URL + "/" + project.getId())).andExpect(status().isOk())
+        mockMvc.perform(delete(BASIC_URL + "/" + project.getId())).andExpect(status().isOk())
                 .andExpect(jsonPath("success",is(true)))
                 .andExpect(jsonPath("message",is("Project deleted successfully"))).andReturn();
     }
@@ -141,7 +140,7 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
         String jsonRequest = gson.toJson(projectRequest);
 
-        mockMvc.perform(put(BASIC_PROJECT_URL + "/" + project.getId())
+        mockMvc.perform(put(BASIC_URL + "/" + project.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .content(jsonRequest))

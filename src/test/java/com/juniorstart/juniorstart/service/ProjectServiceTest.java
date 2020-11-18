@@ -191,6 +191,7 @@ public class ProjectServiceTest {
 
         verify(projectRepository, times(1)).findById(any(UUID.class));
         verify(userDao, times(1)).findByPrivateId(any(UUID.class));
+
     }
 
     @Test
@@ -211,18 +212,18 @@ public class ProjectServiceTest {
 
     @Test
     public void should_find_by_technology() throws Exception {
+
       when(technologyRepository.findById(anyLong())).thenReturn(Optional.of(technology));
       when(projectRepository.findByIdIn(anyList(), isA(Pageable.class))).thenReturn(page);
-
-
-       PagedResponse<ProjectResponse> response = projectService.findByTechnology(technology.getId(), 0, 10);
+      
+      PagedResponse<ProjectResponse> response = projectService.findByTechnology(technology.getId(), 0, 10);
 
       assertTrue(response.getContent().get(0).getName().contains(project.getName()));
       assertTrue(response.getContent().get(0).getBody().contains(project.getBody()));
-     assertTrue(response.getContent().get(0).getDescription().contains(project.getDescription()));
+      assertTrue(response.getContent().get(0).getDescription().contains(project.getDescription()));
 
-     verify(technologyRepository, times(1)).findById(anyLong());
-     verify(projectRepository, times(1)).findByIdIn(anyList(), isA(Pageable.class));
+      verify(technologyRepository, times(1)).findById(anyLong());
+      verify(projectRepository, times(1)).findByIdIn(anyList(), isA(Pageable.class));
     }
     
 }

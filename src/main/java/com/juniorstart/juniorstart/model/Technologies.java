@@ -24,13 +24,13 @@ public class Technologies extends UserDateAudit {
     @Enumerated(EnumType.STRING)
     private TechnologyType technologyType;
 
-
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String description;
 
+    @Singular
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,

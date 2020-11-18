@@ -48,18 +48,19 @@ public class Project  extends UserDateAudit {
     @NotEmpty(message = "Please provide a project repository")
     private String repository;
 
+    @Builder.Default
     @Column(name = "recruiting")
     private Boolean recruiting = false;
 
+    @Singular
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "project_technologies",
             joinColumns =  @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "technology_id"))
-    @Singular
     private Set<Technologies> technologies = new HashSet<>();
 
+    @Singular
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "team_members", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Singular
     private Set<User> team_members = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY, optional = true)
