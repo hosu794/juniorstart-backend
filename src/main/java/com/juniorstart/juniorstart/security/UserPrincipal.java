@@ -11,13 +11,15 @@ import java.util.*;
 
 public class UserPrincipal implements OAuth2User, UserDetails {
     private final UUID id;
+    private final Long publicId;
     private final String email;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public UserPrincipal(UUID id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(UUID id, Long publicId, String email, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
+        this.publicId = publicId;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
@@ -29,7 +31,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 
         return new UserPrincipal(
                 user.getPrivateId(),
-                user.getEmail(),
+                user.getPublicId(), user.getEmail(),
                 user.getPassword(),
                 authorities
         );
@@ -43,6 +45,10 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 
     public UUID getId() {
         return id;
+    }
+
+    public Long getPublicId() {
+        return publicId;
     }
 
     public String getEmail() {

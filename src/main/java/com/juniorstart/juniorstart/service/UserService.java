@@ -7,10 +7,7 @@ import com.juniorstart.juniorstart.exception.AgeSpecifierNotFoundException;
 import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
-import com.juniorstart.juniorstart.payload.ApiResponse;
-import com.juniorstart.juniorstart.payload.ChangeMailRequest;
-import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
-import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
+import com.juniorstart.juniorstart.payload.*;
 import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.CurrentUser;
@@ -51,9 +48,13 @@ public class UserService {
      * @return a current user credentials
      * @throws ResourceNotFoundException if user not find
      */
-    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return userDao.findByPrivateId(userPrincipal.getId())
+    public UserSummary getCurrentUser(UserPrincipal userPrincipal) {
+        User user = userDao.findByPrivateId(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
+
+        UserSummary userSummary = new UserSummary(user.getPublicId(), user.getName(), user.getEmail());
+
+        return userSummary;
     }
 
     /** Update user email.
