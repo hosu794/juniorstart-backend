@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ProjectControllerTest extends ControllerIntegrationTest {
 
-
     private final String BASIC_URL = "/api/project";
 
     Project project;
@@ -28,9 +27,6 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
 
     @Autowired
     ProjectRepository projectRepository;
-
-    @Autowired
-    TechnologiesRepository technologiesRepository;
 
     @Autowired
     UserDao userDao;

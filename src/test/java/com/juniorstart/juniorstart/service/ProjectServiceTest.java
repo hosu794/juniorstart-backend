@@ -129,8 +129,8 @@ public class ProjectServiceTest {
 
     @Test
     public void should_return_findAll_method() throws Exception {
-       when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
 
+        when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
 
         PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
 
@@ -162,7 +162,6 @@ public class ProjectServiceTest {
 
     @Test
     public void should_update_project() throws Exception {
-
 
        when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
        when(projectRepository.findById(any(UUID.class))).thenReturn(Optional.of(project));
