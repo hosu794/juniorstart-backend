@@ -197,7 +197,7 @@ public class ProjectServiceTest {
     public void should_find_by_Name() throws Exception {
 
        when(projectRepository.findByName(any(String.class))).thenReturn(Optional.of(project));
-       when(userDao.findByPublicId(any(Long.class))).thenReturn(Optional.of(user));
+
 
        ProjectResponse response = projectService.findByName(project.getName());
 
@@ -206,7 +206,7 @@ public class ProjectServiceTest {
         assertTrue(response.getName().contains(project.getName()));
 
         verify(projectRepository, times(1)).findByName(anyString());
-        verify(userDao, times(1)).findByPublicId(anyLong());
+
     }
 
     @Test
