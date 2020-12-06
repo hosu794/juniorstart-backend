@@ -63,9 +63,8 @@ public class Project  extends UserDateAudit {
     @JoinTable(name = "team_members", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> team_members = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User mentor;
-
 
 }

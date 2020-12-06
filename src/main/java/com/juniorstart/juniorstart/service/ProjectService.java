@@ -163,8 +163,6 @@ public class ProjectService {
 
         Project project = queryProjectByName(name);
 
-        User creatorOfProject = queryUserByPublicId(project);
-
         return ModelMapper.mapProjectToProjectResponse(project);
     }
 
@@ -232,12 +230,6 @@ public class ProjectService {
         }
     }
 
-    private ProjectResponse findUserAndMapProjectToProjectResponse(Project project) {
-        User user = userDao.findByPublicId(project.getCreatedBy()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", project.getCreatedBy()));
-
-        return ModelMapper.mapProjectToProjectResponse(project);
-    }
-
     private List<UUID> findIdsOfProject(Long technologyId) {
         Technologies technology = technologiesRepository.findById(technologyId).orElseThrow(() -> new ResourceNotFoundException("Technology", "technologyTitle", technologyId));
         return technology.getProjects().stream().map(Project::getId).collect(Collectors.toList());
@@ -256,20 +248,6 @@ public class ProjectService {
         return projectRepository.save(currentProject);
     }
 
-    private PagedResponse<ProjectResponse> validatePagedResponse(Page<Project> projects) {
-        if(projects.getNumberOfElements() == 0) {
-            return new PagedResponse<>(
-                    Collections.emptyList(),
-                    projects.getNumber(),
-                    projects.getSize(),
-                    projects.getTotalElements(),
-                    projects.getTotalPages(),
-                    projects.isLast());
-        }
-
-        return null;
-
-    }
 
     private Page<Project> validatePageAndFindProjectsByIds(int page, int size, long technologyId) {
         ValidatePageUtil.validatePageNumberAndSize(page, size);
@@ -332,10 +310,6 @@ public class ProjectService {
 
     private boolean isProjectPresent(ProjectRequest projectRequest) {
         return projectRepository.findByName(projectRequest.getName()).isPresent();
-    }
-
-    private User queryUserByPublicId(UUID uuid) {
-        return userDao.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("User", "userId", uuid));
     }
 
     private Project queryProjectByName(String name) {
