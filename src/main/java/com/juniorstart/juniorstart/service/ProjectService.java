@@ -230,8 +230,6 @@ public class ProjectService {
         }
     }
 
-
-
     private List<UUID> findIdsOfProject(Long technologyId) {
         Technologies technology = technologiesRepository.findById(technologyId).orElseThrow(() -> new ResourceNotFoundException("Technology", "technologyTitle", technologyId));
         return technology.getProjects().stream().map(Project::getId).collect(Collectors.toList());
@@ -249,7 +247,6 @@ public class ProjectService {
 
         return projectRepository.save(currentProject);
     }
-
 
 
     private Page<Project> validatePageAndFindProjectsByIds(int page, int size, long technologyId) {

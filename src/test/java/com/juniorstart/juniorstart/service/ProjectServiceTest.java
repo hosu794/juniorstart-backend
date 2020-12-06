@@ -162,7 +162,7 @@ public class ProjectServiceTest {
 
     @Test
     public void should_update_project() throws Exception {
-
+      
        when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
        when(projectRepository.findById(any(UUID.class))).thenReturn(Optional.of(project));
        when(projectRepository.save(any(Project.class))).thenReturn(project);
@@ -197,7 +197,6 @@ public class ProjectServiceTest {
     public void should_find_by_Name() throws Exception {
 
        when(projectRepository.findByName(any(String.class))).thenReturn(Optional.of(project));
-
 
        ProjectResponse response = projectService.findByName(project.getName());
 
