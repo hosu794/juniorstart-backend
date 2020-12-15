@@ -130,7 +130,9 @@ public class ProjectServiceTest {
     @Test
     public void should_return_findAll_method() throws Exception {
 
+        when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
         when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
+
 
         PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
 
@@ -140,7 +142,7 @@ public class ProjectServiceTest {
         assertTrue(response.getContent().get(0).getTitle().contains(project.getTitle()));
 
         verify(projectRepository, times(1)).findAll(isA(Pageable.class));
-
+        verify(userDao, times(1)).findByPublicId(anyLong());
     }
 
 
@@ -162,10 +164,11 @@ public class ProjectServiceTest {
 
     @Test
     public void should_update_project() throws Exception {
-      
+
        when(userDao.findByPrivateId(any(UUID.class))).thenReturn(Optional.of(user));
        when(projectRepository.findById(any(UUID.class))).thenReturn(Optional.of(project));
        when(projectRepository.save(any(Project.class))).thenReturn(project);
+       when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
 
        ProjectResponse response = projectService.updateProject(userPrincipal, project.getId(), projectRequest);
 
@@ -176,6 +179,7 @@ public class ProjectServiceTest {
         verify(userDao, times(1)).findByPrivateId(any(UUID.class));
         verify(projectRepository, times(1)).findById(any(UUID.class));
         verify(projectRepository, times(1)).save(any(Project.class));
+        verify(userDao, times(1)).findByPublicId(anyLong());
     }
 
     @Test
@@ -196,16 +200,17 @@ public class ProjectServiceTest {
     @Test
     public void should_find_by_Name() throws Exception {
 
-       when(projectRepository.findByName(any(String.class))).thenReturn(Optional.of(project));
+        when(projectRepository.findByName(any(String.class))).thenReturn(Optional.of(project));
+        when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
 
-       ProjectResponse response = projectService.findByName(project.getName());
+        ProjectResponse response = projectService.findByName(project.getName());
 
         assertTrue(response.getDescription().contains(project.getDescription()));
         assertTrue(response.getBody().contains(project.getBody()));
         assertTrue(response.getName().contains(project.getName()));
 
         verify(projectRepository, times(1)).findByName(anyString());
-
+        verify(userDao, times(1)).findByPublicId(anyLong());
     }
 
     @Test
@@ -213,7 +218,8 @@ public class ProjectServiceTest {
 
       when(technologyRepository.findById(anyLong())).thenReturn(Optional.of(technology));
       when(projectRepository.findByIdIn(anyList(), isA(Pageable.class))).thenReturn(page);
-      
+      when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
+
       PagedResponse<ProjectResponse> response = projectService.findByTechnology(technology.getId(), 0, 10);
 
       assertTrue(response.getContent().get(0).getName().contains(project.getName()));
@@ -222,6 +228,7 @@ public class ProjectServiceTest {
 
       verify(technologyRepository, times(1)).findById(anyLong());
       verify(projectRepository, times(1)).findByIdIn(anyList(), isA(Pageable.class));
+      verify(userDao, times(1)).findByPublicId(anyLong());
     }
     
 }

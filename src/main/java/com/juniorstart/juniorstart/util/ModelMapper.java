@@ -4,6 +4,7 @@ package com.juniorstart.juniorstart.util;
 import com.juniorstart.juniorstart.model.Project;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ProjectResponse;
+import com.juniorstart.juniorstart.payload.UserSummary;
 
 /** Util class to map a model class to a model responses class.
  * @author Grzegorz Szczęsny
@@ -16,7 +17,13 @@ public class ModelMapper {
      * @param project The object that represents a project's credentials.
      * @return a {@link ProjectResponse} that is send to a frontend.
      */
-    public static ProjectResponse mapProjectToProjectResponse(Project project) {
+    public static ProjectResponse mapProjectToProjectResponse(Project project, User creator) {
+
+        UserSummary userSummary = UserSummary.builder()
+                .email(creator.getEmail())
+                .id(creator.getPublicId())
+                .name(creator.getName())
+                .build();
 
         return ProjectResponse.builder()
                 .id(project.getId())
@@ -26,6 +33,7 @@ public class ModelMapper {
                 .numberOfSeats(project.getNumberOfSeats())
                 .repository(project.getRepository())
                 .name(project.getName())
+                .creator(userSummary)
                 .build();
     }
 }
