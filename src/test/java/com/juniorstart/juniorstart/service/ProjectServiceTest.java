@@ -133,6 +133,7 @@ public class ProjectServiceTest {
         when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
         when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
 
+
         PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
 
         assertTrue(response.getContent().get(0).getBody().contains(project.getBody()));
@@ -218,7 +219,7 @@ public class ProjectServiceTest {
       when(technologyRepository.findById(anyLong())).thenReturn(Optional.of(technology));
       when(projectRepository.findByIdIn(anyList(), isA(Pageable.class))).thenReturn(page);
       when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
-      
+
       PagedResponse<ProjectResponse> response = projectService.findByTechnology(technology.getId(), 0, 10);
 
       assertTrue(response.getContent().get(0).getName().contains(project.getName()));

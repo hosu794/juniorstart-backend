@@ -67,5 +67,4 @@ public class Project  extends UserDateAudit {
     @JoinColumn(name = "user_id")
     private User mentor;
 
-
 }
