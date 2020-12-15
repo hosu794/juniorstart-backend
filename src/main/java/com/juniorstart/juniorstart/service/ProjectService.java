@@ -108,7 +108,9 @@ public class ProjectService {
 
             Project updatedProject = updateProjectAndSave(projectRequest, currentProject);
 
-            return ModelMapper.mapProjectToProjectResponse(updatedProject);
+            User creator = queryUserByPublicId(updatedProject);
+
+            return ModelMapper.mapProjectToProjectResponse(updatedProject, creator);
         } else {
             throw new BadRequestException("You are not a owner of this project!");
         }
@@ -163,7 +165,9 @@ public class ProjectService {
 
         Project project = queryProjectByName(name);
 
-        return ModelMapper.mapProjectToProjectResponse(project);
+        User creator = queryUserByPublicId(project);
+
+        return ModelMapper.mapProjectToProjectResponse(project, creator);
     }
 
     /**
@@ -308,7 +312,16 @@ public class ProjectService {
     }
 
     private List<ProjectResponse> createPagedResponses(Page<Project> projects) {
-        return projects.map(project ->  ModelMapper.mapProjectToProjectResponse(project)).getContent();
+
+            return projects.map(project -> {
+
+                User creator = queryUserByPublicId(project);
+
+                return ModelMapper.mapProjectToProjectResponse(project, creator);
+
+            }).getContent();
+
+//        return projects.map(project ->  ModelMapper.mapProjectToProjectResponse(project)).getContent();
     }
 
     private boolean isProjectPresent(ProjectRequest projectRequest) {
