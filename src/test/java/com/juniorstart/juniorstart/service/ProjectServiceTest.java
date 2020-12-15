@@ -129,10 +129,12 @@ public class ProjectServiceTest {
 
     @Test
     public void should_return_findAll_method() throws Exception {
-
+      
         when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
         when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
 
+
+        when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
 
         PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
 
@@ -203,6 +205,7 @@ public class ProjectServiceTest {
         when(projectRepository.findByName(any(String.class))).thenReturn(Optional.of(project));
         when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
 
+
         ProjectResponse response = projectService.findByName(project.getName());
 
         assertTrue(response.getDescription().contains(project.getDescription()));
@@ -210,7 +213,7 @@ public class ProjectServiceTest {
         assertTrue(response.getName().contains(project.getName()));
 
         verify(projectRepository, times(1)).findByName(anyString());
-        verify(userDao, times(1)).findByPublicId(anyLong());
+
     }
 
     @Test

@@ -165,9 +165,11 @@ public class ProjectService {
 
         Project project = queryProjectByName(name);
 
+
         User creator = queryUserByPublicId(project);
 
         return ModelMapper.mapProjectToProjectResponse(project, creator);
+
     }
 
     /**
@@ -234,8 +236,6 @@ public class ProjectService {
         }
     }
 
-
-
     private List<UUID> findIdsOfProject(Long technologyId) {
         Technologies technology = technologiesRepository.findById(technologyId).orElseThrow(() -> new ResourceNotFoundException("Technology", "technologyTitle", technologyId));
         return technology.getProjects().stream().map(Project::getId).collect(Collectors.toList());
@@ -253,8 +253,6 @@ public class ProjectService {
 
         return projectRepository.save(currentProject);
     }
-
-
 
     private Page<Project> validatePageAndFindProjectsByIds(int page, int size, long technologyId) {
         ValidatePageUtil.validatePageNumberAndSize(page, size);
@@ -321,7 +319,6 @@ public class ProjectService {
 
             }).getContent();
 
-//        return projects.map(project ->  ModelMapper.mapProjectToProjectResponse(project)).getContent();
     }
 
     private boolean isProjectPresent(ProjectRequest projectRequest) {
