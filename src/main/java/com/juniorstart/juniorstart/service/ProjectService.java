@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -117,6 +118,7 @@ public class ProjectService {
 
     }
 
+
     /**
      * Delete a project
      * @param currentUser A current user's credentials.
@@ -124,6 +126,7 @@ public class ProjectService {
      * @return a {@link ResponseEntity} with the message.
      * @throws BadRequestException if user hasn't created a this project.
      */
+    @Transactional
     public ResponseEntity<?> deleteProject(UserPrincipal currentUser, UUID projectId) {
 
         Project currentProject = queryProjectById(projectId);
@@ -209,7 +212,7 @@ public class ProjectService {
     }
 
     private boolean checkIsUserCreatedProject(Project project, User currentUser) {
-        return project.getCreatedBy() == currentUser.getPublicId();
+        return project.getCreatedBy().longValue() == currentUser.getPublicId();
     }
 
     private Project createProjectModel(ProjectRequest projectRequest) {
