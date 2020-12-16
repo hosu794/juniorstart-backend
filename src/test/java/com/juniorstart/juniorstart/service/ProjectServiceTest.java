@@ -151,15 +151,17 @@ public class ProjectServiceTest {
 
         when(projectRepository.findByName(ArgumentMatchers.any(String.class))).thenReturn(Optional.empty());
         when(projectRepository.save(ArgumentMatchers.any(Project.class))).thenReturn(project);
+        when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
 
-        Project response = projectService.createProject(projectRequest);
+        ProjectResponse response = projectService.createProject(projectRequest);
 
         assertTrue(response.getBody().contains(project.getBody()));
         assertTrue(response.getName().contains(project.getName()));
-        assertEquals(response.getRecruiting(), project.getRecruiting());
+        assertEquals(response.getDescription(), project.getDescription());
 
         verify(projectRepository, times(1)).findByName(anyString());
         verify(projectRepository, times(1)).save(any(Project.class));
+        verify(userDao, times(1)).findByPublicId(anyLong());
     }
 
     @Test

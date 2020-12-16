@@ -33,7 +33,7 @@ public class ProjectController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public Project createProject(@RequestBody @Valid ProjectRequest projectRequest) {
+    public ProjectResponse createProject(@RequestBody @Valid ProjectRequest projectRequest) {
         return projectService.createProject(projectRequest);
     }
 

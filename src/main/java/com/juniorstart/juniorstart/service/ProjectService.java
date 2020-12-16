@@ -74,7 +74,7 @@ public class ProjectService {
      * @return a new {@link Project}.
      * @throws BadRequestException if user has too many projects.
      */
-    public Project createProject(ProjectRequest projectRequest) {
+    public ProjectResponse createProject(ProjectRequest projectRequest) {
 
         if(isProjectPresent(projectRequest)) {
             throw new BadRequestException("Name already in use.");
@@ -82,7 +82,11 @@ public class ProjectService {
 
         Project newProject = createProjectModel(projectRequest);
 
-        return projectRepository.save(newProject);
+        Project result = projectRepository.save(newProject);
+
+        User creator = queryUserByPublicId(result);
+
+        return ModelMapper.mapProjectToProjectResponse(result, creator);
 
     }
 
@@ -117,7 +121,6 @@ public class ProjectService {
         }
 
     }
-
 
     /**
      * Delete a project
