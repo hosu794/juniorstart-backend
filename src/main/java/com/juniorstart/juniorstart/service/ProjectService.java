@@ -15,6 +15,7 @@ import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.util.ModelMapper;
 import com.juniorstart.juniorstart.util.ValidatePageUtil;
+import io.swagger.models.Model;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
@@ -69,6 +71,19 @@ public class ProjectService {
     }
 
     /**
+     * Get a project by UUID
+     * @param id identification number
+     * @return a {@link Project}
+     */
+    public ProjectResponse getByPublicId(UUID id) {
+        Project project = queryProjectById(id);
+
+        User creator = queryUserByPublicId(project);
+
+        return ModelMapper.mapProjectToProjectResponse(project, creator);
+    }
+
+    /**
      * Create a new project
      * @param projectRequest A request that contains a credentials for a new project.
      * @return a new {@link Project}.
@@ -98,12 +113,12 @@ public class ProjectService {
      * @return a updated project.
      * @throws BadRequestException if user hasn't has a ownership of project.
      */
+    @Transactional
     public ProjectResponse updateProject(UserPrincipal currentUser,
                                          UUID projectId,
                                          ProjectRequest projectRequest) {
 
         User user = queryUserByPrivateId(currentUser);
-
 
         Project currentProject = queryProjectById(projectId);
 
@@ -249,14 +264,14 @@ public class ProjectService {
     }
 
     private Project updateProjectAndSave(ProjectRequest projectRequest, Project currentProject) {
-        currentProject = Project.builder()
-                .recruiting(projectRequest.isRecruiting())
-                .body(projectRequest.getBody())
-                .description(projectRequest.getDescription())
-                .numberOfSeats(projectRequest.getNumberOfSeats())
-                .title(projectRequest.getTitle())
-                .name(projectRequest.getName())
-                .repository(projectRequest.getRepository()).build();
+
+        currentProject.setRecruiting(projectRequest.isRecruiting());
+        currentProject.setBody(projectRequest.getBody());
+        currentProject.setDescription(projectRequest.getDescription());
+        currentProject.setNumberOfSeats(projectRequest.getNumberOfSeats());
+        currentProject.setTitle(projectRequest.getTitle());
+        currentProject.setName(projectRequest.getName());
+        currentProject.setRepository(projectRequest.getRepository());
 
         return projectRepository.save(currentProject);
     }

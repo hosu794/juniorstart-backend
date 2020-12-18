@@ -52,6 +52,11 @@ public class ProjectController {
         return projectService.deleteProject(currentUser, projectId);
     }
 
+    @GetMapping("/{id}")
+    public ProjectResponse findByPublicId(@PathVariable UUID id) {
+        return  projectService.getByPublicId(id);
+    }
+
     @GetMapping("/title/{title}")
     public PagedResponse<ProjectResponse> findByTitle(@CurrentUser UserPrincipal currentUser,
                                                       @PathVariable String title,
