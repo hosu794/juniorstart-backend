@@ -7,11 +7,13 @@ import com.juniorstart.juniorstart.model.MessageStatus;
 import com.juniorstart.juniorstart.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /** Represents a chat service
  * @author Grzegorz Szczęsny
@@ -52,27 +54,29 @@ public class ChatMessageService {
      * @param recipientId A recipient identification number.
      * @return A amount of received messages.
      */
-    public long countNewMessages(String senderId, String recipientId) {
-        return chatMessageRepository.countBySenderIdAndRecipientIdAndStatus(senderId, recipientId, MessageStatus.RECEIVED);
+    public ResponseEntity<Long> countNewMessages(String senderId, String recipientId) {
+        return ResponseEntity.ok(chatMessageRepository.countBySenderIdAndRecipientIdAndStatus(senderId, recipientId, MessageStatus.RECEIVED));
     }
 
     /**
-     * Find a chat Message by senderId and recipientId
+     * Find a chat Messages by senderId and recipientId
      * @param senderId a sender identification number.
      * @param recipientId a recipient identification number.
      * @return a {@link List} that contains a messages, which belongs to sender and recipient.
      */
-    public List<ChatMessage> findChatMessage(String senderId, String recipientId) {
+    public ResponseEntity<List<ChatMessage>> findChatMessage(String senderId, String recipientId) {
 
-        var chatId = chatRoomService.getChatId(senderId, recipientId, false);
+        var chatId = receiveChatRoomId(senderId, recipientId);
 
         var messages = chatId.map(cId -> chatMessageRepository.findByChatIdByDateAsc(cId)).orElse(new ArrayList<>());
 
-        if (messages.size() > 0) {
+        boolean isMessageNotEmpty = messages.size() > 0;
+
+        if (isMessageNotEmpty) {
             updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
         }
 
-        return  messages;
+        return ResponseEntity.ok(messages);
     }
 
     /**
@@ -80,11 +84,21 @@ public class ChatMessageService {
      * @param id A identification number.
      * @return a found {@link ChatMessage}.
      */
-    public ChatMessage findById(Long id) {
+    public ResponseEntity<ChatMessage> findById(Long id) {
         return chatMessageRepository.findById(id).map(chatMessage -> {
-            chatMessage.setStatus(MessageStatus.DELIVERED);
-            return chatMessageRepository.save(chatMessage);
+            ChatMessage result = setStatusAndSaveMessage(chatMessage);
+            return ResponseEntity.ok(result);
         }).orElseThrow(() -> new ResourceNotFoundException("ChatMessage", "chatMessageId", id));
+    }
+
+    /**
+     * Set status to DELIVER, save and return chat message
+     * @param chatMessage A object contains message credentials
+     * @return a saved {@link ChatMessage}
+     */
+    private ChatMessage setStatusAndSaveMessage(ChatMessage chatMessage) {
+        chatMessage.setStatus(MessageStatus.DELIVERED);
+        return chatMessageRepository.save(chatMessage);
     }
 
     /**
@@ -95,6 +109,16 @@ public class ChatMessageService {
      */
     private void updateStatuses(String senderId, String recipientId, MessageStatus status) {
         chatMessageRepository.updateStatuses(status, recipientId, senderId);
+    }
+
+    /**
+     * Receive a chat's room id from sender's id and recipient's id
+     * @param senderId A sender identification number.
+     * @param recipientId A recipient identification number.
+     * @return If chat room exists a chat's room identification number.
+     */
+    private Optional<String> receiveChatRoomId(String senderId, String recipientId) {
+        return chatRoomService.getChatId(senderId, recipientId, false);
     }
 
 }

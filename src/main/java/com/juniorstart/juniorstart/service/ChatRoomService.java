@@ -22,7 +22,7 @@ public class ChatRoomService {
     private final ChatMessageService chatMessageService;
 
 
-    //I used  constructor, because without @Lazy annotation program doesn't work.
+    //I used constructor, because without @Lazy annotation program doesn't work.
     public ChatRoomService(@Lazy ChatRoomRepository chatRoomRepository,@Lazy ChatMessageService chatMessageService) {
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageService = chatMessageService;

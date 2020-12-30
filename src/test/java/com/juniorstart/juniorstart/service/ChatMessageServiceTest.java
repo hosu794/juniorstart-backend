@@ -11,6 +11,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,9 +88,9 @@ public class ChatMessageServiceTest {
     public void should_countNewMessages() throws Exception {
         when(chatMessageRepository.countBySenderIdAndRecipientIdAndStatus(anyString(), anyString(), any())).thenReturn(12l);
 
-        Long response = chatMessageService.countNewMessages(chatMessage.getSenderId(), chatMessage.getRecipientId());
+        ResponseEntity<Long> response = chatMessageService.countNewMessages(chatMessage.getSenderId(), chatMessage.getRecipientId());
 
-        assertEquals(response, 12l);
+        assertEquals(response.getBody(), 12l);
       verify(chatMessageRepository, times(1)).countBySenderIdAndRecipientIdAndStatus(anyString(), anyString(), any());
     }
 
@@ -98,10 +99,10 @@ public class ChatMessageServiceTest {
     public void should_findChatMessage() throws Exception {
         when(chatRoomService.getChatId(anyString(), anyString(), anyBoolean())).thenReturn(Optional.of(chatMessage.getChatId()));
         when(chatMessageRepository.findByChatIdByDateAsc(anyString())).thenReturn(chatMessages);
-        List<ChatMessage> response = chatMessageService.findChatMessage(chatMessage.getSenderId(), chatMessage.getRecipientId());
+        ResponseEntity<List<ChatMessage>> response = chatMessageService.findChatMessage(chatMessage.getSenderId(), chatMessage.getRecipientId());
 
-        assertTrue(response.get(0).getChatId().contains(chatMessage.getChatId()));
-        assertTrue(response.get(0).getContent().contains(chatMessage.getContent()));
+        assertTrue(response.getBody().get(0).getChatId().contains(chatMessage.getChatId()));
+        assertTrue(response.getBody().get(0).getContent().contains(chatMessage.getContent()));
         verify(chatRoomService, times(1)).getChatId(anyString(), anyString(), anyBoolean());
         verify(chatMessageRepository, times(1)).findByChatIdByDateAsc(anyString());
     }
@@ -111,10 +112,10 @@ public class ChatMessageServiceTest {
         when(chatMessageRepository.findById(anyLong())).thenReturn(Optional.of(chatMessage));
         when(chatMessageRepository.save(any(ChatMessage.class))).thenReturn(delivedMessage);
 
-        ChatMessage response = chatMessageService.findById(chatMessage.getId());
+        ResponseEntity<ChatMessage> response = chatMessageService.findById(chatMessage.getId());
 
-        assertTrue(response.getContent().contains(chatMessage.getContent()));
-        assertTrue(response.getStatus().equals(MessageStatus.DELIVERED));
+        assertTrue(response.getBody().getContent().contains(chatMessage.getContent()));
+        assertTrue(response.getBody().getStatus().equals(MessageStatus.DELIVERED));
         verify(chatMessageRepository, times(1)).findById(anyLong());
         verify(chatMessageRepository, times(1)).save(any(ChatMessage.class));
     }
