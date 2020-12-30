@@ -3,6 +3,7 @@ package com.juniorstart.juniorstart.payload;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProjectResponse {
 
-    private long id;
+    private UUID id;
     private String name;
     private String title;
     private String description;

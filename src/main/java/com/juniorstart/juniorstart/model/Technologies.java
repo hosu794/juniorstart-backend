@@ -12,6 +12,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = "title")
+})
 public class Technologies extends UserDateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +24,19 @@ public class Technologies extends UserDateAudit {
     @Enumerated(EnumType.STRING)
     private TechnologyType technologyType;
 
-
-    @Column(unique=true, nullable = false)
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String description;
 
+    @Singular
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "technologies")
+    private Set<Project> projects = new HashSet<>();
 
 }

@@ -18,6 +18,7 @@ import java.util.UUID;
 public class ApplicationLoader implements CommandLineRunner {
 
     private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
@@ -32,9 +33,7 @@ public class ApplicationLoader implements CommandLineRunner {
     }
 
     private boolean checkBootstrap() {
-        boolean isUser = userDao.findByEmail("someEmail").isEmpty();
-
-        return isUser;
+        return userDao.findAll().isEmpty();
     }
 
     private void loadTaskTimerLoader(boolean isTrue) {
@@ -44,7 +43,7 @@ public class ApplicationLoader implements CommandLineRunner {
                     .imageUrl("some_url")
                     .hiddenFromSearch(false)
                     .age(12)
-                    .password("Some password")
+                    .password(passwordEncoder.encode("Some password"))
                     .provider(AuthProvider.local)
                     .name("Somename")
                     .emailVerified(false)
@@ -57,3 +56,5 @@ public class ApplicationLoader implements CommandLineRunner {
         }
     }
 }
+
+

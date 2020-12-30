@@ -1,24 +1,21 @@
 package com.juniorstart.juniorstart.controller;
 
-import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
 import com.juniorstart.juniorstart.payload.UserSummary;
-import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.CurrentUser;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
+
 import java.util.Optional;
 
 /** Represents an user service.
@@ -33,19 +30,13 @@ import java.util.Optional;
 public class UserController {
 
     final private UserService userService;
-    final private UserDao userDao;
+
+
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public UserSummary getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return userService.getCurrentUser(userPrincipal);
-    }
-
-    @GetMapping(value = "/users/summaries")
-    public List<UserSummary> findAllUserSummaries(@CurrentUser UserPrincipal currentUser) {
-
-        return userService.findAllUserSummaries(currentUser);
-
     }
 
     @GetMapping("/user")
