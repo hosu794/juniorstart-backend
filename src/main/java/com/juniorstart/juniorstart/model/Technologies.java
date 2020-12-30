@@ -38,4 +38,5 @@ public class Technologies extends UserDateAudit {
             },
             mappedBy = "technologies")
     private Set<Project> projects = new HashSet<>();
+
 }

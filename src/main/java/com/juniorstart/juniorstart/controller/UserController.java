@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
+
 import java.util.Optional;
 
 /** Represents an user service.
@@ -72,4 +73,6 @@ public class UserController {
     public ResponseEntity<?> getStatusList(){
         return userService.getStatusList();
     }
+
+
 }

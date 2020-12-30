@@ -133,9 +133,6 @@ public class ProjectServiceTest {
         when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
         when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
 
-
-        when(projectRepository.findAll(isA(Pageable.class))).thenReturn(page);
-
         PagedResponse<ProjectResponse> response = projectService.getAllProjects(0 , 10);
 
         assertTrue(response.getContent().get(0).getBody().contains(project.getBody()));
