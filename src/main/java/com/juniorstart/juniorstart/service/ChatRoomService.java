@@ -51,11 +51,9 @@ public class ChatRoomService {
                     var chatId = formatChatId(senderId, recipientId);
 
                     ChatRoom senderRecipient = buildChatRoomForSenderRecipient(senderId, recipientId, chatId);
-
                     ChatRoom recipientSender = buildChatRoomForRecipientSender(senderId, recipientId, chatId);
 
-                    chatRoomRepository.save(senderRecipient);
-                    chatRoomRepository.save(recipientSender);
+                    saveChatRooms(senderRecipient, recipientSender);
 
                     return Optional.of(chatId);
 
@@ -95,12 +93,22 @@ public class ChatRoomService {
     }
 
     /**
-     * Format chatId from senderId and recipientId
+     * Format chatId from senderId and recipientId.
      * @param senderId A sender identification number.
      * @param recipientId A recipient identification number.
-     * @return a created chatId, that was created from sender and recipient ids/
+     * @return a created chatId, that was created from sender and recipient ids.
      */
     private String formatChatId(String senderId, String recipientId) {
         return String.format("%s_%s", senderId, recipientId);
+    }
+
+    /**
+     * Save senderRecipient's chatRoom and recipientSender's chatRoom.
+     * @param senderRecipient A sender to recipient chat room.
+     * @param recipientSender A recipient to sender chat room.
+     */
+    private void saveChatRooms(ChatRoom senderRecipient, ChatRoom recipientSender) {
+        chatRoomRepository.save(senderRecipient);
+        chatRoomRepository.save(recipientSender);
     }
 }
