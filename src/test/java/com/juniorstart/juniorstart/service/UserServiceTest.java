@@ -221,4 +221,5 @@ public class UserServiceTest {
         verify(userDao, times(1)).findById(any());
         verify(userDao, times(1)).findAll();
     }
+
 }
