@@ -13,6 +13,8 @@ import java.util.UUID;
 public interface UserDao extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 
     Optional<User> findByPrivateId(UUID id);
+    User findByPrivateIdNotOptional(UUID id);
+
 
     Optional<User> findByPublicId(Long publicId);
 
