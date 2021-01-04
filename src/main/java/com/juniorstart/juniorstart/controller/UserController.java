@@ -1,6 +1,7 @@
 package com.juniorstart.juniorstart.controller;
 
 import com.juniorstart.juniorstart.model.User;
+import com.juniorstart.juniorstart.model.UserProfile;
 import com.juniorstart.juniorstart.payload.ChangeMailRequest;
 import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
 import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
@@ -15,7 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
-
+import java.util.List;
 import java.util.Optional;
 
 /** Represents an user service.
@@ -30,8 +31,6 @@ import java.util.Optional;
 public class UserController {
 
     final private UserService userService;
-
-
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
@@ -74,5 +73,10 @@ public class UserController {
         return userService.getStatusList();
     }
 
+    @GetMapping("/users/summaries")
+    @PreAuthorize("hasRole('USER')")
+    public List<UserSummary> getAllUserSummaries(@CurrentUser UserPrincipal userPrincipal) {
+        return userService.findAllUserSummaries(userPrincipal);
+    }
 
 }

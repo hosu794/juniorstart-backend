@@ -4,6 +4,7 @@ import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
  */
 @Getter
 @NoArgsConstructor
+@Builder
 public class ChangeMailRequest implements InterfaceChangeRequest {
     @Email
     private String email;
