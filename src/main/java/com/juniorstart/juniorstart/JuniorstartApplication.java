@@ -1,8 +1,10 @@
 package com.juniorstart.juniorstart;
 
+
 import com.juniorstart.juniorstart.repository.ChatMessageRepository;
 import com.juniorstart.juniorstart.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,10 +13,7 @@ import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @SpringBootApplication
-@RequiredArgsConstructor
-public class JuniorstartApplication {
-
-    final private ChatMessageRepository chatMessageRepository;
+public class JuniorstartApplication  {
 
     @PostConstruct
     void init() {

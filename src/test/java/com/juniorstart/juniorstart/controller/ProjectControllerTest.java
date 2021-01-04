@@ -123,6 +123,13 @@ public class ProjectControllerTest extends ControllerIntegrationTest {
     }
 
     @Test
+    public void findProject() throws Exception {
+        mockMvc.perform(get(BASIC_URL + "/" + project.getId())).andExpect(status().isOk())
+                .andExpect(jsonPath("$.name",is(project.getName())))
+                .andExpect(jsonPath("$.description",is(project.getDescription())));
+    }
+
+    @Test
     @WithUserDetails("someEmail")
     public void deleteProject() throws Exception {
         mockMvc.perform(delete(BASIC_URL + "/" + project.getId())).andExpect(status().isOk())

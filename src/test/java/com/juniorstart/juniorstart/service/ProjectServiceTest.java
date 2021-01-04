@@ -184,6 +184,21 @@ public class ProjectServiceTest {
     }
 
     @Test
+    public void should_get_project() throws Exception {
+        when(projectRepository.findById(any(UUID.class))).thenReturn(Optional.of(project));
+        when(userDao.findByPublicId(anyLong())).thenReturn(Optional.of(user));
+
+        ProjectResponse response = projectService.getByPublicId(project.getId());
+
+        assertTrue(response.getName().contains(project.getName()));
+        assertTrue(response.getTitle().contains(project.getTitle()));
+        assertTrue(response.getDescription().contains(project.getDescription()));
+
+        verify(userDao, times(1)).findByPublicId(anyLong());
+        verify(projectRepository, times(1)).findById(any());
+    }
+
+    @Test
     public void should_delete_project() throws Exception {
 
         when(projectRepository.findById(any(UUID.class))).thenReturn(Optional.of(project));

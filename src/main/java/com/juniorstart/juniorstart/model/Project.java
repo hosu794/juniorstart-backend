@@ -17,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class Project  extends UserDateAudit {
+public class Project extends UserDateAudit {
 
     @Id
     @Column(name = "project_id")
