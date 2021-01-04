@@ -4,7 +4,7 @@ import com.juniorstart.juniorstart.exception.BadRequestException;
 import com.juniorstart.juniorstart.model.CodeReviewSection;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.payload.PagedResponse;
-import com.juniorstart.juniorstart.repository.CodeReviewRepository;
+import com.juniorstart.juniorstart.repository.CodeReviewSectionRepository;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import com.juniorstart.juniorstart.util.ValidatePageUtil;
@@ -27,47 +27,39 @@ import java.util.stream.Collectors;
 public class CodeReviewSectionService {
 
     private final UserDao userRepository;
-    private final CodeReviewRepository codeReviewRepository;
+    private final CodeReviewSectionRepository codeReviewSectionRepository;
 
-    public PagedResponse<CodeReviewSection.CodeReviewSectionDto> getCodeReviewSection(HashSet<String> listOfTags, int page, int size) {
+    public PagedResponse<CodeReviewSection.CodeReviewSectionDto> getCodeReviewSection(List<String> listOfTags, int page, int size) {
 
-        List<String> convertedTechnology = listOfTags.stream().map(WordUtils::capitalize).collect(Collectors.toList());
+        List<String> convertedTags = listOfTags.stream().map(WordUtils::capitalize).collect(Collectors.toList());
         size = ValidatePageUtil.validatePageNumberAndSize(page, size);
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<CodeReviewSection> foundCode = codeReviewRepository.findByCodeReviewTagsIn(listOfTags, pageable);
+        Page<CodeReviewSection> foundCode = codeReviewSectionRepository.findByCodeReviewTagsIn(convertedTags, pageable);
 
         return getUserProfilePagedResponse(foundCode);
     }
     private PagedResponse<CodeReviewSection.CodeReviewSectionDto> getUserProfilePagedResponse(Page<CodeReviewSection> foundCode) {
-        if(foundCode.getNumberOfElements() == 0) {
-            return new PagedResponse<>(Collections.emptyList(), foundCode.getNumber(), foundCode.getSize(), foundCode.getTotalElements(), foundCode.getTotalPages(), foundCode.isLast());
-        }
         return new PagedResponse<>(foundCode.toList().stream().map(CodeReviewSection::toCodeReviewSectionDto).collect(Collectors.toList()), foundCode.getNumber(), foundCode.getSize(), foundCode.getTotalElements(), foundCode.getTotalPages(), foundCode.isLast());
     }
 
-
     public ResponseEntity<?> createCodeReviewSection(CodeReviewSection codeReviewSection, UserPrincipal userPrincipal) {
 
-        User user = userRepository.findByPrivateIdNotOptional(userPrincipal.getId());
-        codeReviewSection.setUser(user);
+        Optional<User> user = userRepository.findByPrivateId(userPrincipal.getId());
+        codeReviewSection.setUser(user.get());
 
-        codeReviewRepository.save(codeReviewSection);
-
-
-        return ResponseEntity.ok(codeReviewRepository.save(codeReviewSection));
+        return ResponseEntity.ok(codeReviewSectionRepository.save(codeReviewSection));
     }
-
 
     public ResponseEntity<?> editCodeReviewSection(Long id, CodeReviewSection codeReviewSection, UserPrincipal userPrincipal) {
 
-        User user = userRepository.findByPrivateIdNotOptional(userPrincipal.getId());
+        Optional<User> user = userRepository.findByPrivateId(userPrincipal.getId());
 
-        Optional<CodeReviewSection> find = codeReviewRepository.findById(id);
+        Optional<CodeReviewSection> find = codeReviewSectionRepository.findById(id);
 
-        if (find.isPresent() && find.get().getUser() == user) {
+        if (find.isPresent() && find.get().getUser() == user.get()) {
             codeReviewSection.setId(id);
-            return ResponseEntity.ok(codeReviewRepository.save(codeReviewSection));
+            return ResponseEntity.ok(codeReviewSectionRepository.save(codeReviewSection));
         } else {
             throw new BadRequestException("This Code Review Section ID does not exists");
         }
@@ -75,11 +67,11 @@ public class CodeReviewSectionService {
 
     public ResponseEntity<?> deleteCodeReviewSection(Long id, UserPrincipal userPrincipal) {
 
-        User user = userRepository.findByPrivateIdNotOptional(userPrincipal.getId());
-        Optional<CodeReviewSection> find = codeReviewRepository.findById(id);
+        Optional<User> user = userRepository.findByPrivateId(userPrincipal.getId());
+        Optional<CodeReviewSection> find = codeReviewSectionRepository.findById(id);
 
-        if (find.isPresent() && find.get().getUser() == user && find.get().getId() == id) {
-            codeReviewRepository.deleteById(id);
+        if (find.isPresent() && find.get().getUser() == user.get() && find.get().getId() == id) {
+            codeReviewSectionRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } else {
             throw new BadRequestException("This Code Review Section ID does not exists");

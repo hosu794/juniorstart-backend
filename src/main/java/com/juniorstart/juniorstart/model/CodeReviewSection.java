@@ -4,17 +4,17 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class CodeReviewSection {
 
@@ -25,26 +25,21 @@ public class CodeReviewSection {
     @NotBlank
     private String code;
 
+    @Builder.Default
     @ElementCollection
     private Map<String,String> comments = new HashMap<>();
 
+    @Builder.Default
     @ElementCollection
-    private HashSet<String> codeReviewTags = new HashSet<>();
+    private List<String> codeReviewTags = new ArrayList<>();
 
     @Min(0) @Max(10)
-    private short rate;
+    private byte rate;
 
     private long numberOfRatings;
 
     @ManyToOne
     private User user;
-
-/*
-    public void addUserToCodeReviewSection(User user) {
-        this.user.dr(user);
-        user.getCodeReviewSections().add(this);
-    }
- */
 
     public CodeReviewSectionDto toCodeReviewSectionDto() {
         return new CodeReviewSectionDto(
@@ -58,12 +53,13 @@ public class CodeReviewSection {
     }
 
     @Data
+    @Builder
     @AllArgsConstructor
     public static class CodeReviewSectionDto {
         private String code;
         private Map<String,String> comments;
-        private HashSet<String> codeReviewTags;
-        private short rate;
+        private List<String> codeReviewTags;
+        private byte rate;
         private long numberOfRatings;
         private User user;
     }

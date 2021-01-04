@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Repository
-public interface CodeReviewRepository extends JpaRepository<CodeReviewSection, Long> {
-    Page<CodeReviewSection> findByCodeReviewTagsIn(HashSet<String> codeReviewTags, Pageable pageable);
+public interface CodeReviewSectionRepository extends JpaRepository<CodeReviewSection, Long> {
+    Page<CodeReviewSection> findByCodeReviewTagsIn(List<String> codeReviewTags, Pageable pageable);
 }

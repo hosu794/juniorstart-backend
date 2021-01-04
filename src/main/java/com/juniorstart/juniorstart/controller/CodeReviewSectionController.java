@@ -24,9 +24,8 @@ public class CodeReviewSectionController {
     private final CodeReviewSectionService codeReviewSectionService;
 
 
-    @PreAuthorize("hasRole('user')")
     @GetMapping()
-    public PagedResponse<CodeReviewSection.CodeReviewSectionDto> getCodeReviewSection(HashSet<String> listOfTags,
+    public PagedResponse<CodeReviewSection.CodeReviewSectionDto> getCodeReviewSection(List<String> listOfTags,
                                                                                       @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
                                                                                       @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
 
@@ -42,14 +41,14 @@ public class CodeReviewSectionController {
     }
 
     @PreAuthorize("hasRole('user')")
-    @PostMapping("{id}")
+    @PutMapping("{id}")
     public ResponseEntity<?> editCodeReviewSection(@PathVariable long id, @RequestBody CodeReviewSection codeReviewSection, @CurrentUser UserPrincipal userPrincipal) {
 
         return codeReviewSectionService.editCodeReviewSection(id, codeReviewSection, userPrincipal);
     }
 
     @PreAuthorize("hasRole('user')")
-    @PostMapping("{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteCodeReviewSection(@PathVariable long id, @CurrentUser UserPrincipal userPrincipal) {
 
         return codeReviewSectionService.deleteCodeReviewSection(id, userPrincipal);
