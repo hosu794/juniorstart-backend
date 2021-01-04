@@ -106,22 +106,6 @@ public class UserServiceTest {
         Assert.assertEquals(userService.getCurrentUser(userPrincipal).getEmail(), user.getEmail());
     }
 
-    @Test
-    @DisplayName("Change mail correct")
-    public void testChangeEmail() {
-        //Given
-        mockUser.setEmail("test2@test.com");
-
-        //When
-        ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
-        User user = userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password").get();
-
-        //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        assertEquals("testChangeEmail Success", "test2@test.com", user.getEmail());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, times(1)).send(any(Mail.class));
-    }
 
     @Test
     @DisplayName("Change email valid")
@@ -136,21 +120,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Change password correct")
-    public void testChangePassword() {
-        //Given
-        mockUser.setPassword("NewPassword");
-
-        //When
-        ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
-
-        //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, times(1)).send(any(Mail.class));
-    }
-
-    @Test
     @DisplayName("Change password valid")
     public void testValidChangePassword() {
         //When
@@ -162,20 +131,6 @@ public class UserServiceTest {
         });
     }
 
-    @Test
-    @DisplayName("Change status correct")
-    public void testChangeStatus() {
-        //Given
-        mockUser.setUserStatus(UserStatus.OPEN);
-
-        //When
-        ResponseEntity<ApiResponse> isChanged = userService.changeStatus(statusRequest);
-
-        //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, never()).send(any(Mail.class));
-    }
 
     @Test
     @DisplayName("Change status valid")

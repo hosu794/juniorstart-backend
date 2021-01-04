@@ -32,8 +32,6 @@ public class UserController {
 
     final private UserService userService;
 
-
-
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public UserSummary getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
