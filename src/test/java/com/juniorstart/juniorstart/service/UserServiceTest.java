@@ -6,10 +6,7 @@ import com.juniorstart.juniorstart.exception.ResourceNotFoundException;
 import com.juniorstart.juniorstart.model.AuthProvider;
 import com.juniorstart.juniorstart.model.User;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
-import com.juniorstart.juniorstart.payload.ApiResponse;
-import com.juniorstart.juniorstart.payload.ChangeMailRequest;
-import com.juniorstart.juniorstart.payload.ChangePasswordRequest;
-import com.juniorstart.juniorstart.payload.ChangeStatusRequest;
+import com.juniorstart.juniorstart.payload.*;
 import com.juniorstart.juniorstart.repository.UserDao;
 import com.juniorstart.juniorstart.security.UserPrincipal;
 import org.junit.Assert;
@@ -22,10 +19,7 @@ import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -48,14 +42,18 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
     private User user;
+    private User user2;
     private User mockUser;
     private UserPrincipal userPrincipal;
     private ChangePasswordRequest passwordRequest;
     private ChangeMailRequest mailRequest;
     private ChangeStatusRequest statusRequest;
+    private List<User> usersSummaries;
+    private List<User> allUsers;
 
     @BeforeEach
     void setUp() throws IllegalAccessException, InstantiationException {
+
         user = User.builder()
                 .privateId(UUID.randomUUID())
                 .publicId(10L)
@@ -69,6 +67,27 @@ public class UserServiceTest {
                 .provider(AuthProvider.local)
                 .userStatus(UserStatus.OPEN)
                 .providerId("id").build();
+
+        user2 = User.builder()
+                .privateId(UUID.randomUUID())
+                .publicId(12l)
+                .name("Test2")
+                .age(12)
+                .hiddenFromSearch(false)
+                .email("test2@test.com")
+                .imageUrl("test2Url")
+                .emailVerified(true)
+                .password("Password2")
+                .provider(AuthProvider.local)
+                .userStatus(UserStatus.OPEN)
+                .providerId("id2").build();
+
+        usersSummaries = new ArrayList<>();
+        usersSummaries.add(user2);
+
+        allUsers = new ArrayList<>();
+        allUsers.add(user);
+        allUsers.add(user2);
 
         mockUser = user.getClass().newInstance();
         userPrincipal = UserPrincipal.create(user);
@@ -87,22 +106,6 @@ public class UserServiceTest {
         Assert.assertEquals(userService.getCurrentUser(userPrincipal).getEmail(), user.getEmail());
     }
 
-    @Test
-    @DisplayName("Change mail correct")
-    public void testChangeEmail() {
-        //Given
-        mockUser.setEmail("test2@test.com");
-
-        //When
-        ResponseEntity<ApiResponse> isChanged = userService.changeEmail(mailRequest);
-        User user = userDao.findByPrivateIdAndPassword(this.user.getPrivateId(), "Password").get();
-
-        //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        assertEquals("testChangeEmail Success", "test2@test.com", user.getEmail());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, times(1)).send(any(Mail.class));
-    }
 
     @Test
     @DisplayName("Change email valid")
@@ -117,21 +120,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Change password correct")
-    public void testChangePassword() {
-        //Given
-        mockUser.setPassword("NewPassword");
-
-        //When
-        ResponseEntity<ApiResponse> isChanged = userService.changePassword(passwordRequest);
-
-        //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, times(1)).send(any(Mail.class));
-    }
-
-    @Test
     @DisplayName("Change password valid")
     public void testValidChangePassword() {
         //When
@@ -143,20 +131,6 @@ public class UserServiceTest {
         });
     }
 
-    @Test
-    @DisplayName("Change status correct")
-    public void testChangeStatus() {
-        //Given
-        mockUser.setUserStatus(UserStatus.OPEN);
-
-        //When
-        ResponseEntity<ApiResponse> isChanged = userService.changeStatus(statusRequest);
-
-        //Then
-        assertTrue(isChanged.getBody().isSuccess());
-        verify(userDao, times(1)).save(this.user);
-        verify(mailService, never()).send(any(Mail.class));
-    }
 
     @Test
     @DisplayName("Change status valid")
@@ -186,4 +160,21 @@ public class UserServiceTest {
             assertTrue(isEquals);
         }
     }
+
+    @Test
+    @DisplayName("Get all user without current logged")
+    public void should_return_findAllUserSummaries() throws Exception {
+        when(userDao.findById(any(UUID.class))).thenReturn(Optional.of(user));
+        when(userDao.findAll()).thenReturn(allUsers);
+
+        List<UserSummary> response = userService.findAllUserSummaries(userPrincipal);
+
+        assertEquals(response.get(0).getEmail(), usersSummaries.get(0).getEmail());
+        assertEquals(response.get(0).getId(), usersSummaries.get(0).getPublicId());
+
+
+        verify(userDao, times(1)).findById(any());
+        verify(userDao, times(1)).findAll();
+    }
+
 }

@@ -3,15 +3,13 @@ package com.juniorstart.juniorstart.model;
 import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude="userTechnology")
+@EqualsAndHashCode(of = "privateId")
 @Entity
 @Table(name="users_profile")
 @Builder
@@ -22,6 +20,17 @@ public class UserProfile {
     @OneToOne
     @MapsId
     private User user;
+
+    @OneToMany(mappedBy = "userProfile", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Builder.Default
+    private List<EmploymentHistory> employmentsHistory = new ArrayList<>();
+
+    private String selfDescription;
+
+    private String careerGoals;
+
+    @Lob
+    private byte[] userAvatar;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
@@ -44,11 +53,20 @@ public class UserProfile {
         }
     }
 
+    public void addEmploymentHistory(EmploymentHistory employmentHistory) {
+        this.employmentsHistory.add(employmentHistory);
+        employmentHistory.setUserProfile(this);
+    }
+
     public UserProfileDto toUserProfileDto() {
         return new UserProfileDto(
                 this.user,
                 this.userRole,
-                this.userTechnology);
+                this.userTechnology,
+                this.employmentsHistory,
+                this.selfDescription,
+                this.careerGoals,
+                this.userAvatar);
     }
 
     @Data
@@ -57,5 +75,9 @@ public class UserProfile {
         private User user;
         private UserRole userRole;
         private Set<UserTechnology> userTechnology;
+        private List<EmploymentHistory> employmentsHistory;
+        private String selfDescription;
+        private String careerGoals;
+        private byte[] userAvatar;
     }
 }

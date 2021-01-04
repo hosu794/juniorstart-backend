@@ -3,6 +3,7 @@ package com.juniorstart.juniorstart.payload;
 import com.juniorstart.juniorstart.model.audit.UserStatus;
 import com.juniorstart.juniorstart.payload.interfaces.InterfaceChangeRequest;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

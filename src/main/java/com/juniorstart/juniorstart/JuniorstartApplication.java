@@ -1,7 +1,10 @@
 package com.juniorstart.juniorstart;
 
-import com.juniorstart.juniorstart.repository.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.juniorstart.juniorstart.repository.ChatMessageRepository;
+import com.juniorstart.juniorstart.service.ChatMessageService;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
