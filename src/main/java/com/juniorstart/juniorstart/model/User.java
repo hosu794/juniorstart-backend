@@ -10,9 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -61,4 +59,15 @@ public class User extends DateAudit {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offerCreator",cascade =  CascadeType.ALL)
     private Set<JobOffer> jobOffers = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<CodeReviewSection> codeReviewSections = new HashSet<>();
+
+
+    public void addUserToCodeReviewSection(CodeReviewSection codeReviewSections) {
+        this.codeReviewSections.add(codeReviewSections);
+    }
+
+
+
 }
